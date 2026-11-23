@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="indigo" data-mode="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TruckConnect – Operations Console</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('tc_theme') || 'indigo';
+          const savedMode = localStorage.getItem('tc_mode') || 'auto';
+          document.documentElement.dataset.theme = savedTheme;
+          if (savedMode === 'auto') {
+            const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.dataset.mode = isDark ? 'dark' : 'light';
+          } else {
+            document.documentElement.dataset.mode = savedMode;
+          }
+        } catch (e) {
+          document.documentElement.dataset.theme = 'indigo';
+          document.documentElement.dataset.mode = 'light';
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

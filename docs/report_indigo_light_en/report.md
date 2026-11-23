@@ -1,0 +1,51 @@
+| screen | % pixels off | result |
+|---|---|---|
+| A1_splash.png | 1.85 | FAIL |
+| A2_role_select.png | 9.28 | FAIL |
+| A3_admin_sign_in.png | 9.51 | FAIL |
+| D1_driver_login.png | 9.14 | FAIL |
+| D2_register_mobile_pin.png | 9.65 | FAIL |
+| D3_register_identity.png | 11.44 | FAIL |
+| D4_register_licence.png | 11.82 | FAIL |
+| D5_pending_approval.png | 7.57 | FAIL |
+| D6_permissions.png | 13.39 | FAIL |
+| M10_review_driver.png | 9.65 | FAIL |
+| M11_vehicles.png | 6.55 | FAIL |
+| M12_reports.png | 7.58 | FAIL |
+| M13_alerts_centre.png | 7.45 | FAIL |
+| M14_more.png | 4.55 | FAIL |
+| M15_app_versions.png | 7.78 | FAIL |
+| M1_dashboard.png | 11.81 | FAIL |
+| M2_live_map.png | 7.07 | FAIL |
+| M3_shipments.png | 9.55 | FAIL |
+| M4_shipment_detail.png | 3.81 | FAIL |
+| M5_new_shipment.png | 11.2 | FAIL |
+| M6_assign_driver.png | 43.91 | FAIL |
+| M7_drivers.png | 7.17 | FAIL |
+| M8_driver_detail.png | 4.48 | FAIL |
+| M9_driver_approvals.png | 10.9 | FAIL |
+| S1_settings_admin.png | 5.43 | FAIL |
+| S2_settings_driver.png | 5.01 | FAIL |
+| S3_theme.png | 17.41 | FAIL |
+| S4_language.png | 3.94 | FAIL |
+| S5_notifications.png | 8.47 | FAIL |
+| S6_security.png | 6.99 | FAIL |
+| S7_help.png | 6.96 | FAIL |
+| S8_app_version.png | 10.09 | FAIL |
+| U1_update_available.png | 13.44 | FAIL |
+| U2_install_permission.png | 12.23 | FAIL |
+| U3_forced_update.png | 11.23 | FAIL |
+| V10_sos.png | 12.95 | FAIL |
+| V11_alerts.png | 5.74 | FAIL |
+| V12_profile.png | 4.68 | FAIL |
+| V1_home_no_job.png | 5.16 | FAIL |
+| V2_job_alert.png | 11.29 | FAIL |
+| V3_reject_reason.png | 18.67 | FAIL |
+| V4_job_details.png | 10.36 | FAIL |
+| V5_active_trip.png | 11.17 | FAIL |
+| V6_choose_navigation_app.png | 9.94 | FAIL |
+| V7_proof_of_delivery.png | 9.55 | FAIL |
+| V8_delivered.png | 9.77 | FAIL |
+| V9_history.png | 6.95 | FAIL |
+
+0/47 pass

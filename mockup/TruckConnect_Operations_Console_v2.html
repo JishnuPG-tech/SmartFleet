@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="indigo" data-mode="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TruckConnect – Operations Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#f5f6f8;--surface:#fff;--surface-2:#f7f8fa;--border:#e8eaee;--border-2:#d9dce3;
+  --text:#111318;--text-2:#4b5160;--muted:#8a90a0;--grid:#eef0f3;
+  --accent:#4f46e5;--accent-soft:#eef0ff;--accent-ink:#fff;
+  --ok:#0b7d45;--warn:#a96b00;--serious:#c2540a;--crit:#c9342f;--info:#2563eb;--neutral:#6b7280;
+  --c1:#2a78d6;--c2:#eb6834;--c3:#1baf7a;--c4:#eda100;--c5:#e87ba4;--c6:#008300;--c7:#6250d6;--c8:#e34948;
+  --shadow:0 1px 2px rgba(16,24,40,.04);--shadow-lg:0 12px 40px rgba(16,24,40,.14);
+  --map-land:#eef1f6;--map-sea:#f8fafd;--map-line:#cfd5e1;
+  color-scheme:light;
+}
+html[data-theme=emerald]{--accent:#047857;--accent-soft:#e6f6ef}
+html[data-theme=graphite]{--accent:#27272a;--accent-soft:#f0f0f1}
+html[data-theme=sunset]{--accent:#d9480f;--accent-soft:#fff0e8}
+html[data-mode=dark]{
+  --bg:#0d0f13;--surface:#15181e;--surface-2:#1b1f26;--border:#262b34;--border-2:#343a46;
+  --text:#eceef2;--text-2:#b6bcc9;--muted:#7f8696;--grid:#222731;
+  --accent:#8b83ff;--accent-soft:#232245;--accent-ink:#0d0f13;
+  --ok:#3cc47a;--warn:#e0a63a;--serious:#ee8a4a;--crit:#f0716c;--info:#6aa1ff;--neutral:#9aa1b0;
+  --c1:#3987e5;--c2:#d95926;--c3:#199e70;--c4:#c98500;--c5:#d55181;--c6:#0ca30c;--c7:#9085e9;--c8:#e66767;
+  --shadow:0 1px 2px rgba(0,0,0,.4);--shadow-lg:0 12px 40px rgba(0,0,0,.5);
+  --map-land:#1c212b;--map-sea:#12151b;--map-line:#323948;color-scheme:dark;
+}
+html[data-mode=dark][data-theme=emerald]{--accent:#34d399;--accent-soft:#0f2a22}
+html[data-mode=dark][data-theme=graphite]{--accent:#d4d4d8;--accent-soft:#25262b}
+html[data-mode=dark][data-theme=sunset]{--accent:#fb923c;--accent-soft:#33200f}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;-webkit-font-smoothing:antialiased;display:flex;min-height:100vh}
+button{font-family:inherit;cursor:pointer}
+svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* sidebar */
+aside{width:248px;flex:none;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 14px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:11px;padding:2px 10px 22px}
+.logo{width:34px;height:34px;border-radius:10px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center}
+.brand b{font-size:16px;font-weight:800;letter-spacing:-.01em;display:block}
+.brand small{color:var(--muted);font-size:11.5px}
+.sec{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:6px 12px 8px}
+nav{display:flex;flex-direction:column;gap:3px}
+.nav{display:flex;align-items:center;gap:12px;padding:10px 12px;border:0;background:none;border-radius:10px;color:var(--text-2);font-size:14px;font-weight:600;text-align:left;position:relative;transition:.15s}
+.nav:hover{background:var(--surface-2);color:var(--text)}
+.nav.on{background:var(--accent-soft);color:var(--accent)}
+.nav .badge{margin-left:auto;font-size:11px;background:var(--crit);color:#fff;border-radius:99px;padding:1px 7px;font-weight:700}
+.nav:focus-visible,.btn:focus-visible,.icon-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.side-foot{margin-top:auto;border:1px solid var(--border);border-radius:14px;padding:12px;display:flex;gap:10px;align-items:center}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:12.5px;flex:none}
+.side-foot b{font-size:13px;display:block}.side-foot small{color:var(--muted);font-size:11.5px}
+.sync{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);padding:12px 12px 0}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block}
+.dot.pulse{animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 50%,transparent)}100%{box-shadow:0 0 0 8px transparent}}
+/* main */
+.wrap{flex:1;min-width:0;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:14px;padding:16px 32px;border-bottom:1px solid var(--border);background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(10px);position:sticky;top:0;z-index:20}
+.top h1{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.top .sub{color:var(--muted);font-size:12.5px;margin-top:2px}
+.search{margin-left:auto;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:0 12px;height:38px;width:260px;color:var(--muted)}
+.search input{border:0;outline:0;background:none;color:var(--text);font:inherit;width:100%}
+.icon-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);display:grid;place-items:center;position:relative}
+.icon-btn:hover{border-color:var(--border-2);color:var(--text)}
+.icon-btn .pip{position:absolute;top:7px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--crit);border:2px solid var(--surface)}
+.btn{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-weight:600;font-size:13.5px}
+.btn:hover{border-color:var(--border-2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.sm{height:32px;padding:0 12px;font-size:12.5px;border-radius:8px}
+.btn.danger{color:var(--crit)}
+main{padding:24px 32px 48px;max-width:1480px;width:100%}
+.view{display:none}.view.on{display:block;animation:in .25s ease}
+@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.s3{grid-column:span 3}.s4{grid-column:span 4}.s5{grid-column:span 5}.s6{grid-column:span 6}.s7{grid-column:span 7}.s8{grid-column:span 8}.s12{grid-column:span 12}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);min-width:0}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px 0}
+.card-h h3{font-size:14.5px;font-weight:700}.card-h p{color:var(--muted);font-size:12.5px;margin-top:2px}
+.card-b{padding:16px 20px 20px}
+.kpi{padding:18px 20px}
+.kpi .l{display:flex;justify-content:space-between;align-items:center;color:var(--text-2);font-weight:600;font-size:13px}
+.kpi .ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent)}
+.kpi .v{font-size:30px;font-weight:800;letter-spacing:-.03em;margin:12px 0 4px}
+.kpi .f{font-size:12.5px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.up{color:var(--ok);font-weight:700}.down{color:var(--crit);font-weight:700}
+.box{position:relative;height:270px}.box.t{height:320px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--text-2)}
+.legend span{display:inline-flex;gap:7px;align-items:center}.legend i{width:10px;height:10px;border-radius:3px}
+.legend b{color:var(--text);margin-left:3px}
+.donut{position:relative}.donut .mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none}
+.donut .mid b{font-size:26px;font-weight:800;letter-spacing:-.02em}.donut .mid small{color:var(--muted);font-size:12px}
+/* chips */
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 8px;border-radius:99px;font-size:12px;font-weight:600;color:var(--c);background:color-mix(in srgb,var(--c) 11%,transparent);white-space:nowrap}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--c)}
+.s-Created,.s-Cancelled,.s-Offline,.s-Inactive{--c:var(--neutral)}
+.s-Assigned,.s-Available{--c:var(--info)}
+.s-Accepted,.s-Reached-Pickup,.s-Loaded,.s-In-Transit,.s-Reached-Drop,.s-On-Trip{--c:var(--accent)}
+.s-Delivered,.s-OK,.s-Active{--c:var(--ok)}
+.s-Rejected,.s-Failed,.s-Critical,.s-Expired{--c:var(--crit)}
+.s-Delayed,.s-Maintenance,.s-On-Leave,.s-Expiring,.s-Stale{--c:var(--warn)}
+.s-Pending{--c:var(--warn)}
+/* tables */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:10px 14px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--surface-2)}
+.tbl th:first-child{border-top-left-radius:10px}.tbl th:last-child{border-top-right-radius:10px}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--border);color:var(--text-2);white-space:nowrap}
+.tbl tr:last-child td{border:0}
+.tbl td:first-child{color:var(--text);font-weight:600}
+.tbl tbody tr.click{cursor:pointer}.tbl tbody tr.click:hover td{background:var(--surface-2)}
+.scroll{overflow-x:auto}
+.mono{font-variant-numeric:tabular-nums}
+.pg{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-top:1px solid var(--border);color:var(--muted);font-size:12.5px}
+.person{display:flex;align-items:center;gap:10px}.person .avatar{width:28px;height:28px;font-size:11px}
+.bar{height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden;min-width:90px;border:1px solid var(--border)}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:none;padding:6px 12px;border-radius:7px;color:var(--text-2);font-weight:600;font-size:12.5px}
+.seg button.on{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+/* live trips */
+.trip{display:grid;grid-template-columns:1.1fr 1.4fr 1.6fr auto;gap:16px;align-items:center;padding:14px 20px;border-top:1px solid var(--border)}
+.trip:first-child{border-top:0}
+.trip b{font-weight:700}.trip small{color:var(--muted);display:block;font-size:12px;margin-top:2px}
+.steps{display:flex;align-items:center}
+.steps i{width:10px;height:10px;border-radius:50%;background:var(--border-2);flex:none}
+.steps i.d{background:var(--accent)}.steps i.c{background:var(--surface);box-shadow:0 0 0 2px var(--accent)}
+.steps u{height:2px;flex:1;background:var(--border-2);text-decoration:none}.steps u.d{background:var(--accent)}
+/* alerts */
+.alert{display:flex;gap:12px;padding:13px 20px;border-top:1px solid var(--border);align-items:flex-start}
+.alert:first-child{border-top:0}
+.alert .ai{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex:none;color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent)}
+.alert b{display:block;font-weight:700;font-size:13px}.alert small{color:var(--muted);font-size:12px}
+.alert .act{margin-left:auto;flex:none}
+/* map */
+.mapwrap{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px}
+.map{position:relative;background:var(--map-sea);border-radius:16px;overflow:hidden;height:calc(100vh - 150px);min-height:520px;border:1px solid var(--border)}
+.map svg{width:100%;height:100%;display:block}
+.map .legendbox{position:absolute;left:14px;bottom:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px;font-size:12px;display:flex;flex-direction:column;gap:6px;color:var(--text-2)}
+.map .attr{position:absolute;right:10px;bottom:8px;font-size:10.5px;color:var(--muted)}
+.vlist{display:flex;flex-direction:column;overflow:auto;max-height:calc(100vh - 150px)}
+.vrow{display:flex;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer}
+.vrow:hover,.vrow.on{background:var(--surface-2)}
+.vrow.on{box-shadow:inset 3px 0 0 var(--accent)}
+.vrow small{display:block;color:var(--muted);font-size:12px}
+.vrow b{font-weight:700;font-size:13px}
+.vdetail{padding:16px;border-top:1px solid var(--border);background:var(--surface-2)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:12.5px;margin-top:10px}
+.kv span{color:var(--muted)}.kv b{font-weight:600;text-align:right}
+.mk{cursor:pointer}
+.mk:hover .ring{opacity:1}
+/* drawer & modal */
+.scrim{position:fixed;inset:0;background:rgba(10,12,16,.45);z-index:50;display:none}
+.scrim.on{display:block}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:min(480px,100%);background:var(--surface);z-index:60;box-shadow:var(--shadow-lg);transform:translateX(105%);transition:transform .25s ease;display:flex;flex-direction:column}
+.drawer.on{transform:none}
+.drawer header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.drawer .body{padding:20px 24px;overflow:auto;flex:1}
+.drawer h4,.modal h4{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:22px 0 10px;font-weight:700}
+.drawer h4:first-child{margin-top:0}
+.tl{position:relative;padding-left:22px}
+.tl::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--border)}
+.tl div{position:relative;padding-bottom:16px}
+.tl div::before{content:"";position:absolute;left:-22px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--accent)}
+.tl div.p::before{background:var(--surface);box-shadow:0 0 0 1px var(--border-2)}
+.tl b{display:block;font-size:13px;font-weight:600}.tl small{color:var(--muted);font-size:12px}
+.tl div.p b{color:var(--muted)}
+.pod{border:1px dashed var(--border-2);border-radius:12px;padding:14px;display:flex;gap:14px;align-items:center;background:var(--surface-2)}
+.pod .ph{width:72px;height:72px;border-radius:10px;background:linear-gradient(135deg,var(--accent-soft),var(--surface));display:grid;place-items:center;color:var(--accent);flex:none}
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-48%);width:min(560px,94vw);background:var(--surface);border-radius:18px;z-index:60;box-shadow:var(--shadow-lg);display:none;max-height:92vh;overflow:auto}
+.modal.on{display:block}
+.modal .mh{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal .mh h3{font-size:16px}
+.modal form{padding:20px 24px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fld{display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:600;color:var(--text-2)}
+.fld.full{grid-column:1/-1}
+.fld input,.fld select,.fld textarea{height:40px;border:1px solid var(--border-2);border-radius:10px;background:var(--surface);color:var(--text);padding:0 12px;font:inherit;font-weight:500;outline:0}
+.fld textarea{height:64px;padding:10px 12px;resize:none}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.warnbox{grid-column:1/-1;border-radius:10px;padding:10px 12px;font-size:12.5px;font-weight:600;color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent);display:none}
+.warnbox.on{display:block}
+.mf{grid-column:1/-1;display:flex;justify-content:flex-end;gap:10px;padding-top:6px}
+.pop{position:absolute;right:0;top:46px;width:340px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-lg);display:none;z-index:40;text-align:left}
+.pop.on{display:block}
+.pop h5{font-size:13px;padding:14px 16px 8px;font-weight:700}
+.swatch{width:28px;height:28px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--border-2);padding:0}
+.swatch.on{box-shadow:0 0 0 2px var(--accent)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);background:var(--text);color:var(--bg);padding:11px 18px;border-radius:12px;font-weight:600;font-size:13px;opacity:0;transition:.25s;z-index:80;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.targets{display:flex;flex-direction:column;gap:16px}
+.tg .row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px}.tg .row b{font-weight:700}.tg .row span{color:var(--muted)}
+.tg .bar{height:8px}
+.rel{position:relative}
+@media(max-width:1100px){.s3{grid-column:span 6}.s4,.s5,.s6,.s7,.s8{grid-column:span 12}.mapwrap{grid-template-columns:1fr}.trip{grid-template-columns:1fr 1fr}.search{display:none}}
+@media(max-width:760px){
+  body{flex-direction:column}
+  aside{width:100%;height:auto;position:static;flex-direction:row;align-items:center;padding:10px;overflow-x:auto}
+  .brand,.side-foot,.sec,.sync{display:none}nav{flex-direction:row}.nav{white-space:nowrap}
+  .top,main{padding-left:16px;padding-right:16px}.s3{grid-column:span 12}
+}
+#login{position:fixed;inset:0;z-index:100;background:var(--bg);display:grid;place-items:center;overflow:auto}
+.lcard{width:min(400px,92vw);padding:30px}.lcard form{display:flex;flex-direction:column;gap:14px}
+.lcard .warnbox{display:none}.lcard .warnbox.on{display:block}
+.tbl .btn.sm{height:28px}.side-foot .so{margin-left:auto;height:30px;padding:0 10px;font-size:12px}
+.modal .full{grid-column:1/-1}.modal textarea{width:100%}.ph2{height:80px;border:1px dashed var(--border-2);border-radius:10px;display:grid;place-items:center;color:var(--muted);font-size:12px;background:var(--surface-2)}
+</style>
+</head>
+<body>
+<aside>
+  <div class="brand"><div class="logo"><svg class="i" viewBox="0 0 24 24"><path d="M2 6h11v10H2zM13 9h4l3 3v4h-7"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></div><div><b>TruckConnect</b><small>Operations console</small></div></div>
+  <div class="sec">Workspace</div>
+  <nav id="nav">
+    <button class="nav on" data-v="dashboard"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard</button>
+    <button class="nav" data-v="map"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Live map</button>
+    <button class="nav" data-v="shipments"><svg class="i" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/></svg>Shipments<span class="badge" id="nbPend">3</span></button>
+    <button class="nav" data-v="fleet"><svg class="i" viewBox="0 0 24 24"><path d="M2 6h11v10H2zM13 9h4l3 3v4h-7"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>Drivers &amp; vehicles</button>
+    <button class="nav" data-v="reports"><svg class="i" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M8 17v-5M13 17V8M18 17v-9"/></svg>Reports</button>
+  </nav>
+  <div class="sync"><span class="dot pulse"></span><span id="clock" style="white-space:nowrap">Live · just now</span></div>
+  <div class="side-foot" style="margin-top:14px"><div class="avatar">AK</div><div><b>Anil Kumar</b><small>Owner · Super Admin</small></div></div>
+</aside>
+
+<div class="wrap">
+  <div class="top">
+    <div><h1 id="pt">Dashboard</h1><div class="sub" id="ps"></div></div>
+    <label class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="gs" placeholder="Search shipment, driver, vehicle…"></label>
+    <div class="rel"><button class="icon-btn" id="bellBtn" aria-label="Alerts"><svg class="i" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 004 0"/></svg><span class="pip" id="pip"></span></button>
+      <div class="pop" id="bellPop"></div></div>
+    <div class="rel"><button class="icon-btn" id="themeBtn" aria-label="Appearance"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 000 18z" fill="currentColor"/></svg></button>
+      <div class="pop" id="themePop" style="width:260px"><h5>Appearance</h5>
+        <div style="padding:0 16px 12px;display:flex;gap:10px" id="swatches"></div>
+        <div style="padding:0 16px 16px"><div class="seg" id="modeSeg" style="width:100%"><button data-m="light" style="flex:1">Light</button><button data-m="dark" style="flex:1">Dark</button><button data-m="auto" style="flex:1">Auto</button></div></div></div></div>
+    <button class="btn primary" id="newBtn"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New shipment</button>
+  </div>
+
+  <main>
+    <!-- DASHBOARD -->
+    <section class="view on" id="v-dashboard">
+      <div class="grid" id="kpis"></div>
+      <div class="grid" style="margin-top:16px">
+        <div class="card s8"><div class="card-h"><div><h3>Shipments per day</h3><p>Created vs delivered, last 14 days</p></div><div class="legend" id="lgDay"></div></div><div class="card-b"><div class="box"><canvas id="chDay"></canvas></div></div></div>
+        <div class="card s4"><div class="card-h"><div><h3>Status mix</h3><p>All open and closed this month</p></div></div><div class="card-b"><div class="donut"><div class="box" style="height:210px"><canvas id="chMix"></canvas></div><div class="mid"><b id="mixTot">0</b><small>shipments</small></div></div><div class="legend" id="lgMix" style="margin-top:14px"></div></div></div>
+        <div class="card s8"><div class="card-h"><div><h3>Live trips</h3><p>Active shipments and their milestone progress</p></div><button class="btn sm" data-go="map">Open map</button></div><div style="padding-top:12px" id="liveTrips"></div></div>
+        <div class="card s4"><div class="card-h"><div><h3>Alerts centre</h3><p>Needs your attention</p></div></div><div style="padding-top:12px" id="alerts"></div></div>
+      </div>
+    </section>
+
+    <!-- MAP -->
+    <section class="view" id="v-map">
+      <div class="mapwrap">
+        <div class="map" id="map"></div>
+        <div class="card" style="display:flex;flex-direction:column;overflow:hidden">
+          <div class="card-h" style="padding-bottom:12px"><div><h3>Active vehicles</h3><p id="mapCount"></p></div></div>
+          <div class="vlist" id="vlist"></div><div id="vdetail"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SHIPMENTS -->
+    <section class="view" id="v-shipments">
+      <div class="toolbar"><div class="seg" id="stFilter"></div><span style="flex:1"></span><button class="btn" id="csvBtn">Copy CSV</button></div>
+      <div class="card"><div class="scroll"><table class="tbl"><thead><tr><th>Shipment</th><th>Route</th><th>Goods</th><th>Driver</th><th>Vehicle</th><th>Scheduled</th><th>Status</th></tr></thead><tbody id="shBody"></tbody></table></div><div class="pg"><span id="shCount"></span><span>Select a row for the full timeline and proof of delivery</span></div></div>
+    </section>
+
+    <!-- FLEET -->
+    <section class="view" id="v-fleet">
+      <div class="toolbar"><div class="seg" id="flTab"><button class="on" data-t="drivers">Drivers</button><button data-t="vehicles">Vehicles</button></div><div class="seg" id="flFilter"></div></div>
+      <div class="grid" style="margin-bottom:16px" id="flKpis"></div>
+      <div class="card"><div class="scroll"><table class="tbl" id="flTbl"></table></div></div>
+    </section>
+
+    <!-- REPORTS -->
+    <section class="view" id="v-reports">
+      <div class="toolbar"><div class="seg" id="rgSeg"><button data-r="8" class="on">8 weeks</button><button data-r="6">6 months</button></div><span style="flex:1"></span><button class="btn" id="rptCsv">Copy summary CSV</button></div>
+      <div class="grid">
+        <div class="card s7"><div class="card-h"><div><h3>On-time delivery rate</h3><p>Percent of deliveries inside the expected window</p></div></div><div class="card-b"><div class="box t"><canvas id="rOn"></canvas></div></div></div>
+        <div class="card s5"><div class="card-h"><div><h3>90-day targets</h3><p>From the product success metrics</p></div></div><div class="card-b targets" id="targets"></div></div>
+        <div class="card s6"><div class="card-h"><div><h3>Completed vs cancelled</h3><p>Shipments per month</p></div><div class="legend" id="lgCC"></div></div><div class="card-b"><div class="box"><canvas id="rCC"></canvas></div></div></div>
+        <div class="card s6"><div class="card-h"><div><h3>Trips per driver</h3><p>Top eight this month</p></div></div><div class="card-b"><div class="box"><canvas id="rDrv"></canvas></div></div></div>
+        <div class="card s6"><div class="card-h"><div><h3>Assignment → acceptance</h3><p>Median minutes, target under 5</p></div></div><div class="card-b"><div class="box"><canvas id="rAcc"></canvas></div></div></div>
+        <div class="card s6"><div class="card-h"><div><h3>App version adoption</h3><p>Drivers by installed version</p></div></div><div class="card-b"><div class="donut"><div class="box" style="height:230px"><canvas id="rVer"></canvas></div><div class="mid"><b id="verPct">0%</b><small>on latest</small></div></div><div class="legend" id="lgVer" style="margin-top:12px"></div></div></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="login"><div class="card lcard"><div class="brand" style="padding:0 0 18px"><div class="logo"><svg class="i" viewBox="0 0 24 24"><path d="M2 6h11v10H2zM13 9h4l3 3v4h-7"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></div><div><b>TruckConnect</b><small>Operations console</small></div></div>
+<h2 style="font-size:22px;letter-spacing:-.02em">Admin sign in</h2><p style="color:var(--muted);margin:4px 0 18px;font-size:13px">Owner and dispatcher access only</p>
+<form id="lf"><label class="fld"><span>Email</span><input name="e" type="email" autocomplete="username" required></label><label class="fld"><span>Password</span><input name="p" type="password" autocomplete="current-password" required></label>
+<div class="warnbox" id="lerr"></div><label style="display:flex;gap:8px;font-size:12.5px;color:var(--text-2)"><input type="checkbox" checked> Keep me signed in</label><button class="btn primary" style="justify-content:center;height:42px">Sign in</button></form>
+<p style="margin-top:14px;font-size:12px;color:var(--muted)">Forgot your password? Ask the owner to reset it.</p>
+<div style="display:flex;gap:10px;align-items:center;margin-top:16px"><span id="lsw" style="display:flex;gap:10px"></span><button class="btn sm" data-xmode style="margin-left:auto">Light / Dark</button></div>
+<p style="margin-top:14px;font-size:11.5px;color:var(--muted);line-height:1.5">Demo accounts: anil@truckconnect.in / TruckConnect@2026 (Owner) · dispatch@truckconnect.in / Dispatch@2026 (Dispatcher)</p></div></div>
+<div class="scrim" id="scrim"></div>
+<div class="drawer" id="drawer"></div>
+<div class="modal" id="modal"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const ICON={
+ truck:'<svg class="i" viewBox="0 0 24 24"><path d="M2 6h11v10H2zM13 9h4l3 3v4h-7"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>',
+ user:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
+ box:'<svg class="i" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg>',
+ clock:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+ warn:'<svg class="i" viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/></svg>',
+ sos:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16h.01"/></svg>',
+ x:'<svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+ doc:'<svg class="i" viewBox="0 0 24 24"><path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9 13h6M9 17h6"/></svg>',
+ cam:'<svg class="i" viewBox="0 0 24 24"><path d="M3 8h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+ check:'<svg class="i" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>'
+};
+
+/* ============ DATA ============ */
+const CITY={Kasaragod:[74.99,12.5],Kannur:[75.37,11.87],Wayanad:[76.08,11.61],Kozhikode:[75.78,11.26],Malappuram:[76.07,11.07],Palakkad:[76.65,10.78],Thrissur:[76.21,10.53],Kochi:[76.27,9.93],Idukki:[77.0,9.95],Kottayam:[76.52,9.59],Alappuzha:[76.33,9.49],Kollam:[76.6,8.89],Thiruvananthapuram:[76.94,8.52]};
+const CN=Object.keys(CITY);
+const FLOW=['Created','Assigned','Accepted','Reached Pickup','Loaded','In Transit','Reached Drop','Delivered'];
+const ACTIVE=['Accepted','Reached Pickup','Loaded','In Transit','Reached Drop'];
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;const pick=a=>a[Math.floor(rnd()*a.length)];
+const NAMES=['Suresh Kumar','Rajan Nair','Babu Thomas','Mohanan P','Joseph Mathew','Sasidharan K','Abdul Rahman','Venugopal R','Gopalakrishnan','Shaji Varghese','Haridas M','Unnikrishnan'];
+const TODAY=new Date('2026-11-22T00:00:00');
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const fmtD=d=>d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
+const fmtDT=d=>d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})+', '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+const DST=['On Trip','On Trip','On Trip','On Trip','On Trip','On Trip','On Trip','Available','Available','On Leave','Offline','Inactive'];
+const drivers=NAMES.map((n,i)=>({id:'D'+(i+1),name:n,phone:'+91 9'+(447000000+i*7312351).toString().slice(0,9),status:DST[i],lic:'KL-'+(1000+i*37)+'/20'+(12+i%6),licExp:addDays(TODAY,[210,420,18,640,95,5,310,780,-12,260,500,140][i]),onTime:Math.round(82+rnd()*17),trips:Math.round(18+rnd()*34),vehicle:'V'+(i+1),version:['2.1.0','2.1.0','2.1.0','2.0.3','2.1.0','2.1.0','2.0.3','2.1.0','2.0.1','2.1.0','2.1.0','2.0.3'][i]}));
+const VT=[['Lorry',10],['Mini truck',3],['Container',20],['Pickup',1.5],['Lorry',10],['Mini truck',3],['Container',20],['Lorry',10],['Pickup',1.5],['Lorry',16],['Mini truck',3],['Lorry',10]];
+const vehicles=VT.map((t,i)=>({id:'V'+(i+1),reg:`KL-${[7,8,11,1,14,9,7,2,13,4,5,10][i].toString().padStart(2,'0')}-${'ABCDEFGHJKLM'[i]}${'ZXWVUTSRQPNM'[i]}-${1200+i*371}`,type:t[0],cap:t[1],status:['On Trip','On Trip','On Trip','On Trip','On Trip','On Trip','On Trip','Available','Maintenance','Available','Available','Available'][i],driver:'D'+(i+1),docExp:addDays(TODAY,[300,45,200,12,150,400,90,25,600,330,210,500][i]),km:Math.round(52000+rnd()*90000)}));
+const GOODS=['Rice bags','Cement','Steel rods','Furniture','Tiles','Vegetables','Plywood','Cashew sacks','Spices','Tyres','Paper reams','FMCG cartons'];
+const shipments=[];
+const stPlan=['In Transit','In Transit','Loaded','Reached Pickup','Accepted','In Transit','Reached Drop','Assigned','Created','Created','Rejected','Assigned',
+ 'Delivered','Delivered','Delivered','Delivered','Delivered','Delivered','Delivered','Delivered','Cancelled','Delivered','Failed','Delivered'];
+stPlan.forEach((st,i)=>{
+  const from=CN[(i*3)%CN.length]; let to=CN[(i*5+4)%CN.length]; if(to===from) to=CN[(i+7)%CN.length];
+  const dIdx=(['Created'].includes(st))?null:i%12;
+  const sch=addDays(TODAY,st==='Delivered'||st==='Cancelled'||st==='Failed'?-1-(i%9):(i<12?0:1));sch.setHours(6+(i*2)%12,(i*15)%60);
+  shipments.push({id:`TC-2026-${String(131+i).padStart(6,'0')}`,from,to,goods:pick(GOODS),qty:Math.round(8+rnd()*90),wt:+(1+rnd()*8).toFixed(1),status:st,sched:sch,driver:dIdx===null?null:drivers[dIdx].id,vehicle:dIdx===null?null:vehicles[dIdx].id,
+    prog:st==='In Transit'?.25+rnd()*.55:st==='Loaded'?.05:st==='Reached Drop'?.97:0,delayed:i===1||i===5,note:st==='Rejected'?'Vehicle issue':'',consignee:pick(['Mathew Traders','Kerala Agro Mart','Nair & Sons','City Hardware','Fresh Basket','Malabar Stores'])});
+});
+shipments.forEach(s=>{ if(s.status==='Rejected'){s.driver=null;s.vehicle=null} });
+const speeds={};
+const alerts=[
+ {id:'a1',type:'Critical',ic:'sos',title:'SOS from Rajan Nair',sub:'TC-2026-000132 · near Thrissur · 4 min ago',act:'Call driver'},
+ {id:'a2',type:'Rejected',ic:'x',title:'Job rejected by Mohanan P',sub:'TC-2026-000141 · “Vehicle issue”',act:'Reassign',sid:'TC-2026-000141'},
+ {id:'a3',type:'Delayed',ic:'clock',title:'TC-2026-000136 running 42 min late',sub:'Sasidharan K · expected delivery passed',act:'View',sid:'TC-2026-000136'},
+ {id:'a4',type:'Pending',ic:'warn',title:'No response for 12 min',sub:'TC-2026-000138 assigned to Venugopal R',act:'Reassign',sid:'TC-2026-000138'},
+ {id:'a5',type:'Expiring',ic:'doc',title:'Licence expires in 5 days',sub:'Sasidharan K · KL-1185/2017',act:'Open'}
+];
+/* ============ STATE ============ */
+let view='dashboard',charts={},stFilter='All',flTab='drivers',flFilter='All',query='',selV=null,rep=8;
+const D=id=>drivers.find(d=>d.id===id), V=id=>vehicles.find(v=>v.id===id), S=id=>shipments.find(s=>s.id===id);
+const initials=n=>n.split(' ').map(x=>x[0]).slice(0,2).join('');
+const chip=(s,label)=>`<span class="chip s-${s.replace(/ /g,'-')}">${label||s}</span>`;
+const person=d=>d?`<span class="person"><span class="avatar">${initials(d.name)}</span>${d.name}</span>`:'<span style="color:var(--muted)">Unassigned</span>';
+const shipStatusLabel=s=>s.delayed&&ACTIVE.concat('Assigned').includes(s.status)?'Delayed':s.status;
+const active=()=>shipments.filter(s=>ACTIVE.includes(s.status)||s.status==='In Transit');
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),2200)}
+
+/* ============ CHART HELPERS ============ */
+const kill=()=>{Object.values(charts).forEach(c=>c.destroy());charts={}};
+const mk=(id,cfg)=>{charts[id]=new Chart($('#'+id),cfg)};
+const tip=()=>({backgroundColor:css('--surface'),titleColor:css('--text'),bodyColor:css('--text-2'),borderColor:css('--border-2'),borderWidth:1,padding:11,cornerRadius:10,boxPadding:5,usePointStyle:true});
+const base=(x={})=>({responsive:true,maintainAspectRatio:false,animation:{duration:600},interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:tip()},...x});
+const ax=(o={})=>({x:{grid:{display:false},border:{display:false},ticks:{color:css('--muted'),font:{size:11.5},maxRotation:0,autoSkip:true,maxTicksLimit:10}},y:{grid:{color:css('--grid')},border:{display:false},ticks:{color:css('--muted'),font:{size:11.5},padding:8},beginAtZero:true,...o}});
+const leg=(el,items)=>{$(el).innerHTML=items.map(([l,c,v])=>`<span><i style="background:${css(c)}"></i>${l}${v!==undefined?`<b>${v}</b>`:''}</span>`).join('')};
+const ring=(data,cols)=>({data,backgroundColor:cols.map(css),borderColor:css('--surface'),borderWidth:3,borderRadius:4,hoverOffset:5});
+const ringO=()=>base({cutout:'70%',interaction:{mode:'nearest',intersect:true}});
+const rgba=(v,a)=>{const h=css(v).replace('#','');const n=parseInt(h,16);return `rgba(${n>>16},${n>>8&255},${n&255},${a})`};
+
+/* ============ DASHBOARD ============ */
+function renderDashboard(){
+  const onTrip=drivers.filter(d=>d.status==='On Trip').length, avail=drivers.filter(d=>d.status==='Available').length;
+  const pend=shipments.filter(s=>['Created','Assigned','Rejected'].includes(s.status)).length;
+  const del=shipments.filter(s=>s.delayed&&ACTIVE.includes(s.status)).length;
+  const K=[['On trip',onTrip,'truck','of '+drivers.filter(d=>d.status!=='Inactive').length+' drivers','+2','up'],
+   ['Available',avail,'user','ready to assign','Ready',''],
+   ['Pending assignment',pend,'box','awaiting driver','1 overdue','down'],
+   ['Delayed',del,'clock','past expected time','Late','down']];
+  $('#kpis').innerHTML=K.map(k=>`<div class="card kpi s3"><div class="l">${k[0]}<span class="ic">${ICON[k[2]]}</span></div><div class="v mono">${k[1]}</div><div class="f"><span class="${k[5]}">${k[4]}</span> · ${k[3]}</div></div>`).join('');
+  $('#nbPend').textContent=pend;
+  /* day chart */
+  const days=Array.from({length:14},(_,i)=>fmtD(addDays(TODAY,i-13)));
+  const cr=[9,11,8,12,14,7,5,10,13,12,9,11,14,10], dl=[8,10,9,10,12,8,4,9,11,12,8,10,12,6];
+  mk('chDay',{type:'bar',data:{labels:days,datasets:[{label:'Created',data:cr,backgroundColor:css('--c1'),borderRadius:{topLeft:4,topRight:4},borderSkipped:false,maxBarThickness:14},{label:'Delivered',data:dl,backgroundColor:css('--c3'),borderRadius:{topLeft:4,topRight:4},borderSkipped:false,maxBarThickness:14}]},options:base({scales:ax()})});
+  leg('#lgDay',[['Created','--c1'],['Delivered','--c3']]);
+  /* mix */
+  const groups=[['Delivered',['Delivered'],'--c3'],['In progress',ACTIVE,'--c1'],['Awaiting driver',['Created','Assigned','Rejected'],'--c4'],['Cancelled / failed',['Cancelled','Failed'],'--c8']];
+  const vals=groups.map(g=>shipments.filter(s=>g[1].includes(s.status)).length);
+  mk('chMix',{type:'doughnut',data:{labels:groups.map(g=>g[0]),datasets:[ring(vals,groups.map(g=>g[2]))]},options:ringO()});
+  $('#mixTot').textContent=shipments.length;leg('#lgMix',groups.map((g,i)=>[g[0],g[2],vals[i]]));
+  /* live trips */
+  const ls=shipments.filter(s=>ACTIVE.includes(s.status)).slice(0,6);
+  $('#liveTrips').innerHTML=ls.map(s=>{const idx=FLOW.indexOf(s.status)-2;const st=['Accepted','Pickup','Loaded','Transit','Drop'];
+    const stp=st.map((_,i)=>`<i class="${i<idx?'d':i===idx?'c':''}"></i>${i<4?`<u class="${i<idx?'d':''}"></u>`:''}`).join('');
+    return `<div class="trip" style="cursor:pointer" data-sh="${s.id}"><div><b class="mono">${s.id}</b><small>${s.goods} · ${s.wt} t</small></div><div><b>${s.from} → ${s.to}</b><small>${D(s.driver).name} · ${V(s.vehicle).reg}</small></div><div><div class="steps">${stp}</div><small style="margin-top:6px">${s.status}</small></div>${chip(s.delayed?'Delayed':'OK',s.delayed?'Delayed':'On time')}</div>`}).join('');
+  renderAlerts('#alerts');
+}
+function renderAlerts(sel){
+  const open=alerts.filter(a=>!a.done);
+  $(sel).innerHTML=open.length?open.map(a=>`<div class="alert"><span class="ai s-${a.type}">${ICON[a.ic]}</span><div style="min-width:0"><b>${a.title}</b><small>${a.sub}</small></div><button class="btn sm act" data-al="${a.id}">${a.act}</button></div>`).join(''):'<div style="padding:28px;text-align:center;color:var(--muted)">All clear. No open alerts.</div>';
+  $('#pip').style.display=open.length?'block':'none';
+}
+
+/* ============ MAP ============ */
+const COAST=[[74.9,12.75],[75.2,11.9],[75.55,11.4],[75.7,11.0],[75.95,10.5],[76.1,10.1],[76.18,9.7],[76.22,9.4],[76.4,9.0],[76.5,8.8],[76.8,8.4],[77.0,8.1],[77.25,8.3],[77.15,8.9],[77.1,9.3],[77.25,9.8],[77.1,10.2],[76.95,10.6],[76.85,10.95],[76.75,11.15],[76.55,11.5],[76.25,11.85],[76.0,12.25],[75.65,12.45],[75.3,12.7],[75.1,12.78]];
+const SC=185,LX=74.5,LY=12.95,W=560,H=960;
+const P=([lng,lat])=>[(lng-LX)*SC+12,(LY-lat)*SC+20];
+function trips(){return shipments.filter(s=>['Accepted','Reached Pickup','Loaded','In Transit','Reached Drop'].includes(s.status))}
+function vpos(s){const a=P(CITY[s.from]),b=P(CITY[s.to]);const t=s.prog;return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]}
+function renderMap(){
+  trips().forEach(s=>{if(!speeds[s.id])speeds[s.id]=Math.round(38+rnd()*32)});
+  const T=trips();
+  const land=COAST.map(p=>P(p).join(',')).join(' ');
+  let g=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"><defs><pattern id="gr" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="${css('--grid')}" stroke-width="1"/></pattern></defs><rect width="${W}" height="${H}" fill="url(#gr)"/>`;
+  g+=`<text x="40" y="420" fill="${css('--muted')}" font-size="13" letter-spacing="3" opacity=".7">ARABIAN SEA</text><text x="400" y="200" fill="${css('--muted')}" font-size="12" letter-spacing="2" opacity=".6">KARNATAKA</text><text x="440" y="640" fill="${css('--muted')}" font-size="12" letter-spacing="2" opacity=".6">TAMIL NADU</text>`;
+  g+=`<polygon points="${land}" fill="${css('--map-land')}" stroke="${css('--map-line')}" stroke-width="1.5" stroke-linejoin="round"/>`;
+  T.forEach(s=>{const a=P(CITY[s.from]),b=P(CITY[s.to]),p=vpos(s),sel=selV===s.id;
+    g+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${css('--map-line')}" stroke-width="2" stroke-dasharray="3 5"/><line x1="${a[0]}" y1="${a[1]}" x2="${p[0]}" y2="${p[1]}" stroke="${css(sel?'--accent':'--c1')}" stroke-width="3" stroke-linecap="round" opacity="${sel?1:.55}"/>`});
+  CN.forEach(c=>{const p=P(CITY[c]);const left=['Kasaragod','Kannur','Kozhikode','Thrissur','Kochi','Alappuzha','Kollam','Thiruvananthapuram'].includes(c);
+    g+=`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="${css('--surface')}" stroke="${css('--muted')}" stroke-width="1.5"/><text x="${p[0]+(left?-9:9)}" y="${p[1]+4}" text-anchor="${left?'end':'start'}" font-size="11.5" font-weight="600" fill="${css('--text-2')}">${c==='Thiruvananthapuram'?'Thiruvananthapuram':c}</text>`});
+  T.forEach((s,i)=>{const p=vpos(s),sel=selV===s.id,stale=i===3,delayed=s.delayed;const col=stale?'--warn':delayed?'--serious':'--accent';
+    g+=`<g class="mk" data-v="${s.id}" transform="translate(${p[0]},${p[1]})"><circle class="ring" r="17" fill="${css(col)}" opacity="${sel?.22:0}"/><circle r="11" fill="${css(col)}" stroke="${css('--surface')}" stroke-width="2.5"/><path d="M-5 -3h6v6h-6zM1 -1h3l2 2v3h-5" transform="scale(.85)" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></g>`});
+  g+='</svg>';
+  $('#map').innerHTML=g+`<div class="legendbox"><span style="display:flex;gap:8px;align-items:center"><i style="width:10px;height:10px;border-radius:50%;background:var(--accent)"></i>On trip</span><span style="display:flex;gap:8px;align-items:center"><i style="width:10px;height:10px;border-radius:50%;background:var(--serious)"></i>Delayed</span><span style="display:flex;gap:8px;align-items:center"><i style="width:10px;height:10px;border-radius:50%;background:var(--warn)"></i>Stale location</span></div><div class="attr">Schematic map · production uses OpenStreetMap + MapLibre</div>`;
+  $('#mapCount').textContent=`${T.length} on trip · updates every few seconds`;
+  $('#vlist').innerHTML=T.map((s,i)=>{const d=D(s.driver);const st=i===3?'Stale':s.delayed?'Delayed':'On Trip';
+    return `<div class="vrow ${selV===s.id?'on':''}" data-v="${s.id}"><span class="avatar">${initials(d.name)}</span><div style="flex:1;min-width:0"><b>${V(s.vehicle).reg}</b><small>${d.name} · ${s.from} → ${s.to}</small></div>${chip(st,st==='On Trip'?'Moving':st)}</div>`}).join('');
+  const s=selV&&S(selV);
+  $('#vdetail').innerHTML=s?(()=>{const d=D(s.driver),v=V(s.vehicle);const eta=new Date(Date.now()+ (1-s.prog)*4.5*3600e3);return `<div class="vdetail"><b>${v.reg}</b> <span style="color:var(--muted)">· ${v.type} ${v.cap} t</span>
+    <div class="kv"><span>Driver</span><b>${d.name}</b><span>Shipment</span><b class="mono">${s.id}</b><span>Speed</span><b>${speeds[s.id]} km/h</b><span>Last update</span><b>${trips().indexOf(s)===3?'6 min ago':'12 s ago'}</b><span>ETA ${s.to}</span><b>${eta.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}</b></div>
+    <div style="display:flex;gap:8px;margin-top:14px"><button class="btn sm" data-sh="${s.id}" style="flex:1;justify-content:center">Timeline</button><button class="btn sm primary" data-call="${d.name}" style="flex:1;justify-content:center">Call driver</button></div></div>`})():'<div class="vdetail" style="color:var(--muted);font-size:12.5px">Select a vehicle on the map or list to see driver, shipment, speed and ETA.</div>';
+}
+setInterval(()=>{ // simulated realtime movement
+  trips().filter(s=>s.status==='In Transit'||s.status==='Loaded').forEach(s=>{s.prog=Math.min(.95,s.prog+.004);speeds[s.id]=Math.max(25,Math.min(75,speeds[s.id]+Math.round((rnd()-.5)*6)))});
+  if(view==='map')renderMap();
+},3000);
+let tick=0;setInterval(()=>{tick+=5;$('#clock').textContent=tick<60?'Live · '+tick+'s ago':'Live · '+Math.floor(tick/60)+'m ago';if(tick>=15)tick=0},5000);
+
+/* ============ SHIPMENTS ============ */
+const FILTERS=['All','Active','Pending','Delivered','Cancelled'];
+function filtered(){
+  return shipments.filter(s=>{
+    const f=stFilter==='All'||(stFilter==='Active'&&ACTIVE.includes(s.status))||(stFilter==='Pending'&&['Created','Assigned','Rejected'].includes(s.status))||(stFilter==='Delivered'&&s.status==='Delivered')||(stFilter==='Cancelled'&&['Cancelled','Failed'].includes(s.status));
+    const q=query.toLowerCase();const d=D(s.driver);
+    return f&&(!q||[s.id,s.from,s.to,s.goods,d&&d.name,s.vehicle&&V(s.vehicle).reg].join(' ').toLowerCase().includes(q));
+  });
+}
+function renderShipments(){
+  $('#stFilter').innerHTML=FILTERS.map(f=>`<button class="${f===stFilter?'on':''}" data-f="${f}">${f}</button>`).join('');
+  const rows=filtered();
+  $('#shBody').innerHTML=rows.map(s=>`<tr class="click" data-sh="${s.id}"><td class="mono">${s.id}</td><td>${s.from} → ${s.to}</td><td>${s.goods} · ${s.wt} t</td><td>${person(D(s.driver))}</td><td class="mono">${s.vehicle?V(s.vehicle).reg:'—'}</td><td>${fmtDT(s.sched)}</td><td>${chip(shipStatusLabel(s))}</td></tr>`).join('')||'<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">No shipments match.</td></tr>';
+  $('#shCount').textContent=`Showing ${rows.length} of ${shipments.length} shipments`;
+}
+function openDrawer(id){
+  const s=S(id),d=D(s.driver),v=V(s.vehicle);const idx=FLOW.indexOf(s.status);
+  const terminal=['Cancelled','Failed','Rejected'].includes(s.status);
+  const steps=terminal?FLOW.slice(0,s.status==='Rejected'?2:Math.max(2,3)).concat([s.status]):FLOW;
+  const t0=new Date(s.sched);
+  const tl=steps.map((st,i)=>{const done=terminal?true:i<=idx;const tm=new Date(t0.getTime()+i*55*60000);
+    return `<div class="${done?'':'p'}"><b>${st}</b><small>${done?fmtDT(tm)+(i>=3&&!terminal?' · GPS captured':'')+(i===0?' · by Anil Kumar':''):'Pending'}</small></div>`}).join('');
+  $('#drawer').innerHTML=`<header><div><div class="mono" style="font-weight:800;font-size:17px">${s.id}</div><div style="margin-top:8px">${chip(shipStatusLabel(s))}</div></div><button class="icon-btn" data-close>${ICON.x}</button></header>
+  <div class="body"><h4>Route</h4><div style="font-size:15px;font-weight:700">${s.from} → ${s.to}</div><div style="color:var(--muted);font-size:12.5px;margin-top:4px">Consignee: ${s.consignee} · scheduled ${fmtDT(s.sched)}</div>
+  <h4>Goods</h4><div class="kv" style="margin-top:0"><span>Description</span><b>${s.goods}</b><span>Quantity</span><b>${s.qty} units</b><span>Weight</span><b>${s.wt} tonnes</b></div>
+  <h4>Assignment</h4><div class="kv" style="margin-top:0"><span>Driver</span><b>${d?d.name:'Unassigned'}</b><span>Phone</span><b>${d?d.phone:'—'}</b><span>Vehicle</span><b>${v?v.reg+' · '+v.cap+' t':'—'}</b>${s.note?`<span>Reject reason</span><b>${s.note}</b>`:''}</div>
+  <h4>Timeline</h4><div class="tl">${tl}</div>
+  <h4>Proof of delivery</h4>${s.status==='Delivered'?`<div class="pod"><div class="ph">${ICON.cam}</div><div><b>Photo + receiver confirmed</b><div style="color:var(--muted);font-size:12.5px;margin-top:3px">Received by ${s.consignee.split(' ')[0]} · OTP verified</div></div></div>`:'<div class="pod" style="color:var(--muted)">Available after delivery</div>'}
+  <div style="display:flex;gap:10px;margin-top:24px">${['Created','Assigned','Rejected','Accepted','Reached Pickup','Loaded','In Transit'].includes(s.status)?`<button class="btn primary" data-reassign="${s.id}">${s.driver?'Reassign':'Assign driver'}</button><button class="btn danger" data-cancel="${s.id}">Cancel shipment</button>`:''}${s.status==='Delivered'?'<button class="btn" data-toast="POD downloaded (demo)">Download POD</button>':''}</div></div>`;
+  $('#drawer').classList.add('on');$('#scrim').classList.add('on');
+}
+const closeAll=()=>{$('#drawer').classList.remove('on');$('#modal').classList.remove('on');$('#scrim').classList.remove('on');$$('.pop').forEach(p=>p.classList.remove('on'))};
+function openForm(id){
+  const s=id&&S(id);
+  const opt=a=>a.map(x=>`<option>${x}</option>`).join('');
+  $('#modal').innerHTML=`<div class="mh"><h3>${s?(s.driver?'Reassign':'Assign')+' '+s.id:'New shipment'}</h3><button class="icon-btn" data-close>${ICON.x}</button></div>
+  <form id="f">${s?'':`<label class="fld"><span>Pickup</span><select name="from">${opt(CN)}</select></label><label class="fld"><span>Drop</span><select name="to">${opt(CN.slice().reverse())}</select></label>
+  <label class="fld"><span>Goods</span><input name="goods" placeholder="e.g. Rice bags" required></label><label class="fld"><span>Weight (tonnes)</span><input name="wt" type="number" step=".1" min=".1" value="5" required></label>
+  <label class="fld full"><span>Consignee</span><input name="cons" placeholder="Contact person" required></label>`}
+  <label class="fld"><span>Driver</span><select name="driver">${drivers.filter(d=>d.status!=='Inactive').map(d=>`<option value="${d.id}">${d.name} · ${d.status}</option>`).join('')}</select></label>
+  <label class="fld"><span>Vehicle</span><select name="veh">${vehicles.map(v=>`<option value="${v.id}">${v.reg} · ${v.cap} t · ${v.status}</option>`).join('')}</select></label>
+  <div class="warnbox" id="wb"></div>
+  <div class="mf"><button type="button" class="btn" data-close>Cancel</button><button class="btn primary" type="submit">${s?'Confirm':'Create & assign'}</button></div></form>`;
+  const f=$('#f');
+  const check=()=>{const d=D(f.driver.value),v=V(f.veh.value),w=s?s.wt:+(f.wt?f.wt.value:0);const m=[];
+    if(d.status==='On Trip')m.push(d.name+' is on another trip.');if(d.status==='On Leave'||d.status==='Offline')m.push(d.name+' is '+d.status.toLowerCase()+'.');
+    if(v.status==='Maintenance')m.push(v.reg+' is in maintenance.');if(v.status==='On Trip')m.push(v.reg+' is on another trip.');if(w>v.cap)m.push(`Load ${w} t exceeds capacity ${v.cap} t.`);
+    $('#wb').innerHTML=m.join('<br>');$('#wb').classList.toggle('on',!!m.length)};
+  f.addEventListener('input',check);check();
+  f.onsubmit=e=>{e.preventDefault();
+    if(s){s.driver=f.driver.value;s.vehicle=f.veh.value;if(['Created','Rejected'].includes(s.status))s.status='Assigned';s.note='';const a=alerts.find(x=>x.sid===s.id);if(a)a.done=true;toast(`${s.id} assigned to ${D(s.driver).name}. Driver notified.`)}
+    else{const n=shipments.length+131;const ns={id:`TC-2026-${String(n).padStart(6,'0')}`,from:f.from.value,to:f.to.value,goods:f.goods.value,qty:1,wt:+f.wt.value,status:'Assigned',sched:new Date(),driver:f.driver.value,vehicle:f.veh.value,prog:0,delayed:false,note:'',consignee:f.cons.value};shipments.unshift(ns);toast(`${ns.id} created and sent to ${D(ns.driver).name}.`)}
+    closeAll();refresh()};
+  $('#modal').classList.add('on');$('#scrim').classList.add('on');
+}
+
+/* ============ FLEET ============ */
+const expState=d=>{const n=Math.round((d-TODAY)/864e5);return n<0?['Expired','Expired '+Math.abs(n)+'d ago']:n<=30?['Expiring','Expires in '+n+'d']:['OK',fmtD(d)+' '+d.getFullYear()]};
+function renderFleet(){
+  const isD=flTab==='drivers';
+  $$('#flTab button').forEach(b=>b.classList.toggle('on',b.dataset.t===flTab));
+  const opts=isD?['All','Available','On Trip','On Leave','Offline','Inactive']:['All','Available','On Trip','Maintenance'];
+  if(!opts.includes(flFilter))flFilter='All';
+  $('#flFilter').innerHTML=opts.map(o=>`<button class="${o===flFilter?'on':''}" data-ff="${o}">${o}</button>`).join('');
+  const L=isD?drivers:vehicles;const cnt=s=>L.filter(x=>x.status===s).length;
+  const k=isD?[['Total drivers',L.length],['Available',cnt('Available')],['On trip',cnt('On Trip')],['Licences expiring ≤30 d',L.filter(d=>expState(d.licExp)[0]!=='OK').length]]:[['Total vehicles',L.length],['Available',cnt('Available')],['On trip',cnt('On Trip')],['In maintenance',cnt('Maintenance')]];
+  $('#flKpis').innerHTML=k.map(x=>`<div class="card kpi s3"><div class="l">${x[0]}</div><div class="v mono">${x[1]}</div></div>`).join('');
+  const rows=L.filter(x=>(flFilter==='All'||x.status===flFilter)&&(!query||JSON.stringify(x).toLowerCase().includes(query.toLowerCase())));
+  $('#flTbl').innerHTML=isD?`<thead><tr><th>Driver</th><th>Phone</th><th>Vehicle</th><th>Licence expiry</th><th>On-time</th><th>Trips (30 d)</th><th>App</th><th>Status</th></tr></thead><tbody>${rows.map(d=>{const e=expState(d.licExp);return `<tr><td>${person(d)}</td><td class="mono">${d.phone}</td><td class="mono">${V(d.vehicle).reg}</td><td>${e[0]==='OK'?e[1]:chip(e[0],e[1])}</td><td><div style="display:flex;gap:10px;align-items:center"><div class="bar"><i style="width:${d.onTime}%"></i></div>${d.onTime}%</div></td><td class="mono">${d.trips}</td><td class="mono">v${d.version}</td><td>${chip(d.status)}</td></tr>`}).join('')}</tbody>`
+  :`<thead><tr><th>Registration</th><th>Type</th><th>Capacity</th><th>Default driver</th><th>Documents</th><th>Odometer</th><th>Status</th></tr></thead><tbody>${rows.map(v=>{const e=expState(v.docExp);return `<tr><td class="mono">${v.reg}</td><td>${v.type}</td><td>${v.cap} t</td><td>${person(D(v.driver))}</td><td>${e[0]==='OK'?'All valid · next '+e[1]:chip(e[0],'Renewal '+e[1].toLowerCase())}</td><td class="mono">${v.km.toLocaleString('en-IN')} km</td><td>${chip(v.status)}</td></tr>`}).join('')}</tbody>`;
+}
+
+/* ============ REPORTS ============ */
+function renderReports(){
+  const wk=rep===8;
+  const lab=wk?Array.from({length:8},(_,i)=>'W'+(i+1)):['Jun','Jul','Aug','Sep','Oct','Nov'];
+  const on=wk?[86,88,87,90,91,89,93,94]:[84,86,88,90,91,93];
+  mk('rOn',{type:'line',data:{labels:lab,datasets:[{label:'On-time %',data:on,borderColor:css('--c1'),backgroundColor:rgba('--c1',.12),fill:true,tension:.38,pointRadius:4,pointBackgroundColor:css('--surface'),pointBorderColor:css('--c1'),pointBorderWidth:2,pointHoverRadius:6,borderWidth:2.5},{label:'Target',data:lab.map(()=>92),borderColor:css('--muted'),borderDash:[6,5],pointRadius:0,borderWidth:1.5}]},options:base({plugins:{legend:{display:true,position:'top',align:'end',labels:{color:css('--text-2'),usePointStyle:true,boxWidth:8,boxHeight:8}},tooltip:tip()},scales:ax({min:70,max:100,ticks:{color:css('--muted'),callback:v=>v+'%'}})})});
+  const T=[['Shipments assigned via app',94,90,'%'],['Proof of delivery captured',96,95,'%'],['Trips with live tracking',91,90,'%'],['Weekly active drivers',88,90,'%'],['Crash-free sessions',99.7,99.5,'%']];
+  $('#targets').innerHTML=T.map(t=>`<div class="tg"><div class="row"><b>${t[0]}</b><span>${t[1]}${t[3]} <span style="opacity:.7">/ ${t[2]}${t[3]}</span></span></div><div class="bar"><i style="width:${Math.min(100,t[1]/t[2]*100)}%;background:${t[1]>=t[2]?'var(--ok)':'var(--warn)'}"></i></div></div>`).join('');
+  const mo=['Jun','Jul','Aug','Sep','Oct','Nov'];const cmp=[212,236,248,265,281,246],can=[14,11,16,12,9,8];
+  mk('rCC',{type:'bar',data:{labels:mo,datasets:[{label:'Completed',data:cmp,backgroundColor:css('--c3'),borderColor:css('--surface'),borderWidth:2,borderRadius:4,maxBarThickness:40},{label:'Cancelled',data:can,backgroundColor:css('--c8'),borderColor:css('--surface'),borderWidth:2,borderRadius:4,maxBarThickness:40}]},options:base({scales:{x:{...ax().x,stacked:true},y:{...ax().y,stacked:true}}})});
+  leg('#lgCC',[['Completed','--c3'],['Cancelled','--c8']]);
+  const top=drivers.slice().sort((a,b)=>b.trips-a.trips).slice(0,8);
+  mk('rDrv',{type:'bar',data:{labels:top.map(d=>d.name),datasets:[{label:'Trips',data:top.map(d=>d.trips),backgroundColor:css('--c1'),borderRadius:{topRight:5,bottomRight:5},barThickness:16}]},options:base({indexAxis:'y',interaction:{mode:'nearest',intersect:true},scales:{x:{...ax().x,grid:{color:css('--grid')},beginAtZero:true},y:{grid:{display:false},border:{display:false},ticks:{color:css('--text-2'),font:{size:12}}}}})});
+  const ac=wk?[7.2,6.8,6.1,5.9,5.4,5.1,4.6,4.2]:[8,7.1,6.4,5.6,5,4.3];
+  mk('rAcc',{type:'line',data:{labels:lab,datasets:[{label:'Median minutes',data:ac,borderColor:css('--c2'),backgroundColor:rgba('--c2',.12),fill:true,tension:.38,pointRadius:3,borderWidth:2.5},{label:'Target',data:lab.map(()=>5),borderColor:css('--muted'),borderDash:[6,5],pointRadius:0,borderWidth:1.5}]},options:base({scales:ax({ticks:{color:css('--muted'),callback:v=>v+' m'}})})});
+  const vc={};drivers.filter(d=>d.status!=='Inactive').forEach(d=>vc[d.version]=(vc[d.version]||0)+1);const vk=Object.keys(vc).sort().reverse();const vcol=['--c1','--c4','--c8'];
+  mk('rVer',{type:'doughnut',data:{labels:vk.map(v=>'v'+v),datasets:[ring(vk.map(k=>vc[k]),vcol)]},options:ringO()});
+  const tot=Object.values(vc).reduce((a,b)=>a+b,0);$('#verPct').textContent=Math.round(vc[vk[0]]/tot*100)+'%';
+  leg('#lgVer',vk.map((k,i)=>['v'+k+(i===0?' (latest)':''),vcol[i],vc[k]+' drivers']));
+}
+
+/* ============ ROUTER & EVENTS ============ */
+const META={dashboard:['Dashboard','Sunday, 22 November 2026 · Kerala operations'],map:['Live map','Every active vehicle, updating in real time'],shipments:['Shipments','Create, assign and follow every consignment'],fleet:['Drivers & vehicles','Availability, licences and documents'],reports:['Reports','Performance against 90-day targets']};
+function refresh(){kill();
+  ({dashboard:renderDashboard,map:renderMap,shipments:renderShipments,fleet:renderFleet,reports:renderReports})[view]();
+  buildBell();}
+function buildBell(){$('#bellPop').innerHTML='<h5>Alerts</h5><div class="al" style="max-height:380px;overflow:auto"></div>';renderAlerts('#bellPop .al');}
+function go(v){view=v;$$('.nav').forEach(n=>n.classList.toggle('on',n.dataset.v===v));$$('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));$('#pt').textContent=META[v][0];$('#ps').textContent=META[v][1];try{history.replaceState(null,'','#'+v)}catch(e){}refresh();window.scrollTo(0,0)}
+document.addEventListener('click',e=>{
+  const t=e.target;let el;
+  if(el=t.closest('.nav'))return go(el.dataset.v);
+  if(el=t.closest('[data-go]'))return go(el.dataset.go);
+  if(t.closest('[data-close]')||t===$('#scrim'))return closeAll();
+  if(el=t.closest('[data-reassign]')){closeAll();return openForm(el.dataset.reassign)}
+  if(el=t.closest('[data-cancel]')){const s=S(el.dataset.cancel);s.status='Cancelled';s.note='Cancelled by admin';toast(s.id+' cancelled. Driver notified.');closeAll();return refresh()}
+  if(el=t.closest('[data-toast]'))return toast(el.dataset.toast);
+  if(el=t.closest('[data-call]'))return toast('Calling '+el.dataset.call+' (demo)');
+  if(el=t.closest('[data-al]')){const a=alerts.find(x=>x.id===el.dataset.al);closeAll();if(a.sid&&a.type==='Delayed'){return openDrawer(a.sid)}if(a.sid)return openForm(a.sid);a.done=true;toast(a.type==='Critical'?'Calling Rajan Nair (demo)':'Opening driver profile');return refresh()}
+  if(el=t.closest('[data-sh]')){$$('.pop').forEach(p=>p.classList.remove('on'));return openDrawer(el.dataset.sh)}
+  if(!t.closest('.nav')&&(el=t.closest('[data-v]'))){selV=el.dataset.v;return renderMap()}
+  if(el=t.closest('[data-f]')){stFilter=el.dataset.f;return renderShipments()}
+  if(el=t.closest('#flTab [data-t]')){flTab=el.dataset.t;return renderFleet()}
+  if(el=t.closest('[data-ff]')){flFilter=el.dataset.ff;return renderFleet()}
+  if(el=t.closest('#rgSeg [data-r]')){rep=+el.dataset.r;$$('#rgSeg button').forEach(b=>b.classList.toggle('on',b===el));return(kill(),renderReports())}
+  if(t.closest('#newBtn')){return openForm()}
+  if(t.closest('#bellBtn')){const p=$('#bellPop');const o=!p.classList.contains('on');$$('.pop').forEach(x=>x.classList.remove('on'));p.classList.toggle('on',o);return}
+  if(t.closest('#themeBtn')){const p=$('#themePop');const o=!p.classList.contains('on');$$('.pop').forEach(x=>x.classList.remove('on'));p.classList.toggle('on',o);return}
+  if(el=t.closest('[data-m]')&&t.closest('#modeSeg')){setMode(t.closest('[data-m]').dataset.m);return}
+  if(el=t.closest('[data-th]')){setTheme(el.dataset.th);return}
+  if(t.closest('#csvBtn')){return copy(['id,from,to,goods,weight_t,status',...filtered().map(s=>[s.id,s.from,s.to,s.goods,s.wt,s.status].join(','))].join('\n'))}
+  if(t.closest('#rptCsv')){return copy('metric,value,target\nOn-time %,94,92\nAssignment to acceptance (min),4.2,5\nPOD captured %,96,95')}
+  if(!t.closest('.pop'))$$('.pop').forEach(p=>p.classList.remove('on'));
+});
+function copy(txt){try{navigator.clipboard.writeText(txt).then(()=>toast('CSV copied to clipboard'),()=>toast('Copy blocked in this view'))}catch(e){toast('Copy blocked in this view')}}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()});
+$('#gs').addEventListener('input',e=>{query=e.target.value;if(view==='shipments')renderShipments();else if(view==='fleet')renderFleet();else if(query&&view!=='shipments'){go('shipments')}});
+
+/* theme */
+const TH=[['indigo','#4f46e5'],['emerald','#047857'],['graphite','#27272a'],['sunset','#d9480f']];
+$('#swatches').innerHTML=TH.map(t=>`<button class="swatch" data-th="${t[0]}" style="background:${t[1]}" title="${t[0][0].toUpperCase()+t[0].slice(1)}"></button>`).join('');
+let mode='light',theme='indigo';
+const mq=matchMedia('(prefers-color-scheme: dark)');
+function applyTheme(){const dark=mode==='dark'||(mode==='auto'&&mq.matches);document.documentElement.dataset.mode=dark?'dark':'light';document.documentElement.dataset.theme=theme;
+  $$('#modeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.m===mode));$$('.swatch').forEach(b=>b.classList.toggle('on',b.dataset.th===theme));Chart.defaults.font.family="'Plus Jakarta Sans',system-ui,sans-serif";refresh()}
+const setMode=m=>{mode=m;applyTheme()},setTheme=t=>{theme=t;applyTheme()};
+mq.addEventListener('change',()=>{if(mode==='auto')applyTheme()});
+const h=(location.hash||'').slice(1);
+view=META[h]?h:'dashboard';
+applyTheme();go(view);
+
+/* ===== v2: login, full editing, approvals, audit ===== */
+const xU={'anil@truckconnect.in':{pw:'TruckConnect@2026',n:'Anil Kumar',r:'Owner · Super Admin',o:1},'dispatch@truckconnect.in':{pw:'Dispatch@2026',n:'Divya S',r:'Dispatcher',o:0}};
+let xme=null,xf=0,xl=0;
+const audit=[{t:new Date('2026-11-22T08:10'),who:'Anil Kumar',a:'Approved driver',e:'Haridas M',d:'Licence verified'}];
+const xlog=(a,e,d)=>{audit.unshift({t:new Date(),who:xme?xme.n:'system',a,e,d:d||''});if(view==='audit')xAudit()};
+const xpend=[{id:'P1',name:'Rajan Pillai',phone:'+91 98470 55501',lic:'KL-0720110012345',type:'HGMV',exp:'2029-03-14',veh:'Owner-operator',emg:'Sreeja Nair (Spouse)',at:'22 Nov, 9:12 pm'},{id:'P2',name:'Anoop Das',phone:'+91 99955 20318',lic:'KL-1420150044120',type:'LMV',exp:'2028-07-02',veh:'Company fleet',emg:'Deepa Das (Spouse)',at:'22 Nov, 7:40 pm'}];
+$('#lsw').innerHTML=TH.map(t=>`<button class="swatch" data-th="${t[0]}" style="background:${t[1]}" title="${t[0]}"></button>`).join('');
+$$('.swatch').forEach(b=>b.classList.toggle('on',b.dataset.th===theme));
+const xerr=m=>{const e=$('#lerr');e.textContent=m;e.classList.add('on')};
+$('#lf').onsubmit=e=>{e.preventDefault();const f=e.target,u=xU[f.e.value.trim().toLowerCase()];
+ if(Date.now()<xl)return xerr('Too many attempts. Try again in '+Math.ceil((xl-Date.now())/1e3)+'s.');
+ if(!u||u.pw!==f.p.value){if(++xf>=5){xl=Date.now()+3e4;xf=0}return xerr('Incorrect email or password.')}
+ xf=0;xme=u;$('#login').style.display='none';f.reset();$('#lerr').classList.remove('on');
+ $('.side-foot .avatar').textContent=initials(u.n);$('.side-foot b').textContent=u.n;$('.side-foot small').textContent=u.r;
+ $$('[data-owner]').forEach(n=>n.style.display=u.o?'':'none');xlog('Signed in','Console');go('dashboard')};
+$('.side-foot').insertAdjacentHTML('beforeend','<button class="btn so" id="so">Sign out</button>');
+$('nav').insertAdjacentHTML('beforeend','<button class="nav" data-v="audit" data-owner>'+ICON.doc+'Audit log</button>');
+$('main').insertAdjacentHTML('beforeend','<section class="view" id="v-audit"><div class="card"><div class="scroll"><table class="tbl"><thead><tr><th>Time</th><th>User</th><th>Action</th><th>Entity</th><th>Detail</th></tr></thead><tbody id="auBody"></tbody></table></div><div class="pg"><span>Every create, edit, assignment, approval and cancellation is recorded</span></div></div></section>');
+META.audit=['Audit log','Who changed what, and when'];
+const xAudit=()=>{$('#auBody').innerHTML=audit.map(a=>`<tr><td class="mono">${fmtDT(a.t)}</td><td>${a.who}</td><td>${a.a}</td><td>${a.e}</td><td style="white-space:normal">${a.d}</td></tr>`).join('')};
+const _rf0=refresh;refresh=function(){if(view==='audit'){kill();xAudit();buildBell()}else _rf0()};
+/* shipment create / edit (every field) */
+const xo=(a,v)=>a.map(c=>`<option ${c===v?'selected':''}>${c}</option>`).join('');
+const xdt=d=>new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,16);
+function openForm(id){
+ const s=id&&S(id),T=s&&['Delivered','Cancelled','Failed'].includes(s.status),dis=T?'disabled':'',
+ x=s||{from:CN[0],to:CN[3],goods:'',qty:1,wt:5,sched:new Date(Date.now()+36e5),consignee:'',cphone:'',pAddr:'',dAddr:'',note:'',driver:'',vehicle:''},
+ dopt=drivers.filter(d=>d.status!=='Inactive').map(d=>`<option value="${d.id}" ${d.id===x.driver?'selected':''}>${d.name} · ${d.status}</option>`).join(''),
+ vopt=vehicles.map(v=>`<option value="${v.id}" ${v.id===x.vehicle?'selected':''}>${v.reg} · ${v.cap} t · ${v.status}</option>`).join('');
+ $('#modal').innerHTML=`<div class="mh"><h3>${s?'Edit '+s.id:'New shipment'}</h3><button class="icon-btn" data-close>${ICON.x}</button></div><form id="f">
+ <label class="fld"><span>Pickup city</span><select name="from" ${dis}>${xo(CN,x.from)}</select></label><label class="fld"><span>Drop city</span><select name="to" ${dis}>${xo(CN,x.to)}</select></label>
+ <label class="fld"><span>Pickup address</span><input name="pa" value="${x.pAddr||''}" ${dis}></label><label class="fld"><span>Drop address</span><input name="da" value="${x.dAddr||''}" ${dis}></label>
+ <label class="fld"><span>Goods</span><input name="goods" value="${x.goods}" required ${dis}></label><label class="fld"><span>Quantity (units)</span><input name="qty" type="number" min="1" value="${x.qty}" ${dis}></label>
+ <label class="fld"><span>Weight (tonnes)</span><input name="wt" type="number" step=".1" min=".1" value="${x.wt}" required ${dis}></label><label class="fld"><span>Scheduled pickup</span><input name="sc" type="datetime-local" value="${xdt(x.sched)}" required ${dis}></label>
+ <label class="fld"><span>Consignee</span><input name="cons" value="${x.consignee}" required ${dis}></label><label class="fld"><span>Consignee phone</span><input name="cph" pattern="[0-9+ ]{10,15}" value="${x.cphone||''}" ${dis}></label>
+ <label class="fld"><span>Driver</span><select name="driver" ${dis}><option value="">Unassigned</option>${dopt}</select></label><label class="fld"><span>Vehicle</span><select name="veh" ${dis}><option value="">None</option>${vopt}</select></label>
+ <label class="fld full"><span>Notes for driver</span><textarea name="note" ${dis}>${x.note&&s&&s.status!=='Rejected'?x.note:''}</textarea></label>
+ <div class="warnbox" id="wb"></div><div class="mf"><button type="button" class="btn" data-close>${T?'Close':'Cancel'}</button>${T?'':`<button class="btn primary" type="submit">${s?'Save changes':'Create shipment'}</button>`}</div></form>`;
+ const f=$('#f'),check=()=>{const d=D(f.driver.value),v=V(f.veh.value),w=+f.wt.value,m=[];
+  if(s&&ACTIVE.includes(s.status))m.push('Trip in progress: the driver is notified of every change.');
+  if(d&&d.status==='On Trip'&&d.id!==x.driver)m.push(d.name+' is on another trip.');if(d&&['On Leave','Offline'].includes(d.status))m.push(d.name+' is '+d.status.toLowerCase()+'.');
+  if(v&&v.status==='Maintenance')m.push(v.reg+' is in maintenance.');if(v&&v.status==='On Trip'&&v.id!==x.vehicle)m.push(v.reg+' is on another trip.');if(v&&w>v.cap)m.push(`Load ${w} t exceeds capacity ${v.cap} t.`);
+  if(f.from.value===f.to.value)m.push('Pickup and drop are the same city.');
+  $('#wb').innerHTML=m.join('<br>');$('#wb').classList.toggle('on',!!m.length)};
+ f.addEventListener('input',check);check();
+ f.onsubmit=e=>{e.preventDefault();if(f.driver.value&&!f.veh.value)return toast('Choose a vehicle for the driver');
+  const n={from:f.from.value,to:f.to.value,pAddr:f.pa.value,dAddr:f.da.value,goods:f.goods.value,qty:+f.qty.value,wt:+f.wt.value,sched:new Date(f.sc.value),consignee:f.cons.value,cphone:f.cph.value,note:f.note.value,driver:f.driver.value||null,vehicle:f.veh.value||null};
+  if(s){const ch=Object.keys(n).filter(k=>String(n[k])!==String(s[k]??'')&&!(n[k]===null&&!s[k])).join(', ');Object.assign(s,n);
+   if(n.driver&&['Created','Rejected'].includes(s.status))s.status='Assigned';if(!n.driver&&s.status==='Assigned')s.status='Created';
+   const a=alerts.find(z=>z.sid===s.id);if(a&&n.driver)a.done=true;xlog('Edited shipment',s.id,ch||'no field changes');toast(s.id+' saved'+(n.driver?'. Driver notified.':'.'))}
+  else{const ns=Object.assign({id:'TC-2026-'+String(shipments.length+131).padStart(6,'0'),qty:1,status:n.driver?'Assigned':'Created',prog:0,delayed:false},n);shipments.unshift(ns);xlog('Created shipment',ns.id,ns.from+' → '+ns.to+', '+ns.wt+' t');toast(ns.id+' created'+(n.driver?' and sent to '+D(ns.driver).name:''))}
+  closeAll();refresh()};
+ $('#modal').classList.add('on');$('#scrim').classList.add('on')}
+function xCancel(id){const s=S(id);$('#modal').innerHTML=`<div class="mh"><h3>Cancel ${id}</h3><button class="icon-btn" data-close>${ICON.x}</button></div><form id="f"><label class="fld full"><span>Reason</span><select name="r"><option>Customer request</option><option>No vehicle available</option><option>Wrong details</option><option>Other</option></select></label><label class="fld full"><span>Note (optional)</span><textarea name="n"></textarea></label><div class="mf"><button type="button" class="btn" data-close>Keep shipment</button><button class="btn danger" type="submit">Cancel shipment</button></div></form>`;
+ $('#f').onsubmit=e=>{e.preventDefault();const r=$('#f').r.value;s.status='Cancelled';s.note=r;xlog('Cancelled shipment',id,r+($('#f').n.value?' · '+$('#f').n.value:''));toast(id+' cancelled. Driver notified.');closeAll();refresh()};$('#modal').classList.add('on');$('#scrim').classList.add('on')}
+const _od=openDrawer;openDrawer=function(id){_od(id);const s=S(id),r=$('#drawer .body>div:last-child');if(r&&!['Cancelled','Failed'].includes(s.status))r.insertAdjacentHTML('afterbegin',`<button class="btn" data-edit="${id}">${s.status==='Delivered'?'View details':'Edit details'}</button>`)};
+/* drivers & vehicles: add / edit, approvals */
+function xEnt(k,id){const dr=k==='d',o=dr?D(id):V(id),i=dr?{name:'',phone:'',lic:'',licExp:addDays(TODAY,365),status:'Available',vehicle:'V8'}:{reg:'',type:'Lorry',cap:10,status:'Available',driver:'D8',docExp:addDays(TODAY,365),km:0},x=o||i,dd=d=>xdt(d).slice(0,10);
+ const sel=(n,a,v)=>`<select name="${n}">${a.map(c=>`<option ${c===v?'selected':''}>${c}</option>`).join('')}</select>`;
+ $('#modal').innerHTML=`<div class="mh"><h3>${o?'Edit ':'Add '}${dr?'driver':'vehicle'}</h3><button class="icon-btn" data-close>${ICON.x}</button></div><form id="f">`+(dr?
+ `<label class="fld"><span>Full name</span><input name="a" value="${x.name}" required></label><label class="fld"><span>Mobile</span><input name="b" pattern="[0-9+ ]{10,15}" value="${x.phone}" required></label><label class="fld"><span>Licence no.</span><input name="c" value="${x.lic}" required></label><label class="fld"><span>Licence expiry</span><input name="d" type="date" value="${dd(x.licExp)}" required></label><label class="fld"><span>Status</span>${sel('s',['Available','On Leave','Offline','Inactive'],x.status)}</label><label class="fld"><span>Default vehicle</span><select name="v">${vehicles.map(v=>`<option value="${v.id}" ${v.id===x.vehicle?'selected':''}>${v.reg}</option>`).join('')}</select></label>`:
+ `<label class="fld"><span>Registration</span><input name="a" value="${x.reg}" placeholder="KL-07-AZ-1200" required></label><label class="fld"><span>Type</span>${sel('t',['Lorry','Mini truck','Container','Pickup'],x.type)}</label><label class="fld"><span>Capacity (tonnes)</span><input name="b" type="number" step=".5" min=".5" value="${x.cap}" required></label><label class="fld"><span>Status</span>${sel('s',['Available','On Trip','Maintenance'],x.status)}</label><label class="fld"><span>Default driver</span><select name="v">${drivers.map(d=>`<option value="${d.id}" ${d.id===x.driver?'selected':''}>${d.name}</option>`).join('')}</select></label><label class="fld"><span>Next document expiry</span><input name="d" type="date" value="${dd(x.docExp)}" required></label><label class="fld"><span>Odometer (km)</span><input name="c" type="number" min="0" value="${x.km}"></label>`)+
+ `<div class="mf">${o&&dr?'<button type="button" class="btn" data-pin>Reset PIN</button><button type="button" class="btn" data-rev>Revoke device</button>':''}<button type="button" class="btn" data-close>Cancel</button><button class="btn primary">${o?'Save':'Add'}</button></div></form>`;
+ const f=$('#f');f.querySelector('[data-pin]')&&(f.querySelector('[data-pin]').onclick=()=>{xlog('Reset driver PIN',o.name);toast('New PIN '+(1000+Math.floor(Math.random()*9000))+' for '+o.name+' (shown once)')});
+ f.querySelector('[data-rev]')&&(f.querySelector('[data-rev]').onclick=()=>{xlog('Revoked device',o.name);toast('Device revoked. '+o.name+' signed out.')});
+ f.onsubmit=e=>{e.preventDefault();const t=o||(dr?{id:'D'+(drivers.length+1),onTime:90,trips:0,version:'2.1.0'}:{id:'V'+(vehicles.length+1)});
+  if(dr)Object.assign(t,{name:f.a.value,phone:f.b.value,lic:f.c.value,licExp:new Date(f.d.value),status:f.s.value,vehicle:f.v.value});else Object.assign(t,{reg:f.a.value.toUpperCase(),type:f.t.value,cap:+f.b.value,status:f.s.value,driver:f.v.value,docExp:new Date(f.d.value),km:+f.c.value});
+  if(!o){(dr?drivers:vehicles).push(t);if(dr)toast('Driver added. PIN '+(1000+Math.floor(Math.random()*9000))+' (shown once)')}else toast('Saved');
+  xlog((o?'Edited ':'Added ')+(dr?'driver':'vehicle'),dr?t.name:t.reg);closeAll();refresh()};
+ $('#modal').classList.add('on');$('#scrim').classList.add('on')}
+function xReview(id){const p=xpend.find(z=>z.id===id);$('#modal').innerHTML=`<div class="mh"><h3>Review ${p.name}</h3><button class="icon-btn" data-close>${ICON.x}</button></div><div style="padding:20px 24px"><div class="kv" style="margin:0 0 14px"><span>Mobile</span><b>${p.phone}</b><span>Licence</span><b>${p.lic}</b><span>Type / expiry</span><b>${p.type} · ${p.exp}</b><span>Vehicle</span><b>${p.veh}</b><span>Emergency</span><b>${p.emg}</b><span>Submitted</span><b>${p.at}</b></div><div style="display:flex;gap:10px"><div class="ph2" style="flex:1">Licence front</div><div class="ph2" style="flex:1">Licence back</div></div><p style="font-size:12px;color:var(--muted);margin:12px 0">Verify the photos match the details, and call the driver to confirm the mobile number before approving.</p><div class="mf" style="display:flex;justify-content:flex-end;gap:10px"><button class="btn danger" data-xrej="${id}">Reject</button><button class="btn primary" data-xapp="${id}">Approve</button></div></div>`;$('#modal').classList.add('on');$('#scrim').classList.add('on')}
+const _rf=renderFleet;renderFleet=function(){const sg=$('#flTab');
+ if(!$('[data-t=approvals]',sg)){sg.insertAdjacentHTML('beforeend','<button data-t="approvals">Approvals</button>');$('#v-fleet .toolbar').insertAdjacentHTML('beforeend','<span style="flex:1"></span><button class="btn primary" id="xadd"></button>');
+  $('#flTbl').addEventListener('click',e=>{const tr=e.target.closest('tbody tr');if(!tr||e.target.closest('[data-rv]'))return;const t=tr.cells[0].textContent.trim();const d=drivers.find(z=>t.endsWith(z.name)),v=vehicles.find(z=>z.reg===t);if(d)xEnt('d',d.id);else if(v)xEnt('v',v.id)})}
+ $('[data-t=approvals]').textContent='Approvals ('+xpend.length+')';$('#xadd').style.display=flTab==='approvals'?'none':'';$('#xadd').textContent='Add '+(flTab==='vehicles'?'vehicle':'driver');
+ if(flTab==='approvals'){$$('#flTab button').forEach(b=>b.classList.toggle('on',b.dataset.t==='approvals'));$('#flFilter').innerHTML='';$('#flKpis').innerHTML=`<div class="card kpi s3"><div class="l">Awaiting review</div><div class="v mono">${xpend.length}</div></div>`;
+  $('#flTbl').innerHTML=`<thead><tr><th>Applicant</th><th>Mobile</th><th>Licence</th><th>Vehicle</th><th>Submitted</th><th></th></tr></thead><tbody>${xpend.map(p=>`<tr><td>${p.name}</td><td class="mono">${p.phone}</td><td class="mono">${p.lic}</td><td>${p.veh}</td><td>${p.at}</td><td><button class="btn sm primary" data-rv="${p.id}">Review</button></td></tr>`).join('')||'<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted)">No registrations waiting.</td></tr>'}</tbody>`;return}
+ _rf()};
+document.addEventListener('click',e=>{const t=e.target;let el;
+ if(el=t.closest('[data-cancel]')){e.stopImmediatePropagation();closeAll();return xCancel(el.dataset.cancel)}
+ if(el=t.closest('[data-edit]')){e.stopImmediatePropagation();closeAll();return openForm(el.dataset.edit)}
+ if(el=t.closest('[data-rv]')){e.stopImmediatePropagation();return xReview(el.dataset.rv)}
+ if(el=t.closest('[data-xapp]')){e.stopImmediatePropagation();const p=xpend.find(z=>z.id===el.dataset.xapp);drivers.push({id:'D'+(drivers.length+1),name:p.name,phone:p.phone,lic:p.lic,licExp:new Date(p.exp),status:'Available',onTime:0,trips:0,vehicle:'V8',version:'2.1.0'});xpend.splice(xpend.indexOf(p),1);xlog('Approved driver',p.name,'Licence verified');toast(p.name+' approved. Driver notified.');closeAll();return refresh()}
+ if(el=t.closest('[data-xrej]')){e.stopImmediatePropagation();const p=xpend.find(z=>z.id===el.dataset.xrej);xpend.splice(xpend.indexOf(p),1);xlog('Rejected driver',p.name,'Documents unclear');toast(p.name+' rejected. Driver notified.');closeAll();return refresh()}
+ if(t.closest('#xadd')){e.stopImmediatePropagation();return xEnt(flTab==='vehicles'?'v':'d')}
+ if(t.closest('[data-xmode]')){e.stopImmediatePropagation();return setMode(document.documentElement.dataset.mode==='dark'?'light':'dark')}
+ if(t.closest('#so')){e.stopImmediatePropagation();xlog('Signed out','Console');xme=null;$('#login').style.display='grid';return}
+},true);
+</script>
+</body>
+</html>

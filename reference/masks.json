@@ -1,0 +1,89 @@
+{
+ "_comment": "Fixed masks (dp, x,y,w,h, y measured below the 32dp fake status bar) covering ONLY mockup defects F1 (button rows) and F2 (timeline). Do not edit or enlarge.",
+ "masks": {
+  "V2_job_alert": [
+   [
+    0,
+    562,
+    324,
+    64
+   ]
+  ],
+  "V4_job_details": [
+   [
+    0,
+    284.5,
+    324,
+    56
+   ]
+  ],
+  "V5_active_trip": [
+   [
+    0,
+    319.2,
+    324,
+    56
+   ],
+   [
+    16,
+    47.7,
+    292,
+    261.5
+   ]
+  ],
+  "M4_shipment_detail": [
+   [
+    0,
+    588,
+    324,
+    46
+   ],
+   [
+    16,
+    196.2,
+    292,
+    325
+   ]
+  ],
+  "M8_driver_detail": [
+   [
+    0,
+    588,
+    324,
+    46
+   ]
+  ],
+  "M10_review_driver": [
+   [
+    0,
+    588,
+    324,
+    46
+   ]
+  ],
+  "M12_reports": [
+   [
+    0,
+    588,
+    324,
+    46
+   ]
+  ],
+  "M15_app_versions": [
+   [
+    0,
+    588,
+    324,
+    46
+   ]
+  ],
+  "U1_update_available": [
+   [
+    0,
+    572,
+    324,
+    56
+   ]
+  ]
+ }
+}

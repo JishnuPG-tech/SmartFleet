@@ -1,0 +1,43 @@
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+*.keystore
+*.jks
+google-services.json
+
+# Node & Backend
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-store
+
+# Android & Gradle
+.gradle/
+build/
+*/build/
+*.apk
+*.aab
+local.properties
+.cxx/
+captures/
+.externalNativeBuild/
+
+# IDE & OS
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Testing & Evidence
+# evidence/ (unignored per user directive to preserve verification history)
+reports/
+coverage/
+.nyc_output/

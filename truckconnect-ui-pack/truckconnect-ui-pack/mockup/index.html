@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="indigo" data-mode="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TruckConnect – Android App Screens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Malayalam:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f5f8;--surface:#fff;--surface-2:#f6f7fa;--border:#e7e9ee;--border-2:#d7dbe3;
+  --text:#101319;--text-2:#4a5160;--muted:#8a90a0;
+  --accent:#4f46e5;--accent-soft:#eef0ff;--accent-ink:#fff;
+  --ok:#0b7d45;--warn:#a96b00;--crit:#c9342f;--info:#2563eb;--neutral:#6b7280;
+  --shadow:0 1px 2px rgba(16,24,40,.05);--page:#eceef3;
+  --map-land:#eef1f6;--map-sea:#f8fafd;--map-line:#cfd5e1;color-scheme:light;
+}
+html[data-theme=emerald]{--accent:#047857;--accent-soft:#e6f6ef}
+html[data-theme=graphite]{--accent:#27272a;--accent-soft:#f0f0f1}
+html[data-theme=sunset]{--accent:#d9480f;--accent-soft:#fff0e8}
+html[data-mode=dark]{
+  --bg:#0c0e12;--surface:#14171d;--surface-2:#1b1f26;--border:#262b34;--border-2:#343a46;
+  --text:#eceef2;--text-2:#b6bcc9;--muted:#7f8696;--accent:#8b83ff;--accent-soft:#232245;--accent-ink:#0c0e12;
+  --ok:#3cc47a;--warn:#e0a63a;--crit:#f0716c;--info:#6aa1ff;--neutral:#9aa1b0;--page:#090b0e;
+  --map-land:#1c212b;--map-sea:#12151b;--map-line:#323948;color-scheme:dark;
+}
+html[data-mode=dark][data-theme=emerald]{--accent:#34d399;--accent-soft:#0f2a22}
+html[data-mode=dark][data-theme=graphite]{--accent:#d4d4d8;--accent-soft:#25262b}
+html[data-mode=dark][data-theme=sunset]{--accent:#fb923c;--accent-soft:#33200f}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Plus Jakarta Sans','Noto Sans Malayalam',system-ui,sans-serif;background:var(--page);color:var(--text);font-size:14px;-webkit-font-smoothing:antialiased}
+svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+button{font-family:inherit;cursor:pointer}
+/* ---------- page chrome ---------- */
+header.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.bar{max-width:1500px;margin:auto;padding:14px 32px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:11px}
+.logo{width:34px;height:34px;border-radius:10px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center}
+.brand b{display:block;font-size:15px;font-weight:800;letter-spacing:-.01em}.brand small{color:var(--muted);font-size:12px}
+.tabs{display:flex;gap:4px;margin-left:12px;flex-wrap:wrap}
+.tab{border:0;background:none;padding:9px 14px;border-radius:10px;font-weight:600;font-size:13.5px;color:var(--text-2)}
+.tab:hover{background:var(--surface-2);color:var(--text)}
+.tab.on{background:var(--accent-soft);color:var(--accent)}
+.tab span{margin-left:6px;font-size:11px;color:var(--muted);font-weight:700}
+.ctl{margin-left:auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:none;padding:6px 11px;border-radius:7px;color:var(--text-2);font-weight:600;font-size:12.5px}
+.seg button.on{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.sw{display:flex;gap:8px}.sw button{width:24px;height:24px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--border-2);padding:0}
+.sw button.on{box-shadow:0 0 0 2px var(--accent)}
+main{max-width:1500px;margin:auto;padding:32px 32px 80px}
+.sec-h{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:8px 0 22px}
+.sec-h h1{font-size:28px;font-weight:800;letter-spacing:-.02em}.sec-h p{color:var(--muted);margin-top:6px;max-width:720px;line-height:1.55}
+.flow{margin:38px 0 6px;display:flex;align-items:center;gap:12px}
+.flow h2{font-size:16px;font-weight:800;letter-spacing:-.01em}
+.flow .tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+.flow p{color:var(--muted);font-size:13px}
+.flow hr{flex:1;border:0;border-top:1px solid var(--border-2)}
+.grid{display:flex;flex-wrap:wrap;gap:36px 30px;margin-top:20px}
+figure.fig{width:max-content}
+figcaption{margin-top:14px;max-width:322px;font-size:12.5px;color:var(--muted);line-height:1.5}
+figcaption b{display:block;color:var(--text);font-size:13.5px;margin-bottom:2px}
+figcaption i{font-style:normal;font-family:ui-monospace,monospace;font-size:11px;color:var(--accent);background:var(--accent-soft);padding:1px 6px;border-radius:5px;margin-right:6px}
+/* overview */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+.card h3{font-size:14px;font-weight:700;margin-bottom:6px}.card p{color:var(--text-2);line-height:1.55;font-size:13px}
+.big{font-size:34px;font-weight:800;letter-spacing:-.03em}
+.journey{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin-top:14px}
+.jn{display:flex;align-items:center}
+.jn span{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:7px 11px;font-size:12.5px;font-weight:600}
+.jn span.hl{background:var(--accent-soft);border-color:transparent;color:var(--accent)}
+.jn i{width:18px;height:1px;background:var(--border-2);margin:0 2px}
+table.inv{width:100%;border-collapse:collapse;font-size:13px}
+table.inv th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface-2)}
+table.inv td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text-2);vertical-align:top}
+table.inv td:first-child{font-weight:700;color:var(--text);white-space:nowrap}
+.tk{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.tk div{border:1px solid var(--border);border-radius:12px;padding:12px 14px;background:var(--surface-2);min-width:130px}
+.tk small{color:var(--muted);display:block;font-size:11.5px;margin-bottom:3px}.tk b{font-size:14px}
+.sw2{display:flex;gap:8px;margin-top:10px}.sw2 i{width:34px;height:34px;border-radius:10px;display:block;border:1px solid var(--border)}
+/* ---------- phone ---------- */
+.dev{background:#0b0c0f;padding:8px;border-radius:46px;box-shadow:0 20px 50px rgba(16,24,40,.18),0 2px 6px rgba(16,24,40,.12);width:max-content}
+html[data-mode=dark] .dev{background:#2a2e38}
+.ph{width:324px;height:680px;border-radius:38px;background:var(--bg);color:var(--text);overflow:hidden;display:flex;flex-direction:column;position:relative;font-size:13px;line-height:1.35}
+.ph.drv{font-size:16px}
+.ph.ml{font-family:'Noto Sans Malayalam','Plus Jakarta Sans',sans-serif}
+.sb{height:32px;display:flex;justify-content:space-between;align-items:center;padding:6px 24px 0;font-size:12px;font-weight:700;flex:none;z-index:2}
+.sb .r{display:flex;gap:6px;align-items:center}
+.sb .sig{display:flex;gap:2px;align-items:flex-end}.sb .sig i{width:3px;background:currentColor;border-radius:1px;display:block}
+.sb .bat{width:20px;height:10px;border:1.5px solid currentColor;border-radius:3px;position:relative}.sb .bat::after{content:"";position:absolute;inset:1.5px;right:5px;background:currentColor;border-radius:1px}
+.ab{display:flex;align-items:center;gap:10px;padding:8px 16px 10px;flex:none}
+.ab h2{flex:1;font-size:19px;font-weight:800;letter-spacing:-.01em}
+.ph.drv .ab h2{font-size:22px}
+.ib{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);background:var(--surface);display:grid;place-items:center;color:var(--text-2);position:relative;flex:none}
+.ib .pip{position:absolute;top:8px;right:9px;width:8px;height:8px;border-radius:50%;background:var(--crit);border:2px solid var(--surface)}
+.scr{flex:1;overflow:hidden;padding:0 16px 14px;display:flex;flex-direction:column;gap:12px;min-height:0}
+.scr.c{justify-content:center;align-items:center;text-align:center}
+.bn{height:68px;flex:none;border-top:1px solid var(--border);background:var(--surface);display:flex;padding-bottom:6px}
+.bn div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;font-weight:600;color:var(--muted)}
+.ph.drv .bn{height:76px}.ph.drv .bn div{font-size:12.5px}
+.bn div.on{color:var(--accent)}
+.bn div.on svg{background:var(--accent-soft);width:46px;height:28px;padding:4px 13px;border-radius:14px;box-sizing:border-box}
+.c1{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px}
+.row{display:flex;align-items:center;gap:10px}.g{flex:1;min-width:0}.col{display:flex;flex-direction:column;gap:8px}
+.mut{color:var(--muted)}.sm{font-size:11.5px}.xs{font-size:10.5px}.b{font-weight:700}.xb{font-weight:800}.tc{text-align:center}
+.h1{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.2}.ph.drv .h1{font-size:26px}
+.btn{height:46px;border-radius:14px;background:var(--accent);color:var(--accent-ink);border:0;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;flex:none}
+.btn.o{background:var(--surface);color:var(--text);border:1px solid var(--border-2)}
+.btn.ok{background:var(--ok);color:#fff}.btn.no{background:var(--crit);color:#fff}
+.btn.t{background:none;color:var(--accent);height:36px}
+.btn.xl{height:64px;font-size:20px;border-radius:20px}
+.btn.lg{height:56px;font-size:17px;border-radius:18px}
+.btn.sm{height:34px;font-size:12px;border-radius:10px;width:auto;padding:0 12px}
+.inp{height:48px;border:1px solid var(--border-2);border-radius:12px;padding:0 14px;display:flex;align-items:center;gap:10px;color:var(--text);background:var(--surface);font-weight:500}
+.inp.ph0{color:var(--muted)}
+.ph.drv .inp{height:58px;font-size:18px;border-radius:14px}
+.lbl{font-size:11.5px;font-weight:600;color:var(--text-2);margin-bottom:6px}
+.ph.drv .lbl{font-size:14px}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px 3px 7px;border-radius:99px;font-size:11px;font-weight:700;color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent);white-space:nowrap}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--c)}
+.ph.drv .chip{font-size:13px;padding:4px 11px 4px 9px}
+.k-ok{--c:var(--ok)}.k-warn{--c:var(--warn)}.k-crit{--c:var(--crit)}.k-info{--c:var(--info)}.k-acc{--c:var(--accent)}.k-neu{--c:var(--neutral)}
+.av{width:38px;height:38px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:800;font-size:12.5px;flex:none}
+.av.l{width:72px;height:72px;font-size:24px}
+.ico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);flex:none}
+.ico.ok{background:color-mix(in srgb,var(--ok) 13%,transparent);color:var(--ok)}.ico.warn{background:color-mix(in srgb,var(--warn) 13%,transparent);color:var(--warn)}.ico.crit{background:color-mix(in srgb,var(--crit) 13%,transparent);color:var(--crit)}
+.bar0{height:6px;border-radius:3px;background:var(--surface-2);border:1px solid var(--border);overflow:hidden}.bar0 i{display:block;height:100%;background:var(--accent)}
+.list>div{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border)}.list>div:last-child{border:0}
+.ph.drv .list>div{padding:16px 0}
+.kp{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kp .c1{padding:12px}.kp b{font-size:24px;font-weight:800;letter-spacing:-.02em;display:block;margin-top:4px}
+.seg2{display:flex;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:3px;gap:2px}
+.seg2 div{flex:1;text-align:center;padding:8px 4px;border-radius:9px;font-weight:600;font-size:12px;color:var(--text-2)}
+.seg2 div.on{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:26px 26px 0 0;padding:10px 18px 20px;box-shadow:0 -10px 40px rgba(0,0,0,.18);display:flex;flex-direction:column;gap:12px;z-index:5}
+.sheet::before{content:"";width:38px;height:4px;border-radius:2px;background:var(--border-2);margin:0 auto 4px}
+.dim{position:absolute;inset:0;background:rgba(10,12,16,.45);z-index:4}
+.tgl{width:42px;height:24px;border-radius:99px;background:var(--border-2);position:relative;flex:none}.tgl::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.tgl.on{background:var(--accent)}.tgl.on::after{left:21px}
+.rad{width:22px;height:22px;border-radius:50%;border:2px solid var(--border-2);flex:none;display:grid;place-items:center}.rad.on{border-color:var(--accent)}.rad.on::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.steps{display:flex;gap:6px}.steps i{flex:1;height:5px;border-radius:3px;background:var(--border-2)}.steps i.on{background:var(--accent)}
+.key{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.key div{height:56px;border-radius:16px;background:var(--surface);border:1px solid var(--border);display:grid;place-items:center;font-size:24px;font-weight:700}
+.pin{display:flex;gap:12px;justify-content:center}.pin i{width:18px;height:18px;border-radius:50%;border:2px solid var(--border-2)}.pin i.on{background:var(--accent);border-color:var(--accent)}
+.tl{position:relative;padding-left:22px}.tl::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--border)}
+.tl div{position:relative;padding-bottom:12px}.tl div::before{content:"";position:absolute;left:-22px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);box-shadow:0 0 0 1px var(--accent)}
+.tl div.p::before{background:var(--bg);box-shadow:0 0 0 1px var(--border-2)}.tl div.p b{color:var(--muted)}
+.tl b{display:block;font-size:12.5px}.tl small{color:var(--muted);font-size:11px}
+.ph.drv .tl b{font-size:17px}.ph.drv .tl small{font-size:13px}
+.hero{background:var(--accent);color:var(--accent-ink);border-radius:20px;padding:16px}
+.photo{height:96px;border-radius:14px;border:1.5px dashed var(--border-2);display:grid;place-items:center;color:var(--muted);background:var(--surface);text-align:center;font-size:12px;gap:4px}
+.photo.f{border:0;background:linear-gradient(135deg,var(--accent-soft),var(--surface-2));color:var(--accent)}
+.fab{position:absolute;right:16px;bottom:88px;width:54px;height:54px;border-radius:18px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;box-shadow:0 8px 20px rgba(0,0,0,.22);z-index:3}
+.sosb{position:absolute;right:14px;bottom:92px;width:62px;height:62px;border-radius:50%;background:var(--crit);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;box-shadow:0 8px 20px rgba(201,52,47,.4);z-index:3}
+.mapbox{position:relative;flex:1;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:var(--map-sea);min-height:0}
+.mapbox svg{width:100%;height:100%;display:block}
+.attr{position:absolute;left:8px;bottom:5px;font-size:9px;color:var(--muted)}
+.pulse{position:relative;width:110px;height:110px;margin:0 auto}
+.pulse i{position:absolute;inset:0;border-radius:50%;background:rgba(255,255,255,.18)}
+.pulse i:nth-child(2){inset:14px;background:rgba(255,255,255,.22)}.pulse span{position:absolute;inset:28px;border-radius:50%;background:#fff;color:var(--accent);display:grid;place-items:center}
+.ph.dark0{background:var(--accent);color:var(--accent-ink)}
+.note{font-size:11px;color:var(--muted);text-align:center;line-height:1.5}
+.cd{font-family:ui-monospace,monospace}
+@media(max-width:700px){.bar,main{padding-left:16px;padding-right:16px}.ctl{margin-left:0}}
+</style>
+</head>
+<body>
+<header class="top"><div class="bar">
+  <div class="brand"><div class="logo"><svg class="i" viewBox="0 0 24 24"><path d="M2 6h11v10H2zM13 9h4l3 3v4h-7"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></div><div><b>TruckConnect</b><small>Android app · UI screens v2.1</small></div></div>
+  <nav class="tabs" id="tabs"></nav>
+  <div class="ctl">
+    <div class="sw" id="sw"></div>
+    <div class="seg" id="mode"><button data-m="light" class="on">Light</button><button data-m="dark">Dark</button></div>
+    <div class="seg" id="lang" title="Driver screens language"><button data-l="en" class="on">EN</button><button data-l="ml">മലയാളം</button></div>
+  </div>
+</div></header>
+<main id="main"></main>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+let theme='indigo',mode='light',lang='en',tab='overview';
+/* ================= i18n (driver screens are Malayalam-first) ================= */
+const ML={'Good morning':'സുപ്രഭാതം','No job right now':'ഇപ്പോൾ ജോലി ഇല്ല','New job':'പുതിയ ജോലി','Accept':'സ്വീകരിക്കുക','Reject':'നിരസിക്കുക','Start trip':'യാത്ര തുടങ്ങുക','Pickup':'കയറ്റുന്ന സ്ഥലം','Drop':'ഇറക്കുന്ന സ്ഥലം','Navigate':'വഴി കാണിക്കുക','Call office':'ഓഫീസിനെ വിളിക്കുക','Reached pickup':'കയറ്റുന്ന സ്ഥലത്ത് എത്തി','Loaded':'ലോഡ് കയറ്റി','In transit':'യാത്രയിൽ','Reached drop':'ഇറക്കുന്ന സ്ഥലത്ത് എത്തി','Delivered':'എത്തിച്ചു','Take photo':'ഫോട്ടോ എടുക്കുക','Receiver name':'സ്വീകരിച്ചയാളുടെ പേര്','Complete delivery':'ഡെലിവറി പൂർത്തിയാക്കുക','History':'ചരിത്രം','Alerts':'അറിയിപ്പുകൾ','Profile':'പ്രൊഫൈൽ','Home':'ഹോം','Login':'ലോഗിൻ','Mobile number':'മൊബൈൽ നമ്പർ','Enter your PIN':'നിങ്ങളുടെ പിൻ നൽകുക','Register as Driver':'ഡ്രൈവറായി രജിസ്റ്റർ ചെയ്യുക','Help':'സഹായം','Settings':'ക്രമീകരണങ്ങൾ','Language':'ഭാഷ','Send SOS':'അടിയന്തര സഹായം അയയ്ക്കുക','Vehicle problem':'വാഹനത്തിന് പ്രശ്നം','On leave':'ഞാൻ അവധിയിലാണ്','Too far':'ദൂരം കൂടുതലാണ്','Reason':'കാരണം','Weight':'ഭാരം','Goods':'സാധനങ്ങൾ','Today':'ഇന്ന്','Trips':'യാത്രകൾ','On time':'കൃത്യസമയം','Waiting for approval':'അംഗീകാരത്തിനായി കാത്തിരിക്കുന്നു','Call driver':'വിളിക്കുക','Done':'പൂർത്തിയായി','Back to home':'ഹോമിലേക്ക് മടങ്ങുക','Allow':'അനുവദിക്കുക','Update':'അപ്ഡേറ്റ്','Later':'പിന്നീട്','Next':'അടുത്തത്','Full name':'പൂർണ്ണ നാമം','Set a 4-digit PIN':'4 അക്ക പിൻ സജ്ജമാക്കുക','Log out':'ലോഗ് ഔട്ട്','Hold to send':'അയയ്ക്കാൻ അമർത്തിപ്പിടിക്കുക','Photo of goods':'സാധനങ്ങളുടെ ഫോട്ടോ','Speak job':'ജോലി കേൾക്കുക'};
+const t=s=>(lang==='ml'&&ML[s])||s;
+/* ================= icons & helpers ================= */
+const IC={home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',map:'<path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',box:'<path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/>',truck:'<path d="M2 6h11v10H2zM13 9h4l3 3v4h-7"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14.3c2 .7 3.5 2.6 3.5 5.7"/>',chart:'<path d="M3 3v18h18"/><path d="M8 17v-5M13 17V8M18 17v-9"/>',bell:'<path d="M6 8a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 004 0"/>',cog:'<path d="M4 6h9M19 6h1M4 12h3M13 12h7M4 18h11M21 18h-1"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/>',nav:'<path d="M3 11l18-8-8 18-2-8z"/>',check:'<path d="M5 12l5 5 9-10"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',plus:'<path d="M12 5v14M5 12h14"/>',search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',filter:'<path d="M3 5h18l-7 8v6l-4-2v-4z"/>',camera:'<path d="M3 8h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="13" r="3.5"/>',chev:'<path d="M9 6l6 6-6 6"/>',back:'<path d="M15 6l-6 6 6 6"/>',warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',doc:'<path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9 13h6M9 17h6"/>',lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',palette:'<circle cx="12" cy="12" r="9"/><circle cx="8" cy="10" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16" cy="10" r="1"/>',help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 115 0c0 1.5-2.5 2-2.5 3.5M12 17h.01"/>',download:'<path d="M12 4v11M7 11l5 5 5-5M5 20h14"/>',shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',vol:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 8a5 5 0 010 8"/>',logout:'<path d="M9 4H4v16h5M16 8l4 4-4 4M20 12H9"/>',star:'<path d="M12 3l2.7 5.6 6.3.9-4.5 4.4 1 6.2L12 17l-5.5 3.1 1-6.2L3 9.5l6.3-.9z"/>',edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',id:'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.5-2 5.5-2 6 0M14 10h4M14 14h4"/>',more:'<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>',sos:'<circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16h.01"/>',battery:'<rect x="3" y="7" width="16" height="10" rx="2"/><path d="M21 11v2"/><path d="M8 12h4"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',whatsapp:'<path d="M4 20l1.5-4.5A8 8 0 1112 20a8 8 0 01-3.5-.8z"/>',play:'<path d="M7 4l13 8-13 8z"/>',upload:'<path d="M12 20V9M7 13l5-5 5 5M5 4h14"/>',key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',tag:'<path d="M3 12V3h9l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1"/>',mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/>'};
+const ic=(n,s)=>`<svg class="i" viewBox="0 0 24 24"${s?` style="width:${s}px;height:${s}px"`:''}>${IC[n]}</svg>`;
+const chip=(k,l)=>`<span class="chip k-${k}">${l}</span>`;
+const av=n=>`<span class="av">${n.split(' ').map(x=>x[0]).slice(0,2).join('')}</span>`;
+const sb=(c)=>`<div class="sb"><span>9:41</span><span class="r"><span class="sig"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:10px"></i></span><span class="bat"></span></span></div>`;
+const ab=(title,o={})=>`<div class="ab">${o.back?`<div class="ib">${ic('back')}</div>`:''}<h2>${title}</h2>${o.right||''}</div>`;
+const bellib=pip=>`<div class="ib">${ic('bell')}${pip?'<span class="pip"></span>':''}</div>`;
+const bn=(tabs,on)=>`<div class="bn">${tabs.map((x,i)=>`<div class="${i===on?'on':''}">${ic(x[0])}${x[1]}</div>`).join('')}</div>`;
+const ADM=[['home','Home'],['map','Map'],['box','Shipments'],['truck','Fleet'],['more','More']];
+const DRV=()=>[['home',t('Home')],['clock',t('History')],['bell',t('Alerts')],['user',t('Profile')]];
+const fld=(l,v,ph,icn)=>`<div><div class="lbl">${l}</div><div class="inp ${ph?'ph0':''}">${icn?ic(icn,18):''}${v}</div></div>`;
+const kerala=`<svg viewBox="0 0 290 470" preserveAspectRatio="xMidYMid slice">`;
+const COAST=[[74.9,12.75],[75.2,11.9],[75.55,11.4],[75.7,11.0],[75.95,10.5],[76.1,10.1],[76.18,9.7],[76.22,9.4],[76.4,9.0],[76.5,8.8],[76.8,8.4],[77.0,8.1],[77.25,8.3],[77.15,8.9],[77.1,9.3],[77.25,9.8],[77.1,10.2],[76.95,10.6],[76.85,10.95],[76.75,11.15],[76.55,11.5],[76.25,11.85],[76.0,12.25],[75.65,12.45],[75.3,12.7],[75.1,12.78]];
+const P=(lng,lat)=>[(lng-74.55)*92+8,(12.95-lat)*92+8];
+function mapSvg(pins,sel){
+  const land=COAST.map(p=>P(...p).join(',')).join(' ');
+  let s=`<svg viewBox="0 0 290 470" preserveAspectRatio="xMidYMid slice"><polygon points="${land}" fill="var(--map-land)" stroke="var(--map-line)" stroke-width="1.5" stroke-linejoin="round"/>`;
+  [['Kannur',75.37,11.87],['Kozhikode',75.78,11.26],['Thrissur',76.21,10.53],['Kochi',76.27,9.93],['Kollam',76.6,8.89],['Thiruvananthapuram',76.94,8.52]].forEach(c=>{const p=P(c[1],c[2]);s+=`<circle cx="${p[0]}" cy="${p[1]}" r="2.5" fill="var(--surface)" stroke="var(--muted)"/><text x="${p[0]-7}" y="${p[1]+3}" text-anchor="end" font-size="8" font-weight="600" fill="var(--text-2)">${c[0]}</text>`});
+  pins.forEach(p=>{const q=P(p[0],p[1]);const col=p[2]||'--accent';const on=sel===p[3];s+=`<g transform="translate(${q[0]},${q[1]})"><circle r="${on?15:0}" fill="var(${col})" opacity=".2"/><circle r="9" fill="var(${col})" stroke="var(--surface)" stroke-width="2"/><path d="M-4 -2.5h5v5h-5zM1 -1h2.5l1.5 1.5v2.5h-4z" fill="none" stroke="#fff" stroke-width="1.1"/></g>`});
+  return s+'</svg>';
+}
+/* ================= SCREENS ================= */
+const S={};
+/* ---- AUTH ---- */
+S.splash=()=>`<div class="scr c" style="gap:18px;background:var(--accent);color:var(--accent-ink)"><div style="width:84px;height:84px;border-radius:26px;background:rgba(255,255,255,.16);display:grid;place-items:center">${ic('truck',44)}</div><div><div class="h1" style="font-size:28px">TruckConnect</div><div style="opacity:.8;margin-top:6px">${lang==='ml'?'ലോഡ് · യാത്ര · ഡെലിവറി':'Dispatch · Track · Deliver'}</div></div><div style="position:absolute;bottom:34px;opacity:.7;font-size:11.5px">v2.1.0 · Kerala</div></div>`;
+S.role=()=>`<div class="scr" style="padding-top:20px;gap:14px"><div><div class="h1">Welcome</div><div class="mut" style="margin-top:6px">Choose how you want to continue</div></div>
+ <div class="c1 col" style="gap:12px;padding:18px"><div class="ico">${ic('chart')}</div><div><div class="b" style="font-size:16px">Admin / Dispatcher</div><div class="mut sm" style="margin-top:3px">Assign jobs, track vehicles, view reports</div></div><div class="btn">Continue as Admin</div></div>
+ <div class="c1 col" style="gap:12px;padding:18px"><div class="ico ok">${ic('truck')}</div><div><div class="b" style="font-size:16px">Driver</div><div class="mut sm" style="margin-top:3px">Receive jobs, update trips, share proof</div></div><div class="btn o">Continue as Driver</div></div>
+ <div class="note" style="margin-top:auto">By continuing you accept the Terms and Privacy Policy (DPDP Act 2023)</div></div>`;
+S.dlogin=()=>`<div class="scr" style="padding-top:12px;gap:14px"><div style="display:flex;justify-content:space-between;align-items:center"><div class="ico ok">${ic('truck',22)}</div>${chip('neu','മലയാളം · EN')}</div><div class="h1">${t('Login')}</div>
+ ${fld(t('Mobile number'),'+91 94470 12345',0,'phone')}
+ <div><div class="lbl">${t('Enter your PIN')}</div><div class="pin" style="margin:10px 0 4px"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div></div>
+ <div class="key">${[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>`<div style="${k===''?'border:0;background:none':''}">${k}</div>`).join('')}</div>
+ <div class="btn lg">${t('Login')}</div><div class="btn t">${t('Register as Driver')}</div></div>`;
+S.reg1=()=>`<div class="scr" style="padding-top:2px;gap:14px">${ab(t('Register as Driver'),{back:1})}<div class="steps"><i class="on"></i><i></i><i></i></div><div class="mut sm">1 / 3 · ${lang==='ml'?'മൊബൈലും പിന്നും':'Mobile & PIN'}</div>
+ ${fld(t('Mobile number'),'+91 98470 55501',0,'phone')}
+ <div><div class="lbl">${t('Set a 4-digit PIN')}</div><div class="pin" style="margin:12px 0"><i class="on"></i><i class="on"></i><i></i><i></i></div></div>
+ <div class="key">${[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>`<div style="${k===''?'border:0;background:none':''}">${k}</div>`).join('')}</div>
+ <div class="btn lg" style="margin-top:auto">${t('Next')}</div></div>`;
+S.reg2=()=>`<div class="scr" style="padding-top:2px;gap:12px">${ab(t('Register as Driver'),{back:1})}<div class="steps"><i class="on"></i><i class="on"></i><i></i></div><div class="mut sm">2 / 3 · ${lang==='ml'?'തിരിച്ചറിയലും അടിയന്തര കോണ്ടാക്ടും':'Identity & emergency contact'}</div>
+ ${fld(t('Full name'),'Rajan Nair')}
+ ${fld('Emergency contact name','Sreeja Nair')}
+ ${fld('Emergency contact phone','+91 94950 11223',0,'phone')}
+ <div><div class="lbl">Relation</div><div class="seg2"><div class="on">Spouse</div><div>Parent</div><div>Child</div><div>Other</div></div></div>
+ <div class="btn lg" style="margin-top:auto">${t('Next')}</div></div>`;
+S.reg3=()=>`<div class="scr" style="padding-top:2px;gap:10px">${ab(t('Register as Driver'),{back:1})}<div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i></div><div class="mut sm">3 / 3 · ${lang==='ml'?'ലൈസൻസ് വിവരങ്ങൾ':'Driving licence'}</div>
+ ${fld('Licence number','KL-0720110012345')}
+ <div class="row"><div class="g">${fld('Type','HGMV')}</div><div class="g">${fld('Expiry','14 Mar 2029')}</div></div>
+ <div class="row"><div class="photo f g">${ic('camera',22)}<span>Front captured</span></div><div class="photo g">${ic('camera',22)}<span>Back · tap to capture</span></div></div>
+ <div><div class="lbl">Vehicle</div><div class="seg2"><div class="on">Company fleet</div><div>Owner-operator</div></div></div>
+ <div class="row" style="align-items:flex-start"><div class="tgl on" style="margin-top:2px"></div><div class="sm mut">I consent to location tracking during active trips and processing of my documents (DPDP Act 2023).</div></div>
+ <div class="btn lg" style="margin-top:auto">Submit for approval</div></div>`;
+S.pending=()=>`<div class="scr c" style="gap:16px;padding:0 24px"><div class="ico warn" style="width:84px;height:84px;border-radius:28px">${ic('clock',40)}</div><div class="h1">${t('Waiting for approval')}</div><div class="mut" style="line-height:1.6">${lang==='ml'?'നിങ്ങളുടെ വിവരങ്ങൾ ഓഫീസ് പരിശോധിക്കുന്നു. അംഗീകരിച്ചാൽ അറിയിക്കും.':'The office is verifying your details. You will get an alert once approved.'}</div>
+ <div class="c1 col" style="width:100%;text-align:left;gap:10px"><div class="row"><span class="g mut sm">Status</span>${chip('warn','PENDING_VERIFICATION')}</div><div class="row"><span class="g mut sm">Submitted</span><b class="sm">22 Nov, 9:12 pm</b></div><div class="row"><span class="g mut sm">Documents</span><b class="sm">Licence front + back</b></div></div>
+ <div class="btn o">${ic('phone',18)}${t('Call office')}</div></div>`;
+S.alogin=()=>`<div class="scr" style="padding-top:12px;gap:14px"><div class="ico">${ic('chart',22)}</div><div><div class="h1">Admin sign in</div><div class="mut" style="margin-top:6px">Use your work email and password</div></div>
+ ${fld('Email','anil@truckconnect.in',0,'mail')}${fld('Password','••••••••••',0,'lock')}
+ <div class="row"><div class="tgl on"></div><span class="sm">Keep me signed in</span><span class="g"></span><span class="sm b" style="color:var(--accent)">Forgot?</span></div>
+ <div class="btn">Sign in</div>
+ <div class="c1 row" style="gap:12px">${ic('shield',22)}<div class="g"><div class="b sm">2-step verification</div><div class="mut xs">Enter the 6-digit code if enabled</div></div></div>
+ <div class="note" style="margin-top:auto">Biometric or PIN app lock can be enabled in Security</div></div>`;
+S.perm=()=>`<div class="scr" style="padding-top:2px;gap:12px">${ab(lang==='ml'?'അനുമതികൾ':'Permissions')}<div class="mut sm">${lang==='ml'?'ജോലികൾ ശരിയായി ലഭിക്കാൻ ഇവ അനുവദിക്കുക':'Allow these so jobs and tracking work reliably'}</div>
+ <div class="c1 col"><div class="row"><div class="ico">${ic('map')}</div><div class="g"><div class="b">Location</div><div class="mut sm">Only during active trips. You stay in control.</div></div></div><div class="btn sm" style="width:100%">${t('Allow')}</div></div>
+ <div class="c1 col"><div class="row"><div class="ico">${ic('bell')}</div><div class="g"><div class="b">Notifications</div><div class="mut sm">Loud alert for new jobs, even on lock screen</div></div></div><div class="btn sm" style="width:100%">${t('Allow')}</div></div>
+ <div class="c1 col"><div class="row"><div class="ico">${ic('battery')}</div><div class="g"><div class="b">Battery</div><div class="mut sm">Keep tracking alive on Xiaomi, Oppo, Vivo, Samsung</div></div></div><div class="btn o sm" style="width:100%">Open guide</div></div>
+ <div class="btn lg" style="margin-top:auto">${t('Next')}</div></div>`;
+/* ---- ADMIN ---- */
+S.dash=()=>`${ab('Hello, Anil',{right:bellib(1)})}<div class="scr"><div class="kp">
+ <div class="c1"><span class="mut sm">On trip</span><b>7</b><span class="xs" style="color:var(--ok)">+2 today</span></div><div class="c1"><span class="mut sm">Available</span><b>2</b><span class="xs mut">ready to assign</span></div>
+ <div class="c1"><span class="mut sm">Pending</span><b>5</b><span class="xs" style="color:var(--warn)">1 overdue</span></div><div class="c1"><span class="mut sm">Delayed</span><b>2</b><span class="xs" style="color:var(--crit)">check now</span></div></div>
+ <div class="c1 row" style="border-color:color-mix(in srgb,var(--crit) 40%,var(--border));gap:10px"><div class="ico crit">${ic('sos')}</div><div class="g"><div class="b sm">SOS · Rajan Nair</div><div class="mut xs">Near Thrissur · 4 min ago</div></div><div class="btn sm">Call</div></div>
+ <div class="row"><b class="g">Live trips</b><span class="sm b" style="color:var(--accent)">View map</span></div>
+ ${[['TC-2026-000131','Kasaragod → Malappuram','Suresh K',62,'ok','On time'],['TC-2026-000136','Wayanad → Kozhikode','Sasidharan K',38,'warn','Delayed']].map(x=>`<div class="c1 col" style="gap:8px"><div class="row"><b class="g sm">${x[0]}</b>${chip(x[4],x[5])}</div><div class="sm">${x[1]}</div><div class="bar0"><i style="width:${x[3]}%"></i></div><div class="mut xs">${x[2]} · ${x[3]}% of route</div></div>`).join('')}</div>${bn(ADM,0)}`;
+S.map=()=>`${ab('Live map',{right:`<div class="ib">${ic('filter')}</div>`})}<div class="scr" style="padding-bottom:0"><div class="mapbox">${mapSvg([[75.1,12.1,'--accent','a'],[75.8,11.1,'--serious','b'],[76.2,10.1,'--accent','c'],[76.8,9.2,'--warn','d'],[76.5,10.7,'--accent','e']].map(p=>[p[0],p[1],p[2]==='--serious'?'--crit':p[2],p[3]]),'c')}<div class="attr">© OpenStreetMap · MapLibre</div></div></div>
+ <div class="sheet" style="bottom:68px"><div class="row"><div class="av">SK</div><div class="g"><div class="b">KL-07-AZ-1200</div><div class="mut sm">Suresh Kumar · TC-2026-000131</div></div>${chip('acc','Moving')}</div>
+ <div class="kp" style="grid-template-columns:repeat(3,1fr);gap:8px"><div class="c1 tc" style="padding:8px"><div class="mut xs">Speed</div><b style="font-size:16px">54 km/h</b></div><div class="c1 tc" style="padding:8px"><div class="mut xs">Updated</div><b style="font-size:16px">12 s</b></div><div class="c1 tc" style="padding:8px"><div class="mut xs">ETA</div><b style="font-size:16px">2:40 pm</b></div></div>
+ <div class="row"><div class="btn o sm g">Timeline</div><div class="btn sm g">${ic('phone',16)}Call</div></div></div>${bn(ADM,1)}`;
+S.ships=()=>`${ab('Shipments',{right:`<div class="ib">${ic('search')}</div>`})}<div class="scr"><div class="seg2"><div class="on">All</div><div>Active</div><div>Pending</div><div>Done</div></div>
+ ${[['TC-2026-000138','Idukki → Kasaragod','Assigned','info','Venugopal R'],['TC-2026-000141','Malappuram → Wayanad','Rejected','crit','Unassigned'],['TC-2026-000131','Kasaragod → Malappuram','In transit','acc','Suresh K'],['TC-2026-000133','Thrissur → Kannur','Loaded','acc','Babu Thomas'],['TC-2026-000125','Kochi → Palakkad','Delivered','ok','Haridas M']].map(x=>`<div class="c1 col" style="gap:7px"><div class="row"><b class="g sm">${x[0]}</b>${chip(x[3],x[2])}</div><div class="b">${x[1]}</div><div class="mut xs">${x[4]} · 22 Nov, 6:00 am</div></div>`).join('')}</div><div class="fab">${ic('plus',24)}</div>${bn(ADM,2)}`;
+S.shipd=()=>`${ab('TC-2026-000131',{back:1,right:`<div class="ib">${ic('more')}</div>`})}<div class="scr"><div class="c1 col" style="gap:6px"><div class="row">${chip('acc','In transit')}<span class="g"></span><span class="mut xs">8.5 t · Vegetables</span></div><div class="b" style="font-size:16px">Kasaragod → Malappuram</div><div class="mut xs">Suresh Kumar · KL-07-AZ-1200</div></div>
+ <div class="b">Timeline</div><div class="tl"><div><b>Created</b><small>6:00 am · Anil Kumar</small></div><div><b>Accepted</b><small>6:55 am · by driver</small></div><div><b>Reached pickup</b><small>7:50 am · GPS captured</small></div><div><b>Loaded</b><small>8:45 am · GPS captured</small></div><div><b>In transit</b><small>9:40 am · now</small></div><div class="p"><b>Reached drop</b><small>Pending</small></div><div class="p"><b>Delivered</b><small>Proof pending</small></div></div>
+ <div class="row" style="margin-top:auto"><div class="btn o g">Reassign</div><div class="btn o g" style="color:var(--crit)">Cancel</div></div></div>`;
+S.newship=()=>`<div class="scr" style="padding-top:2px;gap:10px">${ab('New shipment',{back:1})}<div class="steps"><i class="on"></i><i class="on"></i><i></i></div><div class="mut sm">2 / 3 · Goods & schedule</div>
+ ${fld('Pickup','Kasaragod',0,'map')}${fld('Drop','Malappuram',0,'map')}
+ <div class="row"><div class="g">${fld('Goods','Vegetables')}</div><div class="g">${fld('Weight (t)','8.5')}</div></div>
+ ${fld('Consignee','Fresh Basket · +91 94470 33221',0,'user')}${fld('Pickup time','22 Nov, 6:00 am',0,'cal')}
+ <div class="c1 row" style="gap:10px;border-color:color-mix(in srgb,var(--warn) 45%,var(--border))"><div class="ico warn">${ic('warn',20)}</div><div class="sm"><b>Over capacity.</b> 8.5 t exceeds Mini truck 3 t. Pick another vehicle.</div></div>
+ <div class="btn" style="margin-top:auto">Choose driver & vehicle</div></div>`;
+S.assign=()=>`<div class="scr" style="padding-top:2px;opacity:.5">${ab('New shipment',{back:1})}</div><div class="dim"></div><div class="sheet" style="top:150px;justify-content:flex-start"><div class="row"><b class="g" style="font-size:16px">Assign driver</b><div class="ib" style="width:32px;height:32px">${ic('x',16)}</div></div>
+ ${[['Venugopal R','Available · KL-02-HR-3797 · 10 t','ok',1],['Gopalakrishnan','Available · KL-13-JQ-4168 · 1.5 t','ok',0],['Suresh Kumar','On trip until 2:40 pm','warn',0],['Haridas M','Offline','neu',0]].map(x=>`<div class="c1 row" style="padding:11px;${x[3]?'border-color:var(--accent)':''}">${av(x[0])}<div class="g"><div class="b sm">${x[0]}</div><div class="mut xs">${x[1]}</div></div>${x[3]?`<span style="color:var(--accent)">${ic('check',20)}</span>`:chip(x[2],x[2]==='ok'?'Free':x[2]==='warn'?'Busy':'Offline')}</div>`).join('')}
+ <div class="btn">Assign & notify driver</div></div>`;
+S.drivers=()=>`${ab('Drivers',{right:`<div class="ib">${ic('plus')}</div>`})}<div class="scr"><div class="inp ph0">${ic('search',18)}Search name or phone</div><div class="seg2"><div class="on">All</div><div>Free</div><div>On trip</div><div>Leave</div></div>
+ ${[['Suresh Kumar','KL-07-AZ-1200','On trip','acc'],['Rajan Nair','KL-08-BX-1571','On trip','acc'],['Venugopal R','KL-02-HR-3797','Available','info'],['Shaji Varghese','KL-04-KP-4539','On leave','warn'],['Haridas M','KL-05-LN-4910','Offline','neu']].map(x=>`<div class="c1 row" style="padding:11px">${av(x[0])}<div class="g"><div class="b">${x[0]}</div><div class="mut xs">${x[1]}</div></div>${chip(x[3],x[2])}</div>`).join('')}</div>${bn(ADM,3)}`;
+S.driverd=()=>`${ab('Driver',{back:1,right:`<div class="ib">${ic('edit')}</div>`})}<div class="scr"><div class="col" style="align-items:center;gap:6px;padding:4px 0"><span class="av l">SK</span><div class="b" style="font-size:18px">Suresh Kumar</div><div class="mut sm">+91 94470 00000</div>${chip('acc','On trip')}</div>
+ <div class="kp" style="grid-template-columns:repeat(3,1fr);gap:8px"><div class="c1 tc" style="padding:10px"><div class="mut xs">Trips</div><b style="font-size:18px">49</b></div><div class="c1 tc" style="padding:10px"><div class="mut xs">On-time</div><b style="font-size:18px">82%</b></div><div class="c1 tc" style="padding:10px"><div class="mut xs">Rating</div><b style="font-size:18px">4.6</b></div></div>
+ <div class="c1 list" style="padding:4px 14px"><div><span class="mut g sm">Vehicle</span><b class="sm">KL-07-AZ-1200 · 10 t</b></div><div><span class="mut g sm">Licence</span><b class="sm">HGMV · 20 Jun 2027</b></div><div><span class="mut g sm">Emergency</span><b class="sm">Lakshmi · +91 94950 …</b></div><div><span class="mut g sm">Device</span><b class="sm">Redmi 9 · v2.1.0</b></div></div>
+ <div class="row" style="margin-top:auto"><div class="btn o g">Reset PIN</div><div class="btn o g" style="color:var(--crit)">Revoke device</div></div></div>`;
+S.approvals=()=>`${ab('Driver approvals',{back:1,right:chip('warn','2 new')})}<div class="scr"><div class="mut sm">New self-registrations waiting for verification</div>
+ ${[['Rajan Nair','Owner-operator · HGMV','9:12 pm'],['Anoop Das','Company fleet · LMV','7:40 pm']].map(x=>`<div class="c1 col" style="gap:10px"><div class="row">${av(x[0])}<div class="g"><div class="b">${x[0]}</div><div class="mut xs">${x[1]}</div></div><span class="mut xs">${x[2]}</span></div><div class="row"><span class="chip k-neu">${'Licence front'}</span><span class="chip k-neu">Licence back</span></div><div class="row"><div class="btn o sm g">Review</div><div class="btn ok sm g">Approve</div></div></div>`).join('')}
+ <div class="c1 row" style="gap:10px">${ic('bell',20)}<div class="sm mut">You are alerted by push and in-app notice for every new registration.</div></div></div>${bn(ADM,4)}`;
+S.review=()=>`${ab('Review driver',{back:1})}<div class="scr"><div class="row">${av('Rajan Nair')}<div class="g"><div class="b" style="font-size:16px">Rajan Nair</div><div class="mut xs">+91 98470 55501 · Submitted 9:12 pm</div></div></div>
+ <div class="c1 list" style="padding:4px 14px"><div><span class="mut g sm">Licence no.</span><b class="sm">KL-0720110012345</b></div><div><span class="mut g sm">Type / expiry</span><b class="sm">HGMV · 14 Mar 2029</b></div><div><span class="mut g sm">Vehicle</span><b class="sm">Owner-operator</b></div><div><span class="mut g sm">Emergency</span><b class="sm">Sreeja Nair (Spouse)</b></div></div>
+ <div class="row"><div class="photo f g" style="height:84px">${ic('id',24)}<span>Licence front</span></div><div class="photo f g" style="height:84px">${ic('id',24)}<span>Licence back</span></div></div>
+ <div class="c1 row" style="gap:10px">${ic('shield',20)}<span class="sm mut">Verify the photo matches the details before approving.</span></div>
+ <div class="row" style="margin-top:auto"><div class="btn no g">Reject</div><div class="btn ok g">Approve</div></div></div>`;
+S.vehicles=()=>`${ab('Vehicles',{back:1,right:`<div class="ib">${ic('plus')}</div>`})}<div class="scr"><div class="seg2"><div class="on">All</div><div>Available</div><div>On trip</div><div>Service</div></div>
+ ${[['KL-07-AZ-1200','Lorry · 10 t','On trip','acc','Insurance in 300 d'],['KL-08-BX-1571','Mini truck · 3 t','On trip','acc','PUC in 45 d'],['KL-02-HR-3797','Lorry · 10 t','Available','info','Permit in 25 d'],['KL-13-JQ-4168','Pickup · 1.5 t','Service','warn','Fitness due']].map(x=>`<div class="c1 row" style="padding:12px"><div class="ico">${ic('truck')}</div><div class="g"><div class="b">${x[0]}</div><div class="mut xs">${x[1]} · ${x[4]}</div></div>${chip(x[3],x[2])}</div>`).join('')}</div>${bn(ADM,3)}`;
+S.reports=()=>`${ab('Reports',{back:1,right:`<div class="ib">${ic('download')}</div>`})}<div class="scr"><div class="seg2"><div>Week</div><div class="on">Month</div><div>Quarter</div></div>
+ <div class="kp"><div class="c1"><span class="mut sm">On-time</span><b>94%</b><span class="xs" style="color:var(--ok)">+2 pt</span></div><div class="c1"><span class="mut sm">Accept time</span><b>4.2 m</b><span class="xs" style="color:var(--ok)">target 5</span></div></div>
+ <div class="c1 col"><div class="b sm">Trips per driver</div><svg viewBox="0 0 270 100" style="width:100%">${[49,44,42,40,36,34].map((v,i)=>`<rect x="${6+i*44}" y="${100-v*1.8}" width="30" height="${v*1.8}" rx="5" fill="var(--accent)" opacity="${1-i*.1}"/>`).join('')}</svg></div>
+ <div class="c1 row" style="gap:16px"><svg viewBox="0 0 42 42" style="width:84px;flex:none"><circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--border-2)" stroke-width="6"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--ok)" stroke-width="6" stroke-dasharray="96 4" transform="rotate(-90 21 21)"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--crit)" stroke-width="6" stroke-dasharray="3 97" stroke-dashoffset="-96" transform="rotate(-90 21 21)"/></svg><div class="col sm" style="gap:6px"><b>Completed vs cancelled</b><span style="color:var(--ok)">● 246 completed</span><span style="color:var(--crit)">● 8 cancelled</span></div></div>
+ <div class="row" style="margin-top:auto"><div class="btn o g">Export PDF</div><div class="btn o g">Export Excel</div></div></div>`;
+S.alerts=()=>`${ab('Alerts',{right:chip('crit','4 open')})}<div class="scr"><div class="seg2"><div class="on">All</div><div>SOS</div><div>Delays</div><div>Docs</div></div>
+ ${[['sos','crit','SOS from Rajan Nair','Near Thrissur · 4 min ago','Call'],['x','crit','Job rejected','TC-2026-000141 · “Vehicle issue”','Reassign'],['clock','warn','42 min late','TC-2026-000136 · Sasidharan K','View'],['warn','warn','No response · 12 min','TC-2026-000138 · Venugopal R','Reassign'],['doc','warn','Licence expires in 5 days','Sasidharan K','Open']].map(x=>`<div class="c1 row" style="padding:11px;gap:10px"><div class="ico ${x[1]}">${ic(x[0],20)}</div><div class="g"><div class="b sm">${x[2]}</div><div class="mut xs">${x[3]}</div></div><div class="btn o sm">${x[4]}</div></div>`).join('')}</div>${bn(ADM,4)}`;
+S.more=()=>`${ab('More')}<div class="scr"><div class="c1 row">${av('Anil Kumar')}<div class="g"><div class="b">Anil Kumar</div><div class="mut xs">Owner · Super Admin</div></div>${ic('chev',18)}</div>
+ <div class="c1 list" style="padding:2px 14px">${[['chart','Reports',''],['truck','Vehicles',''],['users','Driver approvals','2'],['download','App versions',''],['list','Audit log',''],['cog','Settings','']].map(x=>`<div><span class="ico" style="width:34px;height:34px">${ic(x[0],18)}</span><span class="g b sm">${x[1]}</span>${x[2]?chip('warn',x[2]):''}${ic('chev',16)}</div>`).join('')}</div>
+ <div class="c1 row" style="color:var(--crit)">${ic('logout',20)}<b class="sm">Sign out</b></div></div>${bn(ADM,4)}`;
+S.versions=()=>`${ab('App versions',{back:1})}<div class="scr"><div class="c1 col" style="gap:8px"><div class="row"><b class="g">v2.1.0 · latest</b>${chip('ok','Rollout 100%')}</div><div class="bar0"><i style="width:75%"></i></div><div class="mut xs">9 of 12 drivers updated · minimum supported v2.0.3</div></div>
+ ${[['Suresh Kumar','v2.1.0','ok','Latest'],['Mohanan P','v2.0.3','warn','Outdated'],['Abdul Rahman','v2.0.3','warn','Outdated'],['Gopalakrishnan','v2.0.1','crit','Below minimum']].map(x=>`<div class="c1 row" style="padding:11px">${av(x[0])}<div class="g"><div class="b sm">${x[0]}</div><div class="mut xs">${x[1]}</div></div>${chip(x[2],x[3])}</div>`).join('')}
+ <div class="row" style="margin-top:auto"><div class="btn o g">Halt rollout</div><div class="btn g">Force update</div></div></div>`;
+/* ---- DRIVER ---- */
+S.dhome0=()=>`${ab(t('Good morning')+', Suresh',{right:bellib(0)})}<div class="scr c" style="gap:16px;padding:0 24px"><div class="ico" style="width:110px;height:110px;border-radius:36px">${ic('truck',54)}</div><div class="h1">${t('No job right now')}</div><div class="mut" style="line-height:1.5">${lang==='ml'?'പുതിയ ജോലി വന്നാൽ ശബ്ദത്തോടെ അറിയിക്കും':'You will hear a loud alert when a new job arrives'}</div>${chip('ok',lang==='ml'?'ഓൺലൈൻ · ലഭ്യം':'Online · Available')}</div><div class="sosb">SOS</div>${bn(DRV(),0)}`;
+S.jobalert=()=>`<div class="scr" style="padding:18px 18px 22px;gap:14px;background:var(--accent);color:var(--accent-ink);justify-content:space-between"><div class="pulse"><i></i><i></i><span>${ic('bell',32)}</span></div><div class="tc"><div style="opacity:.85;font-weight:700;letter-spacing:.06em">${t('New job').toUpperCase()}</div><div class="h1" style="font-size:30px;margin-top:8px">Kasaragod<br>→ Malappuram</div></div>
+ <div style="background:rgba(255,255,255,.14);border-radius:20px;padding:14px;display:flex;justify-content:space-around;text-align:center"><div><div style="opacity:.8;font-size:13px">${t('Goods')}</div><b>Vegetables</b></div><div><div style="opacity:.8;font-size:13px">${t('Weight')}</div><b>8.5 t</b></div><div><div style="opacity:.8;font-size:13px">${t('Today')}</div><b>6:00 am</b></div></div>
+ <div class="btn lg" style="background:rgba(255,255,255,.18);color:inherit">${ic('vol',22)}${t('Speak job')}</div>
+ <div class="row"><div class="btn xl no g">${ic('x',26)}${t('Reject')}</div><div class="btn xl ok g">${ic('check',26)}${t('Accept')}</div></div></div>`;
+S.reject=()=>`<div class="scr" style="opacity:.4">${ab(t('New job'))}</div><div class="dim"></div><div class="sheet"><div class="h1" style="font-size:22px">${t('Reason')}</div>${[t('Vehicle problem'),t('On leave'),t('Too far')].map((r,i)=>`<div class="c1 row" style="padding:16px;${i===0?'border-color:var(--accent)':''}"><div class="rad ${i===0?'on':''}"></div><b class="g" style="font-size:17px">${r}</b></div>`).join('')}<div class="btn xl no">${t('Reject')}</div><div class="btn lg o">${t('Later')}</div></div>`;
+S.jobdetail=()=>`${ab('TC-2026-000131',{back:1,right:chip('info','Accepted')})}<div class="scr" style="gap:10px"><div class="c1 col" style="gap:10px"><div class="row"><div class="ico ok">${ic('map',22)}</div><div class="g"><div class="mut sm">${t('Pickup')}</div><b>Kasaragod Market</b></div></div><div class="row"><div class="ico crit">${ic('map',22)}</div><div class="g"><div class="mut sm">${t('Drop')}</div><b>Malappuram Mandi</b></div></div></div>
+ <div class="c1 row"><div class="g"><div class="mut sm">${t('Goods')}</div><b>Vegetables</b></div><div class="g"><div class="mut sm">${t('Weight')}</div><b>8.5 t</b></div></div>
+ <div class="row"><div class="btn lg o g">${ic('nav',22)}${t('Navigate')}</div><div class="btn lg o g">${ic('phone',22)}${t('Call office')}</div></div>
+ <div class="btn xl" style="margin-top:auto">${ic('play',24)}${t('Start trip')}</div></div>`;
+S.trip=()=>`${ab('Kasaragod → Malappuram',{})}<div class="scr" style="gap:10px"><div class="c1 tl" style="padding:14px 14px 6px 36px"><div><b>${t('Reached pickup')}</b><small>7:50 am</small></div><div><b>${t('Loaded')}</b><small>8:45 am</small></div><div><b>${t('In transit')}</b><small>${lang==='ml'?'ഇപ്പോൾ':'Now'}</small></div><div class="p"><b>${t('Reached drop')}</b></div><div class="p"><b>${t('Delivered')}</b></div></div>
+ <div class="row"><div class="btn lg o g">${ic('nav',22)}${t('Navigate')}</div><div class="btn lg o g">${ic('phone',22)}</div></div>
+ <div class="btn xl" style="margin-top:auto">${ic('check',26)}${t('Reached drop')}</div></div><div class="sosb" style="bottom:176px">SOS</div>`;
+S.navchoose=()=>`<div class="scr" style="opacity:.4">${ab('Kasaragod → Malappuram')}</div><div class="dim"></div><div class="sheet"><div class="h1" style="font-size:22px">${t('Navigate')}</div>${[['Google Maps','map'],['Vela','nav'],['OsmAnd','globe']].map((x,i)=>`<div class="c1 row" style="padding:16px"><div class="ico">${ic(x[1],22)}</div><b class="g" style="font-size:17px">${x[0]}</b>${i===1?chip('ok','Default'):''}</div>`).join('')}<div class="note">Opens your installed maps app with the destination</div></div>`;
+S.pod=()=>`${ab(t('Complete delivery'),{back:1})}<div class="scr" style="gap:12px"><div><div class="lbl">${t('Photo of goods')}</div><div class="photo f" style="height:130px">${ic('camera',34)}<b style="font-size:15px">Photo taken · 280 KB</b></div></div>
+ <div><div class="lbl">${t('Receiver name')}</div><div class="inp">Mathew Traders</div></div>
+ <div class="c1 row" style="gap:12px">${ic('key',24)}<div class="g"><div class="b">OTP (optional)</div><div class="mut sm">Customer OTP · 4 digits</div></div>${chip('neu','Skip')}</div>
+ <div class="btn xl ok" style="margin-top:auto">${ic('check',26)}${t('Complete delivery')}</div></div>`;
+S.success=()=>`<div class="scr c" style="gap:18px;padding:0 24px"><div class="ico ok" style="width:110px;height:110px;border-radius:36px">${ic('check',58)}</div><div class="h1">${t('Delivered')}</div><div class="c1 col" style="width:100%;text-align:left"><div class="row"><span class="g mut">TC-2026-000131</span><b>2:36 pm</b></div><div class="row"><span class="g mut">${t('Receiver name')}</span><b>Mathew Traders</b></div></div><div class="btn xl">${t('Back to home')}</div></div>`;
+S.history=()=>`${ab(t('History'))}<div class="scr"><div class="row"><div class="c1 g tc" style="padding:12px"><div class="mut sm">${t('Trips')}</div><b style="font-size:24px">49</b></div><div class="c1 g tc" style="padding:12px"><div class="mut sm">${t('On time')}</div><b style="font-size:24px">82%</b></div></div>
+ ${[['Kasaragod → Malappuram','Today · 2:36 pm'],['Kochi → Kozhikode','21 Nov'],['Thrissur → Kannur','19 Nov'],['Palakkad → Idukki','18 Nov']].map(x=>`<div class="c1 row" style="padding:14px"><div class="ico ok">${ic('check',22)}</div><div class="g"><b style="font-size:16px">${x[0]}</b><div class="mut sm">${x[1]}</div></div>${ic('chev',18)}</div>`).join('')}</div>${bn(DRV(),1)}`;
+S.sos=()=>`<div class="scr" style="opacity:.35">${ab('SOS')}</div><div class="dim"></div><div class="sheet" style="gap:14px"><div class="col" style="align-items:center;gap:10px;text-align:center"><div class="ico crit" style="width:84px;height:84px;border-radius:50%">${ic('sos',44)}</div><div class="h1" style="font-size:22px">${t('Send SOS')}?</div><div class="mut sm" style="line-height:1.5">${lang==='ml'?'നിങ്ങളുടെ സ്ഥലം ഓഫീസിലേക്ക് അയയ്ക്കും':'Your live location will be sent to the office'}</div></div><div class="btn xl no">${t('Hold to send')}</div><div class="btn lg o">${lang==='ml'?'വേണ്ട':'Cancel'}</div></div>`;
+S.dnotif=()=>`${ab(t('Alerts'))}<div class="scr"><div class="list c1" style="padding:0 14px">${[['truck','New job · Kasaragod','6:00 am','acc'],['check','Delivered · TC-…125','Yesterday','ok'],['warn','Licence expires in 5 days','2 days ago','warn'],['download','New app version','3 days ago','acc']].map(x=>`<div><span class="ico ${x[3]==='ok'?'ok':x[3]==='warn'?'warn':''}">${ic(x[0],22)}</span><div class="g"><b style="font-size:15px">${x[1]}</b><div class="mut sm">${x[2]}</div></div></div>`).join('')}</div></div>${bn(DRV(),2)}`;
+S.dprofile=()=>`${ab(t('Profile'),{right:`<div class="ib">${ic('cog')}</div>`})}<div class="scr"><div class="col" style="align-items:center;gap:6px"><span class="av l">SK</span><div class="b" style="font-size:20px">Suresh Kumar</div>${chip('ok','Approved')}</div>
+ <div class="c1 list" style="padding:0 14px"><div><span class="g mut">Vehicle</span><b>KL-07-AZ-1200</b></div><div><span class="g mut">Licence</span><b>20 Jun 2027</b></div><div><span class="g mut">${t('Language')}</span><b>മലയാളം</b></div></div>
+ <div class="btn lg o" style="color:var(--crit);margin-top:auto">${ic('logout',22)}${t('Log out')}</div></div>${bn(DRV(),3)}`;
+/* ---- SETTINGS & SYSTEM ---- */
+const setRow=x=>`<div><span class="ico" style="width:36px;height:36px">${ic(x[0],18)}</span><div class="g"><b class="sm">${x[1]}</b>${x[2]?`<div class="mut xs">${x[2]}</div>`:''}</div>${ic('chev',16)}</div>`;
+S.setA=()=>`${ab('Settings',{back:1})}<div class="scr"><div class="c1 row">${av('Anil Kumar')}<div class="g"><div class="b">Anil Kumar</div><div class="mut xs">anil@truckconnect.in</div></div>${ic('edit',18)}</div>
+ <div class="c1 list" style="padding:2px 14px">${[['user','Profile','Name, phone, email'],['palette','Theme','Indigo · Auto'],['globe','Language','English'],['bell','Notifications','Alerts & sounds'],['lock','Security','App lock, sessions'],['help','Help','Guides & support'],['tag','App version','v2.1.0']].map(setRow).join('')}</div><div class="note">Theme choice syncs to your profile</div></div>`;
+S.setD=()=>`${ab(t('Settings'),{back:1})}<div class="scr" style="gap:10px"><div class="c1 list" style="padding:0 14px">${[['palette','Theme',''],['globe',t('Language'),lang==='ml'?'മലയാളം':'English'],['vol','Voice read-out','On'],['bell','Notifications',''],['help',t('Help'),'']].map(x=>`<div style="padding:17px 0"><span class="ico">${ic(x[0],22)}</span><div class="g"><b>${x[1]}</b>${x[2]?`<div class="mut sm">${x[2]}</div>`:''}</div>${ic('chev',18)}</div>`).join('')}</div>
+ <div class="c1 col"><b>Text size</b><div class="seg2" style="font-size:15px"><div>Normal</div><div class="on">Large</div><div>Extra large</div></div></div></div>`;
+S.theme=()=>`${ab('Theme',{back:1})}<div class="scr"><div class="seg2"><div>Light</div><div>Dark</div><div class="on">Auto</div></div><div class="mut sm">Pick a colour theme. All meet WCAG AA contrast.</div>
+ <div class="kp">${[['Indigo','#4f46e5',1],['Emerald','#047857',0],['Graphite','#27272a',0],['Sunset','#d9480f',0]].map(x=>`<div class="c1 col" style="${x[2]?'border-color:var(--accent);border-width:2px':''}"><div style="height:56px;border-radius:12px;background:${x[1]};display:grid;place-items:center;color:#fff">${x[2]?ic('check',24):''}</div><b class="sm">${x[0]}</b></div>`).join('')}</div>
+ <div class="c1 col" style="gap:8px"><div class="mut xs">Preview</div><div class="btn">Primary button</div><div class="row">${chip('acc','In transit')}${chip('ok','Delivered')}${chip('warn','Delayed')}</div></div></div>`;
+S.language=()=>`${ab(t('Language'),{back:1})}<div class="scr" style="gap:10px"><div class="mut sm">Driver screens default to Malayalam</div>${[['മലയാളം','Malayalam',1],['English','English',0]].map(x=>`<div class="c1 row" style="padding:16px;${x[2]?'border-color:var(--accent)':''}"><div class="rad ${x[2]?'on':''}"></div><div class="g"><b style="font-size:17px">${x[0]}</b><div class="mut sm">${x[1]}</div></div></div>`).join('')}<div class="c1 row">${ic('globe',20)}<span class="sm mut">Switch any time. No restart needed.</span></div></div>`;
+S.notifs=()=>`${ab('Notifications',{back:1})}<div class="scr"><div class="c1 list" style="padding:0 14px">${[['Job alerts (loud)',1],['Cancellation & reassignment',1],['Repeat push if not opened',1],['Delay and SOS alerts',1],['Update reminders',0],['Daily summary',0]].map(x=>`<div><span class="g b sm">${x[0]}</span><div class="tgl ${x[1]?'on':''}"></div></div>`).join('')}</div><div class="c1 row">${ic('bell',20)}<div class="sm mut">Channels: Job alerts · Updates · General</div></div></div>`;
+S.security=()=>`${ab('Security',{back:1})}<div class="scr"><div class="c1 list" style="padding:0 14px"><div><span class="ico" style="width:34px;height:34px">${ic('lock',18)}</span><span class="g b sm">App lock (PIN / biometric)</span><div class="tgl on"></div></div><div><span class="ico" style="width:34px;height:34px">${ic('shield',18)}</span><span class="g b sm">2-step verification</span><div class="tgl on"></div></div><div><span class="ico" style="width:34px;height:34px">${ic('key',18)}</span><span class="g b sm">Change password</span>${ic('chev',16)}</div></div>
+ <div class="b sm" style="margin-top:4px">Signed-in devices</div>${[['Redmi Note 11 · this device','Active now',1],['Samsung A14','2 days ago',0]].map(x=>`<div class="c1 row" style="padding:12px"><div class="ico">${ic('phone',20)}</div><div class="g"><div class="b sm">${x[0]}</div><div class="mut xs">${x[1]}</div></div>${x[2]?chip('ok','Current'):'<div class="btn o sm" style="color:var(--crit)">Revoke</div>'}</div>`).join('')}</div>`;
+S.help=()=>`${ab(t('Help'),{back:1})}<div class="scr" style="gap:10px"><div class="hero row" style="gap:12px">${ic('play',30)}<div class="g"><b>Watch the 2-minute guide</b><div style="opacity:.85;font-size:12px">${lang==='ml'?'മലയാളത്തിൽ':'In Malayalam'}</div></div></div>
+ <div class="c1 list" style="padding:0 14px">${[['whatsapp','WhatsApp support','Chat with the office'],['phone',t('Call office'),'+91 484 000 0000'],['doc','How to accept a job','3 steps'],['map','Fix tracking on my phone','Battery settings'],['shield','Privacy & location','DPDP consent']].map(setRow).join('')}</div></div>`;
+S.about=()=>`${ab('App version',{back:1})}<div class="scr" style="gap:12px"><div class="col" style="align-items:center;gap:8px;padding:10px 0"><div class="logo" style="width:64px;height:64px;border-radius:20px">${ic('truck',32)}</div><b style="font-size:18px">TruckConnect</b><span class="mut">v2.1.0 (build 21) · direct</span></div>
+ <div class="c1 list" style="padding:0 14px"><div><span class="g mut sm">Channel</span><b class="sm">Direct (self-hosted)</b></div><div><span class="g mut sm">Minimum supported</span><b class="sm">v2.0.3</b></div><div><span class="g mut sm">Last checked</span><b class="sm">Today, 9:02 am</b></div></div>
+ <div class="c1 col"><b class="sm">What’s new</b><div class="mut sm">• Driver registration and approval<br>• Faster job alerts</div></div><div class="btn" style="margin-top:auto">Check for updates</div></div>`;
+S.update=()=>`<div class="scr" style="opacity:.4">${ab(t('Home'))}</div><div class="dim"></div><div class="sheet" style="gap:12px"><div class="row"><div class="ico">${ic('download',22)}</div><div class="g"><b style="font-size:17px">${lang==='ml'?'പുതിയ പതിപ്പ് ലഭ്യമാണ്':'New version available'}</b><div class="mut sm">v2.1.1 · 18 MB</div></div></div>
+ <div class="c1 sm" style="line-height:1.6">• ${lang==='ml'?'വേഗത്തിലുള്ള ജോലി അറിയിപ്പ്':'Faster job alerts'}<br>• ${lang==='ml'?'ചെറിയ തകരാറുകൾ പരിഹരിച്ചു':'Small fixes'}</div><div class="bar0"><i style="width:64%"></i></div><div class="mut xs tc">Downloading… 64%</div>
+ <div class="row"><div class="btn lg o g">${t('Later')}</div><div class="btn lg g">${t('Update')}</div></div></div>`;
+S.install=()=>`<div class="scr c" style="gap:16px;padding:0 22px"><div class="ico warn" style="width:84px;height:84px;border-radius:28px">${ic('shield',42)}</div><div class="h1" style="font-size:22px">Allow installs from TruckConnect</div><div class="mut" style="line-height:1.6;font-size:13px">Android asks once for “Install unknown apps”. Turn it on for TruckConnect, then come back. We check the file’s signature before installing.</div>
+ <div class="c1 col" style="width:100%;text-align:left;gap:8px"><div class="row"><span class="av" style="width:28px;height:28px;font-size:12px">1</span><span class="sm">Tap Open settings</span></div><div class="row"><span class="av" style="width:28px;height:28px;font-size:12px">2</span><span class="sm">Switch on Allow from this source</span></div><div class="row"><span class="av" style="width:28px;height:28px;font-size:12px">3</span><span class="sm">Press back and tap Install</span></div></div><div class="btn">Open settings</div></div>`;
+S.forced=()=>`<div class="scr c" style="gap:16px;padding:0 24px;background:var(--surface)"><div class="ico crit" style="width:92px;height:92px;border-radius:30px">${ic('warn',44)}</div><div class="h1">${lang==='ml'?'അപ്ഡേറ്റ് ആവശ്യമാണ്':'Update required'}</div><div class="mut" style="line-height:1.6">${lang==='ml'?'തുടരാൻ ഏറ്റവും പുതിയ പതിപ്പ് ഇൻസ്റ്റാൾ ചെയ്യുക':'This version is no longer supported. Install the latest to continue.'}</div>
+ <div class="c1 row" style="width:100%"><span class="g mut sm">Installed</span><b class="sm">v2.0.1</b><span class="mut">→</span><b class="sm" style="color:var(--accent)">v2.1.1</b></div><div class="btn xl">${t('Update')}</div><div class="note">Never shown during an active trip</div></div>`;
+/* ================= GROUPS ================= */
+const G=[
+ {id:'auth',title:'Onboarding & access',desc:'Splash, role choice, driver PIN login, self-registration with licence capture, pending approval, admin sign-in and permission setup.',flows:[
+  {t:'Launch',tag:'All users',d:'First impression and role entry',s:[['A1','Splash','Brand moment while the session and version check run.','splash'],['A2','Role select','Admin or Driver. One clear primary action each.','role']]},
+  {t:'Driver login & registration',tag:'Driver · AUTH-1, AUTH-8',d:'Phone and PIN, no SMS cost. New drivers self-register and wait for approval.',s:[['D1','Driver login','Large keypad, mobile number, PIN. Register link below.','dlogin',1],['D2','Register · mobile & PIN','Step 1 of 3. Set a 4-digit PIN.','reg1',1],['D3','Register · identity','Step 2 of 3. Name and emergency contact.','reg2',1],['D4','Register · licence','Step 3 of 3. Licence details, front and back photos, vehicle type, DPDP consent.','reg3',1],['D5','Pending approval','PENDING_VERIFICATION until an admin approves.','pending',1],['D6','Permissions','Location, notifications and battery, each explained in one card.','perm',1]]},
+  {t:'Admin access',tag:'Admin · AUTH-2',d:'Email and password with optional 2-step code',s:[['A3','Admin sign in','Email, password, 2-step verification, keep signed in.','alogin']]}]},
+ {id:'admin',title:'Admin & dispatcher',desc:'Everything the owner and dispatchers need on their phone: dashboard, live map, shipments, fleet, driver approvals, reports and alerts.',flows:[
+  {t:'Operate',tag:'ADM-1 to ADM-4',d:'Daily dispatch work',s:[['M1','Dashboard','On trip, available, pending, delayed, SOS banner and live trips.','dash'],['M2','Live map','MapLibre with OpenStreetMap. Tap a vehicle for driver, speed, ETA.','map'],['M3','Shipments','Filter by status. One tap to the detail or the + button to create.','ships'],['M4','Shipment detail','Timestamped timeline, reassign or cancel with reason.','shipd'],['M5','New shipment','Capacity warning appears before assigning.','newship'],['M6','Assign driver','Availability shown for every driver. Notifies instantly.','assign']]},
+  {t:'Fleet & approvals',tag:'DRV · VEH · AUTH-9',d:'People, vehicles and new driver verification',s:[['M7','Drivers','Search and filter by availability.','drivers'],['M8','Driver detail','Stats, vehicle, licence, device. Reset PIN or revoke device.','driverd'],['M9','Driver approvals','Alerted on every new registration.','approvals'],['M10','Review driver','Inspect details and licence photos. Approve or reject.','review'],['M11','Vehicles','Status and document expiry reminders.','vehicles']]},
+  {t:'Insight & control',tag:'ADM-4 to ADM-6, UPD-8',d:'Reports, alerts and release visibility',s:[['M12','Reports','On-time rate, trips per driver, completed vs cancelled, export.','reports'],['M13','Alerts centre','SOS, rejects, delays, no-response and expiring documents.','alerts'],['M14','More','Reports, vehicles, approvals, versions, audit log, settings.','more'],['M15','App versions','Which driver runs which version. Halt or force update.','versions']]}]},
+ {id:'driver',title:'Driver',desc:'Built for elderly drivers: Malayalam first, 56 dp minimum buttons, 18 sp text, colour plus icon plus text, three taps for any action.',flows:[
+  {t:'Receive & accept',tag:'APP-1 to APP-2',d:'Loud full-screen alert, large Accept and Reject',s:[['V1','Home · no job','Calm empty state, SOS always reachable.','dhome0',1],['V2','Job alert','Full-screen over the lock screen with voice read-out.','jobalert',1],['V3','Reject reason','One tap reason, no typing.','reject',1],['V4','Job details','Pickup, drop, goods. Navigate, call, start trip.','jobdetail',1]]},
+  {t:'Run the trip',tag:'APP-3 to APP-6',d:'One big button for the next milestone',s:[['V5','Active trip','Milestone list and a single large next action.','trip',1],['V6','Choose navigation app','Geo intent opens Vela, OsmAnd or Google Maps.','navchoose',1],['V7','Proof of delivery','Photo, receiver name, optional OTP.','pod',1],['V8','Delivered','Confirmation and back to home.','success',1]]},
+  {t:'Support',tag:'APP-9, APP-10',d:'History, safety and profile',s:[['V9','History','Past trips with on-time rate.','history',1],['V10','SOS','Hold to send location to the office.','sos',1],['V11','Alerts','In-app notification list.','dnotif',1],['V12','Profile','Vehicle, licence, language, log out.','dprofile',1]]}]},
+ {id:'settings',title:'Settings & system',desc:'Themes, language, notifications, security, help and the in-app update flow, shared by both roles.',flows:[
+  {t:'Settings',tag:'Section 8',d:'Four themes, light, dark and auto, Malayalam and English',s:[['S1','Settings · admin','Profile, theme, language, notifications, security, help, version.','setA'],['S2','Settings · driver','Larger rows, voice read-out, text size up to extra large.','setD',1],['S3','Theme','Indigo, Emerald, Graphite, Sunset with live preview.','theme'],['S4','Language','Malayalam and English, switch any time.','language',1],['S5','Notifications','Channels and repeat-push options.','notifs'],['S6','Security','App lock, 2-step, signed-in devices.','security'],['S7','Help','Video guide, WhatsApp, call office.','help',1],['S8','App version','Channel, minimum version, release notes.','about']]},
+  {t:'In-app updates',tag:'UPD-1 to UPD-7',d:'Self-hosted updater for the free phase, Play flow later',s:[['U1','Update available','Flexible update with progress. Waits until the trip ends.','update',1],['U2','Install permission','One-screen explainer for Install unknown apps.','install'],['U3','Forced update','Blocking when below the minimum version.','forced',1]]}]}
+];
+/* ================= RENDER ================= */
+const total=G.reduce((a,g)=>a+g.flows.reduce((b,f)=>b+f.s.length,0),0);
+function fig(s){const[id,name,note,key,drv]=s;return `<figure class="fig"><div class="dev"><div class="ph ${drv?'drv':''} ${drv&&lang==='ml'?'ml':''}">${sb()}${S[key]()}</div></div><figcaption><b><i>${id}</i>${name}</b>${note}</figcaption></figure>`}
+function overview(){
+  const inv=G.map(g=>`<tr><td>${g.title}</td><td>${g.flows.reduce((b,f)=>b+f.s.length,0)}</td><td>${g.flows.flatMap(f=>f.s.map(x=>x[1])).join(' · ')}</td></tr>`).join('');
+  return `<div class="sec-h"><div><h1>TruckConnect Android app</h1><p>Complete screen set for the Admin and Driver roles, from splash to settings. Built on the v2.1 PRD: Kotlin and Jetpack Compose, MapLibre maps, free-phase PIN login with driver self-registration and approval, and the in-app updater.</p></div></div>
+  <div class="cards"><div class="card"><div class="big">${total}</div><h3>Screens</h3><p>Across onboarding, admin, driver and settings.</p></div><div class="card"><div class="big">2</div><h3>Roles</h3><p>One app, role-based navigation after login.</p></div><div class="card"><div class="big">4×3</div><h3>Themes</h3><p>Indigo, Emerald, Graphite, Sunset, each in light, dark and auto.</p></div><div class="card"><div class="big">ML · EN</div><h3>Languages</h3><p>Driver screens are Malayalam first. Use the toggle above.</p></div></div>
+  <div class="flow"><h2>Core journeys</h2><hr></div>
+  <div class="card"><b>Dispatch to delivery</b><div class="journey">${['Admin creates shipment','Assigns driver + vehicle','Driver alerted','Accept','Start trip','Milestones','Photo proof','Admin sees it live'].map((x,i,a)=>`<div class="jn"><span class="${i===3||i===6?'hl':''}">${x}</span>${i<a.length-1?'<i></i>':''}</div>`).join('')}</div>
+  <div style="height:18px"></div><b>Driver self-registration</b><div class="journey">${['Register as Driver','Mobile + PIN','Identity','Licence + photos','Pending','Admin approves','Login with PIN'].map((x,i,a)=>`<div class="jn"><span class="${i===4||i===5?'hl':''}">${x}</span>${i<a.length-1?'<i></i>':''}</div>`).join('')}</div></div>
+  <div class="flow"><h2>Design system</h2><hr></div>
+  <div class="cards"><div class="card"><h3>Typography</h3><p>Plus Jakarta Sans for Latin, Noto Sans Malayalam companion bundled.</p><div class="tk"><div><small>Admin body</small><b>13–14 sp</b></div><div><small>Driver body</small><b>18 sp min</b></div></div></div>
+  <div class="card"><h3>Touch targets</h3><p>Large, forgiving, no hidden gestures.</p><div class="tk"><div><small>Driver</small><b>56 dp min</b></div><div><small>Admin</small><b>48 dp min</b></div></div></div>
+  <div class="card"><h3>Status language</h3><p>Colour plus icon plus text, never colour alone.</p><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">${chip('ok','Delivered')}${chip('acc','In transit')}${chip('warn','Delayed')}${chip('crit','Rejected')}${chip('neu','Offline')}</div></div>
+  <div class="card"><h3>Spacing & shape</h3><p>4 dp grid, 12 to 20 dp radii, subtle elevation, short fast transitions.</p><div class="tk"><div><small>Grid</small><b>4 dp</b></div><div><small>Contrast</small><b>WCAG AA</b></div></div></div></div>
+  <div class="flow"><h2>Screen inventory</h2><hr></div>
+  <div class="card" style="padding:0;overflow:hidden"><table class="inv"><thead><tr><th>Section</th><th>Screens</th><th>Includes</th></tr></thead><tbody>${inv}</tbody></table></div>`;
+}
+function renderTabs(){
+  $('#tabs').innerHTML=[['overview','Overview',''],...G.map(g=>[g.id,g.title.split(' &')[0],g.flows.reduce((b,f)=>b+f.s.length,0)])].map(x=>`<button class="tab ${tab===x[0]?'on':''}" data-t="${x[0]}">${x[1]}${x[2]!==''?`<span>${x[2]}</span>`:''}</button>`).join('');
+}
+function render(){
+  renderTabs();
+  if(tab==='overview'){$('#main').innerHTML=overview();return}
+  const g=G.find(x=>x.id===tab);
+  $('#main').innerHTML=`<div class="sec-h"><div><h1>${g.title}</h1><p>${g.desc}</p></div></div>`+g.flows.map(f=>`<div class="flow"><h2>${f.t}</h2><span class="tag">${f.tag}</span><p>${f.d}</p><hr></div><div class="grid">${f.s.map(fig).join('')}</div>`).join('');
+}
+/* controls */
+const TH=[['indigo','#4f46e5'],['emerald','#047857'],['graphite','#27272a'],['sunset','#d9480f']];
+$('#sw').innerHTML=TH.map(t=>`<button data-th="${t[0]}" style="background:${t[1]}" title="${t[0]}" class="${t[0]===theme?'on':''}"></button>`).join('');
+document.addEventListener('click',e=>{
+  let b;
+  if(b=e.target.closest('[data-t]')){tab=b.dataset.t;render();window.scrollTo(0,0);try{history.replaceState(null,'','#'+tab)}catch(_){}}
+  else if(b=e.target.closest('[data-th]')){theme=b.dataset.th;document.documentElement.dataset.theme=theme;document.querySelectorAll('#sw button').forEach(x=>x.classList.toggle('on',x===b))}
+  else if(b=e.target.closest('[data-m]')){mode=b.dataset.m;document.documentElement.dataset.mode=mode;document.querySelectorAll('#mode button').forEach(x=>x.classList.toggle('on',x===b))}
+  else if(b=e.target.closest('[data-l]')){lang=b.dataset.l;document.querySelectorAll('#lang button').forEach(x=>x.classList.toggle('on',x===b));render()}
+});
+const h=(location.hash||'').slice(1);if(h==='overview'||G.some(g=>g.id===h))tab=h;
+render();
+</script>
+</body>
+</html>

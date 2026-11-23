@@ -1,0 +1,512 @@
+[
+ {
+  "screen": "A1_splash",
+  "en": "Dispatch · Track · Deliver",
+  "ml": "ലോഡ് · യാത്ര · ഡെലിവറി"
+ },
+ {
+  "screen": "D1_driver_login",
+  "en": "Login",
+  "ml": "ലോഗിൻ"
+ },
+ {
+  "screen": "D1_driver_login",
+  "en": "Mobile number",
+  "ml": "മൊബൈൽ നമ്പർ"
+ },
+ {
+  "screen": "D1_driver_login",
+  "en": "Enter your PIN",
+  "ml": "നിങ്ങളുടെ പിൻ നൽകുക"
+ },
+ {
+  "screen": "D1_driver_login",
+  "en": "Register as Driver",
+  "ml": "ഡ്രൈവറായി രജിസ്റ്റർ ചെയ്യുക"
+ },
+ {
+  "screen": "D2_register_mobile_pin",
+  "en": "Register as Driver",
+  "ml": "ഡ്രൈവറായി രജിസ്റ്റർ ചെയ്യുക"
+ },
+ {
+  "screen": "D2_register_mobile_pin",
+  "en": "1 / 3 · Mobile & PIN",
+  "ml": "1 / 3 · മൊബൈലും പിന്നും"
+ },
+ {
+  "screen": "D2_register_mobile_pin",
+  "en": "Mobile number",
+  "ml": "മൊബൈൽ നമ്പർ"
+ },
+ {
+  "screen": "D2_register_mobile_pin",
+  "en": "Set a 4-digit PIN",
+  "ml": "4 അക്ക പിൻ സജ്ജമാക്കുക"
+ },
+ {
+  "screen": "D2_register_mobile_pin",
+  "en": "Next",
+  "ml": "അടുത്തത്"
+ },
+ {
+  "screen": "D3_register_identity",
+  "en": "Register as Driver",
+  "ml": "ഡ്രൈവറായി രജിസ്റ്റർ ചെയ്യുക"
+ },
+ {
+  "screen": "D3_register_identity",
+  "en": "2 / 3 · Identity & emergency contact",
+  "ml": "2 / 3 · തിരിച്ചറിയലും അടിയന്തര കോണ്ടാക്ടും"
+ },
+ {
+  "screen": "D3_register_identity",
+  "en": "Full name",
+  "ml": "പൂർണ്ണ നാമം"
+ },
+ {
+  "screen": "D3_register_identity",
+  "en": "Next",
+  "ml": "അടുത്തത്"
+ },
+ {
+  "screen": "D4_register_licence",
+  "en": "Register as Driver",
+  "ml": "ഡ്രൈവറായി രജിസ്റ്റർ ചെയ്യുക"
+ },
+ {
+  "screen": "D4_register_licence",
+  "en": "3 / 3 · Driving licence",
+  "ml": "3 / 3 · ലൈസൻസ് വിവരങ്ങൾ"
+ },
+ {
+  "screen": "D5_pending_approval",
+  "en": "Waiting for approval",
+  "ml": "അംഗീകാരത്തിനായി കാത്തിരിക്കുന്നു"
+ },
+ {
+  "screen": "D5_pending_approval",
+  "en": "The office is verifying your details. You will get an alert once approved.",
+  "ml": "നിങ്ങളുടെ വിവരങ്ങൾ ഓഫീസ് പരിശോധിക്കുന്നു. അംഗീകരിച്ചാൽ അറിയിക്കും."
+ },
+ {
+  "screen": "D5_pending_approval",
+  "en": "Call office",
+  "ml": "ഓഫീസിനെ വിളിക്കുക"
+ },
+ {
+  "screen": "D6_permissions",
+  "en": "Permissions",
+  "ml": "അനുമതികൾ"
+ },
+ {
+  "screen": "D6_permissions",
+  "en": "Allow these so jobs and tracking work reliably",
+  "ml": "ജോലികൾ ശരിയായി ലഭിക്കാൻ ഇവ അനുവദിക്കുക"
+ },
+ {
+  "screen": "D6_permissions",
+  "en": "Allow",
+  "ml": "അനുവദിക്കുക"
+ },
+ {
+  "screen": "D6_permissions",
+  "en": "Next",
+  "ml": "അടുത്തത്"
+ },
+ {
+  "screen": "S2_settings_driver",
+  "en": "Settings",
+  "ml": "ക്രമീകരണങ്ങൾ"
+ },
+ {
+  "screen": "S2_settings_driver",
+  "en": "Language",
+  "ml": "ഭാഷ"
+ },
+ {
+  "screen": "S2_settings_driver",
+  "en": "English",
+  "ml": "മലയാളം"
+ },
+ {
+  "screen": "S2_settings_driver",
+  "en": "Help",
+  "ml": "സഹായം"
+ },
+ {
+  "screen": "S4_language",
+  "en": "Language",
+  "ml": "ഭാഷ"
+ },
+ {
+  "screen": "S7_help",
+  "en": "Help",
+  "ml": "സഹായം"
+ },
+ {
+  "screen": "S7_help",
+  "en": "In Malayalam",
+  "ml": "മലയാളത്തിൽ"
+ },
+ {
+  "screen": "S7_help",
+  "en": "Call office",
+  "ml": "ഓഫീസിനെ വിളിക്കുക"
+ },
+ {
+  "screen": "U1_update_available",
+  "en": "Home",
+  "ml": "ഹോം"
+ },
+ {
+  "screen": "U1_update_available",
+  "en": "New version available",
+  "ml": "പുതിയ പതിപ്പ് ലഭ്യമാണ്"
+ },
+ {
+  "screen": "U1_update_available",
+  "en": "• Faster job alerts • Small fixes",
+  "ml": "• വേഗത്തിലുള്ള ജോലി അറിയിപ്പ് • ചെറിയ തകരാറുകൾ പരിഹരിച്ചു"
+ },
+ {
+  "screen": "U1_update_available",
+  "en": "Later",
+  "ml": "പിന്നീട്"
+ },
+ {
+  "screen": "U1_update_available",
+  "en": "Update",
+  "ml": "അപ്ഡേറ്റ്"
+ },
+ {
+  "screen": "U3_forced_update",
+  "en": "Update required",
+  "ml": "അപ്ഡേറ്റ് ആവശ്യമാണ്"
+ },
+ {
+  "screen": "U3_forced_update",
+  "en": "This version is no longer supported. Install the latest to continue.",
+  "ml": "തുടരാൻ ഏറ്റവും പുതിയ പതിപ്പ് ഇൻസ്റ്റാൾ ചെയ്യുക"
+ },
+ {
+  "screen": "U3_forced_update",
+  "en": "Update",
+  "ml": "അപ്ഡേറ്റ്"
+ },
+ {
+  "screen": "V10_sos",
+  "en": "Send SOS?",
+  "ml": "അടിയന്തര സഹായം അയയ്ക്കുക?"
+ },
+ {
+  "screen": "V10_sos",
+  "en": "Your live location will be sent to the office",
+  "ml": "നിങ്ങളുടെ സ്ഥലം ഓഫീസിലേക്ക് അയയ്ക്കും"
+ },
+ {
+  "screen": "V10_sos",
+  "en": "Hold to send",
+  "ml": "അയയ്ക്കാൻ അമർത്തിപ്പിടിക്കുക"
+ },
+ {
+  "screen": "V10_sos",
+  "en": "Cancel",
+  "ml": "വേണ്ട"
+ },
+ {
+  "screen": "V11_alerts",
+  "en": "Alerts",
+  "ml": "അറിയിപ്പുകൾ"
+ },
+ {
+  "screen": "V11_alerts",
+  "en": "Home",
+  "ml": "ഹോം"
+ },
+ {
+  "screen": "V11_alerts",
+  "en": "History",
+  "ml": "ചരിത്രം"
+ },
+ {
+  "screen": "V11_alerts",
+  "en": "Profile",
+  "ml": "പ്രൊഫൈൽ"
+ },
+ {
+  "screen": "V12_profile",
+  "en": "Profile",
+  "ml": "പ്രൊഫൈൽ"
+ },
+ {
+  "screen": "V12_profile",
+  "en": "Language",
+  "ml": "ഭാഷ"
+ },
+ {
+  "screen": "V12_profile",
+  "en": "Log out",
+  "ml": "ലോഗ് ഔട്ട്"
+ },
+ {
+  "screen": "V12_profile",
+  "en": "Home",
+  "ml": "ഹോം"
+ },
+ {
+  "screen": "V12_profile",
+  "en": "History",
+  "ml": "ചരിത്രം"
+ },
+ {
+  "screen": "V12_profile",
+  "en": "Alerts",
+  "ml": "അറിയിപ്പുകൾ"
+ },
+ {
+  "screen": "V1_home_no_job",
+  "en": "Good morning, Suresh",
+  "ml": "സുപ്രഭാതം, Suresh"
+ },
+ {
+  "screen": "V1_home_no_job",
+  "en": "No job right now",
+  "ml": "ഇപ്പോൾ ജോലി ഇല്ല"
+ },
+ {
+  "screen": "V1_home_no_job",
+  "en": "You will hear a loud alert when a new job arrives",
+  "ml": "പുതിയ ജോലി വന്നാൽ ശബ്ദത്തോടെ അറിയിക്കും"
+ },
+ {
+  "screen": "V1_home_no_job",
+  "en": "Online · Available",
+  "ml": "ഓൺലൈൻ · ലഭ്യം"
+ },
+ {
+  "screen": "V1_home_no_job",
+  "en": "Home",
+  "ml": "ഹോം"
+ },
+ {
+  "screen": "V1_home_no_job",
+  "en": "History",
+  "ml": "ചരിത്രം"
+ },
+ {
+  "screen": "V1_home_no_job",
+  "en": "Alerts",
+  "ml": "അറിയിപ്പുകൾ"
+ },
+ {
+  "screen": "V1_home_no_job",
+  "en": "Profile",
+  "ml": "പ്രൊഫൈൽ"
+ },
+ {
+  "screen": "V2_job_alert",
+  "en": "NEW JOB",
+  "ml": "പുതിയ ജോലി"
+ },
+ {
+  "screen": "V2_job_alert",
+  "en": "Goods",
+  "ml": "സാധനങ്ങൾ"
+ },
+ {
+  "screen": "V2_job_alert",
+  "en": "Weight",
+  "ml": "ഭാരം"
+ },
+ {
+  "screen": "V2_job_alert",
+  "en": "Today",
+  "ml": "ഇന്ന്"
+ },
+ {
+  "screen": "V2_job_alert",
+  "en": "Speak job",
+  "ml": "ജോലി കേൾക്കുക"
+ },
+ {
+  "screen": "V2_job_alert",
+  "en": "Reject",
+  "ml": "നിരസിക്കുക"
+ },
+ {
+  "screen": "V2_job_alert",
+  "en": "Accept",
+  "ml": "സ്വീകരിക്കുക"
+ },
+ {
+  "screen": "V3_reject_reason",
+  "en": "New job",
+  "ml": "പുതിയ ജോലി"
+ },
+ {
+  "screen": "V3_reject_reason",
+  "en": "Reason",
+  "ml": "കാരണം"
+ },
+ {
+  "screen": "V3_reject_reason",
+  "en": "Vehicle problem",
+  "ml": "വാഹനത്തിന് പ്രശ്നം"
+ },
+ {
+  "screen": "V3_reject_reason",
+  "en": "On leave",
+  "ml": "ഞാൻ അവധിയിലാണ്"
+ },
+ {
+  "screen": "V3_reject_reason",
+  "en": "Too far",
+  "ml": "ദൂരം കൂടുതലാണ്"
+ },
+ {
+  "screen": "V3_reject_reason",
+  "en": "Reject",
+  "ml": "നിരസിക്കുക"
+ },
+ {
+  "screen": "V3_reject_reason",
+  "en": "Later",
+  "ml": "പിന്നീട്"
+ },
+ {
+  "screen": "V4_job_details",
+  "en": "Pickup",
+  "ml": "കയറ്റുന്ന സ്ഥലം"
+ },
+ {
+  "screen": "V4_job_details",
+  "en": "Drop",
+  "ml": "ഇറക്കുന്ന സ്ഥലം"
+ },
+ {
+  "screen": "V4_job_details",
+  "en": "Goods",
+  "ml": "സാധനങ്ങൾ"
+ },
+ {
+  "screen": "V4_job_details",
+  "en": "Weight",
+  "ml": "ഭാരം"
+ },
+ {
+  "screen": "V4_job_details",
+  "en": "Navigate",
+  "ml": "വഴി കാണിക്കുക"
+ },
+ {
+  "screen": "V4_job_details",
+  "en": "Call office",
+  "ml": "ഓഫീസിനെ വിളിക്കുക"
+ },
+ {
+  "screen": "V4_job_details",
+  "en": "Start trip",
+  "ml": "യാത്ര തുടങ്ങുക"
+ },
+ {
+  "screen": "V5_active_trip",
+  "en": "Reached pickup",
+  "ml": "കയറ്റുന്ന സ്ഥലത്ത് എത്തി"
+ },
+ {
+  "screen": "V5_active_trip",
+  "en": "Loaded",
+  "ml": "ലോഡ് കയറ്റി"
+ },
+ {
+  "screen": "V5_active_trip",
+  "en": "In transit",
+  "ml": "യാത്രയിൽ"
+ },
+ {
+  "screen": "V5_active_trip",
+  "en": "Now",
+  "ml": "ഇപ്പോൾ"
+ },
+ {
+  "screen": "V5_active_trip",
+  "en": "Reached drop",
+  "ml": "ഇറക്കുന്ന സ്ഥലത്ത് എത്തി"
+ },
+ {
+  "screen": "V5_active_trip",
+  "en": "Delivered",
+  "ml": "എത്തിച്ചു"
+ },
+ {
+  "screen": "V5_active_trip",
+  "en": "Navigate",
+  "ml": "വഴി കാണിക്കുക"
+ },
+ {
+  "screen": "V6_choose_navigation_app",
+  "en": "Navigate",
+  "ml": "വഴി കാണിക്കുക"
+ },
+ {
+  "screen": "V7_proof_of_delivery",
+  "en": "Complete delivery",
+  "ml": "ഡെലിവറി പൂർത്തിയാക്കുക"
+ },
+ {
+  "screen": "V7_proof_of_delivery",
+  "en": "Photo of goods",
+  "ml": "സാധനങ്ങളുടെ ഫോട്ടോ"
+ },
+ {
+  "screen": "V7_proof_of_delivery",
+  "en": "Receiver name",
+  "ml": "സ്വീകരിച്ചയാളുടെ പേര്"
+ },
+ {
+  "screen": "V8_delivered",
+  "en": "Delivered",
+  "ml": "എത്തിച്ചു"
+ },
+ {
+  "screen": "V8_delivered",
+  "en": "Receiver name",
+  "ml": "സ്വീകരിച്ചയാളുടെ പേര്"
+ },
+ {
+  "screen": "V8_delivered",
+  "en": "Back to home",
+  "ml": "ഹോമിലേക്ക് മടങ്ങുക"
+ },
+ {
+  "screen": "V9_history",
+  "en": "History",
+  "ml": "ചരിത്രം"
+ },
+ {
+  "screen": "V9_history",
+  "en": "Trips",
+  "ml": "യാത്രകൾ"
+ },
+ {
+  "screen": "V9_history",
+  "en": "On time",
+  "ml": "കൃത്യസമയം"
+ },
+ {
+  "screen": "V9_history",
+  "en": "Home",
+  "ml": "ഹോം"
+ },
+ {
+  "screen": "V9_history",
+  "en": "Alerts",
+  "ml": "അറിയിപ്പുകൾ"
+ },
+ {
+  "screen": "V9_history",
+  "en": "Profile",
+  "ml": "പ്രൊഫൈൽ"
+ }
+]
