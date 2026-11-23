@@ -47,14 +47,6 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 
-data class TcMapPinData(
-    val lng: Double,
-    val lat: Double,
-    val kind: TcChipKind,
-    val id: String,
-    val isSelected: Boolean = false
-)
-
 /**
  * Enterprise OpenStreetMap Surface for TruckConnect (60fps Optimized).
  *

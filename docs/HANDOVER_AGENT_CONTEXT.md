@@ -87,7 +87,37 @@ npm run dev
 - `mockup/index.html`: The interactive HTML mockup that serves as the visual reference.
 - `reference/spec/`: Element-by-element JSON layout specifications.
 - `reference/png/`: Reference PNG screenshots for all themes and modes.
+- `Mobile/`: Physical phone screenshot captures from client testing identifying edge cases (E01-E13).
 - `docs/handover/transcripts/transcript.jsonl`: Full trace of every decision and action taken.
 - `docs/handover/user_uploads/`: Original user images and screenshots from real phone testing.
 - `docs/handover/artifacts/`: Generated verification captures and UI hierarchy dumps.
+- `docs/handover/artifacts/v3_release/`: Final verified device captures after v3 release pass.
 - `evidence/`: Bug verification logs and comparison reports.
+
+---
+
+## 6. V3 Master Release Pass — Complete Changelog & Fixes
+
+1. **Top Cutout / Punch-Hole & 3-Button Navigation Inset Elimination (`TcScreen`)**:
+   - Every single screen now uses `TcScreen`, combining `WindowInsets.statusBars.union(WindowInsets.displayCutout)` at top and `navigationBarsPadding()` at bottom.
+   - Screen headers, back buttons, and top actions no longer clip into the device's dynamic island / camera cutout.
+   - Bottom primary action buttons, FABs, and bottom bars no longer overlap with 3-button navigation bars.
+
+2. **Complete AI-Slop Purge (`TcChip`)**:
+   - Replaced all circular colored dots (green/orange/red dots) in `TcStatusChip` with 16dp line vector icons (`ic_truck`, `ic_check`, `ic_clock`, `ic_warn`, `ic_x`, `ic_user`).
+   - Chip backgrounds standardized to 12% tint of status color with 10dp corner radius and 28dp height per Antigravity v3 spec OD-1.
+
+3. **60 FPS Hardware-Accelerated Navigation & Rendering**:
+   - Removed per-frame bitmap allocations in OpenStreetMap (`TcOsmMap`), pre-caching 12 vector marker drawables (`pinCache`).
+   - Bottom tab transitions maintain view hierarchies with `saveState = true` and `restoreState = true`.
+   - Rapid double-tap debounce (`safeNavigate`) added to `MainActivity.kt`.
+   - Hardware-accelerated enter/exit slide + fade animations.
+
+4. **Driver Authentication & Active Trip (V5)**:
+   - Driver Login updated to **Mobile Phone Number (+91 94470 12891) and Password** with visibility toggle (PIN code authentication removed).
+   - Floating round red SOS button completely removed across driver and admin screens per user directive.
+   - Active Trip screen features full milestone timeline, route summary cards, pickup & drop locations, and solid "Start trip" action.
+
+5. **OpenStreetMap Integration**:
+   - Zero-API-key OpenStreetMap standard tile surface (`osmdroid` MAPNIK) with Kerala highway corridor route polyline and live vehicle markers.
+   - Interactive zoom buttons (+ / -) and recenter location control.

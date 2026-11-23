@@ -37,7 +37,7 @@ import com.truckconnect.core.design.theme.TcThemeState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TcConfirmDialog(
-    isOpen: Boolean,
+    isOpen: Boolean = true,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
     title: String,

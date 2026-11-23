@@ -150,7 +150,7 @@ fun DriverProfileScreen(
                     .padding(top = 8.dp)
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_door),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_logout),
                     contentDescription = null,
                     modifier = Modifier.size(18.dp),
                     tint = colors.crit

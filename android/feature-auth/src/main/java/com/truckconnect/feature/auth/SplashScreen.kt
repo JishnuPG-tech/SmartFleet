@@ -61,7 +61,6 @@ fun SplashScreen(
             )
         ) {
             TcLogoTile(
-                isLarge = true,
                 modifier = Modifier.clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,

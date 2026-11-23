@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import com.truckconnect.core.design.R
 import com.truckconnect.core.design.component.TcCard
 import com.truckconnect.core.design.component.TcScreen
@@ -94,14 +95,14 @@ fun ThemeScreen(
                             Column(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .clip(RoundedCornerShape(dimens.Radius12))
+                                    .clip(RoundedCornerShape(12.dp))
                                     .background(if (isSelected) colors.accentSoft else colors.surface)
                                     .border(
                                         BorderStroke(
                                             width = if (isSelected) dimens.CardBorder * 2 else dimens.CardBorder,
                                             color = if (isSelected) colors.accent else colors.border
                                         ),
-                                        RoundedCornerShape(dimens.Radius12)
+                                        RoundedCornerShape(12.dp)
                                     )
                                     .clickable(
                                         interactionSource = remember { MutableInteractionSource() },
@@ -118,7 +119,7 @@ fun ThemeScreen(
                                 Box(
                                     modifier = Modifier
                                         .size(dimens.Size28)
-                                        .clip(RoundedCornerShape(dimens.Radius8))
+                                        .clip(RoundedCornerShape(8.dp))
                                         .background(swatchColor),
                                     contentAlignment = Alignment.Center
                                 ) {
