@@ -38,6 +38,7 @@ Thumbs.db
 
 # Testing & Evidence
 # evidence/ (unignored per user directive to preserve verification history)
-reports/
+/reports/
 coverage/
 .nyc_output/
+!apps/console/src/features/reports/
