@@ -1,9 +1,15 @@
 @import './tokens.css';
 
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  touch-action: manipulation;
 }
 
 body {
@@ -12,8 +18,10 @@ body {
   color: var(--text);
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
   display: flex;
+  overflow-x: clip;
 }
 
 button {
@@ -46,6 +54,18 @@ aside.sidebar {
   height: 100vh;
   overflow-y: auto;
   z-index: 30;
+  transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1), padding 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.18s ease;
+  will-change: width, transform;
+}
+
+aside.sidebar.collapsed {
+  width: 0 !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  border-right-width: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .brand {
@@ -171,34 +191,28 @@ nav.nav-group {
   font-size: 11.5px;
 }
 
-.sync {
-  display: flex;
+.sync-badge {
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 11.5px;
-  color: var(--muted);
-  padding: 12px 12px 0;
+  gap: 8px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-2);
+  margin: 14px 6px 0;
 }
 
-.dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--ok);
-  display: inline-block;
-}
-
-.dot.pulse {
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 50%, transparent);
-  }
-  100% {
-    box-shadow: 0 0 0 8px transparent;
-  }
+.sync-live-label {
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 12%, transparent);
+  padding: 1.5px 5.5px;
+  border-radius: 4px;
 }
 
 /* Layout Wrap */
@@ -348,17 +362,18 @@ main.main-content {
 }
 
 .view-anim {
-  animation: in 0.25s ease;
+  animation: tc-fade-in 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
-@keyframes in {
+@keyframes tc-fade-in {
   from {
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(2px) translateZ(0);
   }
   to {
     opacity: 1;
-    transform: none;
+    transform: translateZ(0);
   }
 }
 
@@ -483,9 +498,9 @@ main.main-content {
 }
 
 .legend i {
-  width: 10px;
-  height: 10px;
-  border-radius: 3px;
+  width: 12px;
+  height: 4px;
+  border-radius: 2px;
 }
 
 .legend b {
@@ -517,26 +532,21 @@ main.main-content {
   font-size: 12px;
 }
 
-/* Chips */
+/* Enterprise Status Badges (No AI Slop Dots) */
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 10px 3px 8px;
-  border-radius: 99px;
-  font-size: 12px;
-  font-weight: 600;
+  padding: 2.5px 7.5px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--c);
-  background: color-mix(in srgb, var(--c) 11%, transparent);
+  background: color-mix(in srgb, var(--c) 9%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--c) 22%, transparent);
   white-space: nowrap;
-}
-
-.chip::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--c);
+  line-height: 1.25;
 }
 
 .s-Created, .s-Cancelled, .s-Offline, .s-Inactive { --c: var(--neutral); }
@@ -787,18 +797,12 @@ main.main-content {
 
 /* Origin and Destination Pin Markers */
 .tc-endpoint-marker {
-  position: absolute !important;
-  top: 0;
-  left: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   user-select: none;
   z-index: 8;
   pointer-events: none;
-  width: 90px;
-  margin-left: -45px;
-  margin-top: -30px;
 }
 
 .tc-endpoint-pin {
@@ -964,79 +968,58 @@ main.main-content {
 /* Custom MapLibre Vehicle Markers */
 .tc-vehicle-marker {
   cursor: pointer;
-  position: absolute !important;
-  top: 0;
-  left: 0;
-  width: 48px;
-  height: 48px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   user-select: none;
-  z-index: 10;
+  z-index: 15;
   pointer-events: auto;
-  margin-left: -24px;
-  margin-top: -24px;
 }
 
-.tc-marker-halo {
-  position: absolute;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 2.5px solid var(--accent);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.tc-vehicle-marker.active .tc-marker-halo {
-  animation: tc-pulse 2s infinite ease-out;
-}
-
-@keyframes tc-pulse {
-  0% { transform: scale(0.6); opacity: 0.9; }
-  100% { transform: scale(1.6); opacity: 0; }
+.tc-vehicle-marker.active {
+  z-index: 60;
 }
 
 .tc-marker-pin {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface);
+  background: #ffffff;
   border: 2.5px solid var(--accent);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s, border-color 0.2s;
   z-index: 2;
 }
 
 .tc-vehicle-marker:hover .tc-marker-pin {
-  transform: scale(1.22);
+  transform: scale(1.18);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.42);
 }
 
 .tc-vehicle-marker.active .tc-marker-pin {
-  transform: scale(1.25);
+  transform: scale(1.24);
   border-width: 3px;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 35%, transparent), 0 5px 16px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 35%, transparent), 0 6px 20px rgba(0, 0, 0, 0.45);
 }
 
 .tc-marker-tag {
-  position: absolute;
-  top: 38px;
-  background: var(--surface);
-  color: var(--text);
+  margin-top: 3px;
+  background: #111318;
+  color: #ffffff;
   font-size: 10px;
   font-weight: 800;
   padding: 1.5px 6px;
-  border-radius: 5px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
   pointer-events: none;
   font-family: inherit;
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
   z-index: 3;
 }
 

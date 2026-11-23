@@ -1,26 +1,28 @@
 package com.truckconnect.feature.admin
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.truckconnect.core.design.component.TcAppBar
+import androidx.compose.ui.unit.dp
 import com.truckconnect.core.design.component.TcAvatar
 import com.truckconnect.core.design.component.TcButton
 import com.truckconnect.core.design.component.TcButtonVariant
 import com.truckconnect.core.design.component.TcCard
 import com.truckconnect.core.design.component.TcChip
 import com.truckconnect.core.design.component.TcChipKind
+import com.truckconnect.core.design.component.TcConfirmDialog
 import com.truckconnect.core.design.component.TcProgressBar
-import com.truckconnect.core.design.theme.TcDimens
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.theme.TcThemeState
 
 @Composable
@@ -33,6 +35,9 @@ fun AppVersionsScreen(
     val typography = TcThemeState.typography
     val dimens = TcThemeState.dimens
 
+    var showForceDialog by remember { mutableStateOf(false) }
+    var showHaltDialog by remember { mutableStateOf(false) }
+
     val driversVersions = listOf(
         listOf("Suresh Kumar", "v2.1.0", "Latest", TcChipKind.Ok),
         listOf("Mohanan P", "v2.0.3", "Outdated", TcChipKind.Warn),
@@ -40,22 +45,38 @@ fun AppVersionsScreen(
         listOf("Gopalakrishnan", "v2.0.1", "Below minimum", TcChipKind.Crit)
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colors.bg)
-            .padding(bottom = dimens.ScreenPaddingBottom),
-        verticalArrangement = Arrangement.spacedBy(dimens.Gap10)
-    ) {
-        TcAppBar(title = "App versions", onBackClick = onBackClick)
+    TcScreen(
+        title = "App versions",
+        onBackClick = onBackClick,
+        isScrollable = true,
+        pinnedBottomActions = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(dimens.Gap10)
+            ) {
+                TcButton(
+                    onClick = { showHaltDialog = true },
+                    variant = TcButtonVariant.Outline,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(text = "Halt rollout")
+                }
 
+                TcButton(
+                    onClick = { showForceDialog = true },
+                    variant = TcButtonVariant.Crit,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(text = "Force update")
+                }
+            }
+        }
+    ) {
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = dimens.ScreenPaddingHorizontal),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap10)
         ) {
-            // Rollout Header Card
+            // Rollout Header Card with clear labels
             TcCard {
                 Column(verticalArrangement = Arrangement.spacedBy(dimens.Gap8)) {
                     Row(
@@ -63,23 +84,54 @@ fun AppVersionsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Column {
+                            Text(
+                                text = "v2.1.0 · Current release",
+                                style = typography.btnSm,
+                                color = colors.text
+                            )
+                            Text(
+                                text = "Target: All active drivers",
+                                style = typography.xsmall,
+                                color = colors.muted
+                            )
+                        }
+                        TcChip(text = "Active rollout", kind = TcChipKind.Ok)
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
-                            text = "v2.1.0 · latest",
-                            style = typography.btnSm,
+                            text = "Fleet adoption",
+                            style = typography.caption,
+                            color = colors.text2
+                        )
+                        Text(
+                            text = "75% (9 of 12 drivers)",
+                            style = typography.caption,
                             color = colors.text
                         )
-                        TcChip(text = "Rollout 100%", kind = TcChipKind.Ok)
                     }
 
                     TcProgressBar(progress = 0.75f)
 
                     Text(
-                        text = "9 of 12 drivers updated · minimum supported v2.0.3",
+                        text = "Minimum supported version: v2.0.3 · 1 driver below minimum",
                         style = typography.xsmall,
                         color = colors.muted
                     )
                 }
             }
+
+            Text(
+                text = "Driver breakdown",
+                style = typography.h2,
+                color = colors.text,
+                modifier = Modifier.padding(top = 6.dp)
+            )
 
             // Driver versions list
             driversVersions.forEach { item ->
@@ -111,30 +163,34 @@ fun AppVersionsScreen(
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Action Row (Defect F1 fixed: weight(1f), spacedBy(dimens.Gap10))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(dimens.Gap10)
-            ) {
-                TcButton(
-                    onClick = onHaltRolloutClick,
-                    variant = TcButtonVariant.Outline,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(text = "Halt rollout")
-                }
-
-                TcButton(
-                    onClick = onForceUpdateClick,
-                    variant = TcButtonVariant.Primary,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(text = "Force update")
-                }
-            }
         }
+    }
+
+    if (showForceDialog) {
+        TcConfirmDialog(
+            title = "Force update to v2.1.0?",
+            message = "This will require all 12 drivers to update before they can start their next trip. Drivers currently on an active trip can complete delivery first.",
+            confirmLabel = "Force update",
+            isDestructive = true,
+            onConfirm = {
+                showForceDialog = false
+                onForceUpdateClick()
+            },
+            onDismiss = { showForceDialog = false }
+        )
+    }
+
+    if (showHaltDialog) {
+        TcConfirmDialog(
+            title = "Halt v2.1.0 rollout?",
+            message = "New drivers will stop receiving prompts to update. Drivers already on v2.1.0 will continue using it.",
+            confirmLabel = "Halt rollout",
+            isDestructive = true,
+            onConfirm = {
+                showHaltDialog = false
+                onHaltRolloutClick()
+            },
+            onDismiss = { showHaltDialog = false }
+        )
     }
 }

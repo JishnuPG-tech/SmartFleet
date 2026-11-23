@@ -19,13 +19,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
-
+import androidx.compose.ui.unit.dp
 import com.truckconnect.core.design.R
 import com.truckconnect.core.design.component.TcButton
 import com.truckconnect.core.design.component.TcButtonSize
 import com.truckconnect.core.design.component.TcButtonVariant
 import com.truckconnect.core.design.component.TcCard
-import com.truckconnect.core.design.theme.TcDimens
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.theme.TcThemeState
 
 @Composable
@@ -37,92 +37,97 @@ fun DeliveredSuccessScreen(
     val dimens = TcThemeState.dimens
     val isMalayalam = TcThemeState.isMalayalam
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colors.bg)
-            .padding(
-                top = dimens.ScreenPaddingTop,
-                start = dimens.Padding24,
-                end = dimens.Padding24,
-                bottom = dimens.ScreenPaddingBottom
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(
-            dimens.Gap18,
-            alignment = Alignment.CenterVertically
-        )
-    ) {
-        // Ok Check Icon Box (110x110, radius 36)
-        Box(
-            modifier = Modifier
-                .size(dimens.Size110)
-                .clip(RoundedCornerShape(dimens.Size36))
-                .background(colors.okIconBg),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_check),
-                contentDescription = null,
-                modifier = Modifier.size(dimens.Size58),
-                tint = colors.ok
-            )
-        }
-
-        Text(
-            text = if (isMalayalam) "എത്തിച്ചു" else "Delivered",
-            style = typography.h1,
-            color = colors.text,
-            textAlign = TextAlign.Center
-        )
-
-        TcCard {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(dimens.Gap8)
+    TcScreen(
+        pinnedBottomActions = {
+            TcButton(
+                onClick = onBackToHomeClick,
+                variant = TcButtonVariant.Primary,
+                size = TcButtonSize.Lg,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "TC-2026-000131",
-                        style = typography.small,
-                        color = colors.muted
-                    )
-                    Text(
-                        text = "2:36 pm",
-                        style = typography.btnSm,
-                        color = colors.text
-                    )
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = if (isMalayalam) "സ്വീകരിച്ചയാളുടെ പേര്" else "Receiver name",
-                        style = typography.small,
-                        color = colors.muted
-                    )
-                    Text(
-                        text = "Mathew Traders",
-                        style = typography.btnSm,
-                        color = colors.text
-                    )
-                }
+                Text(text = if (isMalayalam) "ഹോമിലേക്ക് മടങ്ങുക" else "Back to home")
             }
         }
-
-        TcButton(
-            onClick = onBackToHomeClick,
-            variant = TcButtonVariant.Primary,
-            size = TcButtonSize.Xl
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = dimens.Padding24),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(
+                dimens.Gap18,
+                alignment = Alignment.CenterVertically
+            )
         ) {
-            Text(text = if (isMalayalam) "ഹോമിലേക്ക് മടങ്ങുക" else "Back to home")
+            Box(
+                modifier = Modifier
+                    .size(96.dp)
+                    .clip(RoundedCornerShape(28.dp))
+                    .background(colors.okIconBg),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_check),
+                    contentDescription = null,
+                    modifier = Modifier.size(48.dp),
+                    tint = colors.ok
+                )
+            }
+
+            Text(
+                text = if (isMalayalam) "ഡെലിവറി പൂർത്തിയായി!" else "Delivery completed!",
+                style = typography.h1,
+                color = colors.text,
+                textAlign = TextAlign.Center
+            )
+
+            Text(
+                text = if (isMalayalam)
+                    "TC-2026-000131 സുരക്ഷിതമായി എത്തിച്ചു. PoD രേഖകൾ ഫ്ലീറ്റ് സിസ്റ്റത്തിലേക്ക് അപ്‌ലോഡ് ചെയ്തു."
+                else
+                    "Shipment TC-2026-000131 delivered safely. Proof of delivery uploaded to fleet console.",
+                style = typography.body,
+                color = colors.muted,
+                textAlign = TextAlign.Center
+            )
+
+            TcCard {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = if (isMalayalam) "റൂട്ട്" else "Route",
+                            style = typography.xsmall,
+                            color = colors.muted
+                        )
+                        Text(
+                            text = "Kasaragod → Malappuram",
+                            style = typography.btnSm,
+                            color = colors.text
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = if (isMalayalam) "സമയം" else "Completion time",
+                            style = typography.xsmall,
+                            color = colors.muted
+                        )
+                        Text(
+                            text = "Today, 2:36 pm",
+                            style = typography.xsmall,
+                            color = colors.text
+                        )
+                    }
+                }
+            }
         }
     }
 }

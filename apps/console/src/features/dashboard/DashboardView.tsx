@@ -38,12 +38,9 @@ export const DashboardView: React.FC = () => {
 
   const getCss = (v: string) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 
-  // Initialize and redraw Chart.js charts
+  // Initialize and update Chart.js charts efficiently without destroying canvas on every render
   useEffect(() => {
     if (!dayChartRef.current || !mixChartRef.current) return;
-
-    if (dayChartInstance.current) dayChartInstance.current.destroy();
-    if (mixChartInstance.current) mixChartInstance.current.destroy();
 
     const c1 = getCss('--c1') || '#2a78d6';
     const c3 = getCss('--c3') || '#1baf7a';
@@ -56,115 +53,119 @@ export const DashboardView: React.FC = () => {
     const grid = getCss('--grid') || '#eef0f3';
     const muted = getCss('--muted') || '#8a90a0';
 
-    // 14-day Created vs Delivered
-    const days = Array.from({ length: 14 }, (_, i) => {
-      const d = new Date('2026-11-22T00:00:00');
-      d.setDate(d.getDate() + (i - 13));
-      return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
-    });
-    const cr = [9, 11, 8, 12, 14, 7, 5, 10, 13, 12, 9, 11, 14, 10];
-    const dl = [8, 10, 9, 10, 12, 8, 4, 9, 11, 12, 8, 10, 12, 6];
+    // 14-day Created vs Delivered (initialized once)
+    if (!dayChartInstance.current) {
+      const days = Array.from({ length: 14 }, (_, i) => {
+        const d = new Date('2026-11-22T00:00:00');
+        d.setDate(d.getDate() + (i - 13));
+        return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+      });
+      const cr = [9, 11, 8, 12, 14, 7, 5, 10, 13, 12, 9, 11, 14, 10];
+      const dl = [8, 10, 9, 10, 12, 8, 4, 9, 11, 12, 8, 10, 12, 6];
 
-    dayChartInstance.current = new Chart(dayChartRef.current, {
-      type: 'bar',
-      data: {
-        labels: days,
-        datasets: [
-          {
-            label: 'Created',
-            data: cr,
-            backgroundColor: c1,
-            borderRadius: { topLeft: 4, topRight: 4 },
-            borderSkipped: false,
-            maxBarThickness: 14,
+      dayChartInstance.current = new Chart(dayChartRef.current, {
+        type: 'bar',
+        data: {
+          labels: days,
+          datasets: [
+            {
+              label: 'Created',
+              data: cr,
+              backgroundColor: c1,
+              borderRadius: { topLeft: 4, topRight: 4 },
+              borderSkipped: false,
+              maxBarThickness: 14,
+            },
+            {
+              label: 'Delivered',
+              data: dl,
+              backgroundColor: c3,
+              borderRadius: { topLeft: 4, topRight: 4 },
+              borderSkipped: false,
+              maxBarThickness: 14,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: surface,
+              titleColor: text,
+              bodyColor: text2,
+              borderColor: border2,
+              borderWidth: 1,
+              padding: 10,
+              cornerRadius: 8,
+            },
           },
-          {
-            label: 'Delivered',
-            data: dl,
-            backgroundColor: c3,
-            borderRadius: { topLeft: 4, topRight: 4 },
-            borderSkipped: false,
-            maxBarThickness: 14,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: { duration: 400 },
-        interaction: { mode: 'index', intersect: false },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: surface,
-            titleColor: text,
-            bodyColor: text2,
-            borderColor: border2,
-            borderWidth: 1,
-            padding: 10,
-            cornerRadius: 8,
+          scales: {
+            x: {
+              grid: { display: false },
+              border: { display: false },
+              ticks: { color: muted, font: { size: 11 } },
+            },
+            y: {
+              grid: { color: grid },
+              border: { display: false },
+              ticks: { color: muted, font: { size: 11 }, padding: 6 },
+              beginAtZero: true,
+            },
           },
         },
-        scales: {
-          x: {
-            grid: { display: false },
-            border: { display: false },
-            ticks: { color: muted, font: { size: 11 } },
-          },
-          y: {
-            grid: { color: grid },
-            border: { display: false },
-            ticks: { color: muted, font: { size: 11 }, padding: 6 },
-            beginAtZero: true,
-          },
-        },
-      },
-    });
+      });
+    }
 
-    // Status Mix Donut
+    // Status Mix Donut (updated in-place for 60fps performance)
     const deliveredCount = shipments.filter((s) => s.status === 'Delivered').length;
     const inProgressCount = shipments.filter((s) => ACTIVE_STATUSES.includes(s.status)).length;
     const awaitingCount = shipments.filter((s) => ['Created', 'Assigned', 'Rejected'].includes(s.status)).length;
     const cancelledCount = shipments.filter((s) => ['Cancelled', 'Failed'].includes(s.status)).length;
+    const mixData = [deliveredCount, inProgressCount, awaitingCount, cancelledCount];
 
-    mixChartInstance.current = new Chart(mixChartRef.current, {
-      type: 'doughnut',
-      data: {
-        labels: ['Delivered', 'In progress', 'Awaiting driver', 'Cancelled / failed'],
-        datasets: [
-          {
-            data: [deliveredCount, inProgressCount, awaitingCount, cancelledCount],
-            backgroundColor: [c3, c1, c4, c8],
-            borderColor: surface,
-            borderWidth: 3,
-            borderRadius: 4,
-            hoverOffset: 6,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '72%',
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: surface,
-            titleColor: text,
-            bodyColor: text2,
-            borderColor: border2,
-            borderWidth: 1,
-            padding: 10,
-            cornerRadius: 8,
+    if (!mixChartInstance.current) {
+      mixChartInstance.current = new Chart(mixChartRef.current, {
+        type: 'doughnut',
+        data: {
+          labels: ['Delivered', 'In progress', 'Awaiting driver', 'Cancelled / failed'],
+          datasets: [
+            {
+              data: mixData,
+              backgroundColor: [c3, c1, c4, c8],
+              borderColor: surface,
+              borderWidth: 3,
+              borderRadius: 4,
+              hoverOffset: 6,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '72%',
+          animation: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: surface,
+              titleColor: text,
+              bodyColor: text2,
+              borderColor: border2,
+              borderWidth: 1,
+              padding: 10,
+              cornerRadius: 8,
+            },
           },
         },
-      },
-    });
-
-    return () => {
-      dayChartInstance.current?.destroy();
-      mixChartInstance.current?.destroy();
-    };
+      });
+    } else {
+      mixChartInstance.current.data.datasets[0].data = mixData;
+      mixChartInstance.current.update('none');
+    }
   }, [shipments]);
 
   // Live trips (active shipments)

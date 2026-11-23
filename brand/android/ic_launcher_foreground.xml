@@ -1,0 +1,30 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:translateX="0"
+        android:translateY="0">
+        <!-- Open 'C' Connect Ring (Scaled for Adaptive Icon safe zone 66dp) -->
+        <path
+            android:fillColor="@android:color/transparent"
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="5.5"
+            android:strokeLineCap="round"
+            android:pathData="M73.5,38.5 C68.5,29.5 59.0,24.0 48.0,24.5 C34.5,25.2 24.0,36.5 24.8,50.0 C25.5,63.5 36.8,74.0 50.3,73.5 C60.0,73.0 68.5,67.0 73.5,58.5" />
+        
+        <!-- Bold 'T' Transport Core -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M40.0,36.0 L68.0,36.0 L68.0,42.5 L57.0,42.5 L57.0,66.0 L51.0,66.0 L51.0,42.5 L40.0,42.5 Z" />
+
+        <!-- High-Precision Telematics Node Dots on Ring Terminal -->
+        <path
+            android:fillColor="#34D399"
+            android:pathData="M73.5,38.5 A3.5,3.5 0 1,0 73.5,38.4 Z" />
+        <path
+            android:fillColor="#34D399"
+            android:pathData="M73.5,58.5 A3.5,3.5 0 1,0 73.5,58.4 Z" />
+    </group>
+</vector>

@@ -37,7 +37,7 @@ import com.truckconnect.core.design.component.TcChipKind
 import com.truckconnect.core.design.component.TcField
 import com.truckconnect.core.design.component.TcIconButton
 import com.truckconnect.core.design.component.TcNavItems
-import com.truckconnect.core.design.component.TcScaffold
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.component.TcSegmented
 import com.truckconnect.core.design.theme.TcDimens
 import com.truckconnect.core.design.theme.TcThemeState
@@ -94,37 +94,30 @@ fun DriversScreen(
         matchesSearch && matchesFilter
     }
 
-    TcScaffold(
-        topBar = {
-            TcAppBar(
-                title = "Drivers",
-                actions = {
-                    TcIconButton(onClick = { showAddDriverSheet = true }) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_plus),
-                            contentDescription = "Add",
-                            modifier = Modifier.size(dimens.IconSizeDefault),
-                            tint = colors.text2
-                        )
-                    }
-                }
-            )
+    TcScreen(
+        title = "Drivers",
+        topBarActions = {
+            TcIconButton(onClick = { showAddDriverSheet = true }) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_plus),
+                    contentDescription = "Add",
+                    modifier = Modifier.size(dimens.IconSizeDefault),
+                    tint = colors.text2
+                )
+            }
         },
-        bottomBar = {
+        bottomNav = {
             TcBottomNav(
                 tabs = TcNavItems.AdminTabs,
                 selectedIndex = AdminTab.FLEET.ordinal,
                 onTabSelected = onTabSelected,
                 isDriver = false
             )
-        }
-    ) { paddingValues ->
+        },
+        isScrollable = true
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.ScreenPaddingHorizontal),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap10)
         ) {
             TcField(

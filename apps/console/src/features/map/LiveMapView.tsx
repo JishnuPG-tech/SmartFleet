@@ -374,7 +374,7 @@ export const LiveMapView: React.FC = () => {
     map.addControl(new maplibregl.NavigationControl({ showCompass: true, visualizePitch: true }), 'top-right');
     map.addControl(new maplibregl.FullscreenControl(), 'top-right');
 
-    map.on('load', () => {
+    const onMapLoaded = () => {
       setIsMapReady(true);
 
       // Fit bounds to show all active vehicles immediately
@@ -385,9 +385,15 @@ export const LiveMapView: React.FC = () => {
           const tele = interpolateAlongPolyline(corridor, s.prog);
           bounds.extend(tele.position);
         });
-        map.fitBounds(bounds, { padding: 70, maxZoom: 10 });
+        map.fitBounds(bounds, { padding: 60, maxZoom: 10 });
       }
-    });
+    };
+
+    if (map.loaded()) {
+      onMapLoaded();
+    } else {
+      map.once('load', onMapLoaded);
+    }
 
     mapRef.current = map;
 
@@ -398,6 +404,17 @@ export const LiveMapView: React.FC = () => {
 
     return () => {
       ro.disconnect();
+      // Clean up markers
+      Object.values(markersRef.current).forEach((m) => m.remove());
+      markersRef.current = {};
+      if (endpointsRef.current.origin) {
+        endpointsRef.current.origin.remove();
+        endpointsRef.current.origin = undefined;
+      }
+      if (endpointsRef.current.destination) {
+        endpointsRef.current.destination.remove();
+        endpointsRef.current.destination = undefined;
+      }
       map.remove();
       mapRef.current = null;
     };
@@ -407,7 +424,7 @@ export const LiveMapView: React.FC = () => {
   // Update Vehicle Markers
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !isMapReady) return;
+    if (!map) return;
 
     const currentIds = new Set(activeShipments.map((s) => s.id));
     Object.keys(markersRef.current).forEach((id) => {
@@ -442,13 +459,12 @@ export const LiveMapView: React.FC = () => {
         el.setAttribute('title', `${vehicle?.reg || s.id} (${driver?.name || 'Driver'}) - ${s.from} → ${s.to}`);
 
         el.innerHTML = `
-          <div class="tc-marker-halo" style="border-color: ${markerColor};"></div>
           <div class="tc-marker-pin" style="border-color: ${markerColor};">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: ${markerColor}; transform: rotate(${tele.heading}deg); transition: transform 0.3s ease;">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: ${markerColor}; transform: rotate(${tele.heading}deg); transition: transform 0.25s ease;">
               <polygon points="12 2 19 21 12 17 5 21 12 2" fill="${markerColor}" stroke="none"></polygon>
             </svg>
           </div>
-          <div class="tc-marker-tag">${vehicle?.reg?.slice(0, 8) || s.id}</div>
+          <div class="tc-marker-tag">${vehicle?.reg || s.id}</div>
         `;
 
         el.addEventListener('click', (e) => {
@@ -470,13 +486,11 @@ export const LiveMapView: React.FC = () => {
       } else {
         marker.setLngLat(tele.position);
         const el = marker.getElement();
-        el.className = `tc-vehicle-marker ${isSelected ? 'active' : ''}`;
-        const halo = el.querySelector<HTMLElement>('.tc-marker-halo');
+        el.classList.toggle('active', isSelected);
         const pin = el.querySelector<HTMLElement>('.tc-marker-pin');
         const svg = el.querySelector<SVGElement>('svg');
         const tag = el.querySelector<HTMLElement>('.tc-marker-tag');
 
-        if (halo) halo.style.borderColor = markerColor;
         if (pin) pin.style.borderColor = markerColor;
         if (svg) {
           svg.style.transform = `rotate(${tele.heading}deg)`;
@@ -484,15 +498,15 @@ export const LiveMapView: React.FC = () => {
           const poly = svg.querySelector('polygon');
           if (poly) poly.setAttribute('fill', markerColor);
         }
-        if (tag) tag.textContent = vehicle?.reg?.slice(0, 8) || s.id;
+        if (tag) tag.textContent = vehicle?.reg || s.id;
       }
     });
-  }, [activeShipments, selectedShipmentId, speeds, isMapReady]);
+  }, [activeShipments, selectedShipmentId, speeds]);
 
   // Render Origin and Destination Endpoint Markers on Map
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !isMapReady || !selectedShipment) return;
+    if (!map || !selectedShipment) return;
 
     const fromCoord = KERALA_CITIES[selectedShipment.from] || DETAILED_WAYPOINTS[selectedShipment.from] || [76.2673, 9.9312];
     const toCoord = KERALA_CITIES[selectedShipment.to] || DETAILED_WAYPOINTS[selectedShipment.to] || [75.7804, 11.2588];
@@ -530,7 +544,7 @@ export const LiveMapView: React.FC = () => {
       const tag = endpointsRef.current.destination.getElement().querySelector('.tc-endpoint-tag');
       if (tag) tag.textContent = `TO: ${selectedShipment.to}`;
     }
-  }, [selectedShipment, isMapReady]);
+  }, [selectedShipment]);
 
   // Render GeoJSON Route Path (Traveled + Remaining) on Map
   useEffect(() => {
@@ -718,22 +732,6 @@ export const LiveMapView: React.FC = () => {
                 )}
               </button>
             </div>
-          </div>
-
-          {/* Bottom Left Legend Box */}
-          <div className="legendbox">
-            <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <i style={{ width: 10, height: 10, borderRadius: '50%', background: '#1baf7a' }} />
-              {isMalayalam ? 'ഓട്ടത്തിൽ (സാധാരണ)' : 'On trip (Active GPS)'}
-            </span>
-            <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <i style={{ width: 10, height: 10, borderRadius: '50%', background: '#e34948' }} />
-              {isMalayalam ? 'വൈകിയ ഷിപ്പ്‌മെന്റ്' : 'Delayed milestone'}
-            </span>
-            <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <i style={{ width: 10, height: 10, borderRadius: '50%', background: '#eda100' }} />
-              {isMalayalam ? 'ലൊക്കേഷൻ പിംഗ് ലഭ്യമല്ല' : 'Stale location ping'}
-            </span>
           </div>
 
           <div className="attr">

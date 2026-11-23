@@ -21,7 +21,7 @@ import com.truckconnect.core.design.component.TcAvatar
 import com.truckconnect.core.design.component.TcCard
 import com.truckconnect.core.design.component.TcIconBox
 import com.truckconnect.core.design.component.TcListRow
-import com.truckconnect.core.design.component.TcScaffold
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.theme.TcDimens
 import com.truckconnect.core.design.theme.TcThemeState
 
@@ -47,7 +47,7 @@ fun SettingsAdminScreen(
 
     val settingsItems = listOf(
         Triple(R.drawable.ic_user, "Profile", "Name, phone, email"),
-        Triple(R.drawable.ic_palette, "Theme", "Indigo · Auto"),
+        Triple(R.drawable.ic_palette, "Theme", "Emerald · Auto"),
         Triple(R.drawable.ic_globe, "Language", "English"),
         Triple(R.drawable.ic_bell, "Notifications", "Alerts & sounds"),
         Triple(R.drawable.ic_lock, "Security", "App lock, sessions"),
@@ -55,24 +55,13 @@ fun SettingsAdminScreen(
         Triple(R.drawable.ic_tag, "App version", "v2.1.0")
     )
 
-    TcScaffold(
-        topBar = {
-            TcAppBar(
-                title = "Settings",
-                onBackClick = onBackClick
-            )
-        }
-    ) { paddingValues ->
+    TcScreen(
+        title = "Settings",
+        onBackClick = onBackClick,
+        isScrollable = true
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(paddingValues)
-                .padding(
-                    start = dimens.ScreenPaddingHorizontal,
-                    end = dimens.ScreenPaddingHorizontal,
-                    top = dimens.Gap10,
-                    bottom = dimens.ScreenPaddingBottom
-                ),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap12)
         ) {
             // Profile Card (BUG-07 initials verification)

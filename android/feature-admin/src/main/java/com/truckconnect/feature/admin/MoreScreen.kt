@@ -26,7 +26,7 @@ import com.truckconnect.core.design.component.TcChipKind
 import com.truckconnect.core.design.component.TcIconBox
 import com.truckconnect.core.design.component.TcListRow
 import com.truckconnect.core.design.component.TcNavItems
-import com.truckconnect.core.design.component.TcScaffold
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.theme.TcDimens
 import com.truckconnect.core.design.theme.TcThemeState
 
@@ -57,30 +57,20 @@ fun MoreScreen(
         Triple(R.drawable.ic_cog, "Settings", "")
     )
 
-    TcScaffold(
-        topBar = {
-            TcAppBar(title = "More")
-        },
-        bottomBar = {
+    TcScreen(
+        title = "More",
+        bottomNav = {
             TcBottomNav(
                 tabs = TcNavItems.AdminTabs,
                 selectedIndex = AdminTab.MORE.ordinal,
                 onTabSelected = onTabSelected,
                 isDriver = false
             )
-        }
-    ) { paddingValues ->
+        },
+        isScrollable = true
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .padding(
-                    start = dimens.ScreenPaddingHorizontal,
-                    end = dimens.ScreenPaddingHorizontal,
-                    top = dimens.Gap10,
-                    bottom = dimens.Gap10
-                ),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap12)
         ) {
             // User Profile Row

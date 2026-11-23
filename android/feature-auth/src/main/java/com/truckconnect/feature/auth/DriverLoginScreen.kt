@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import com.truckconnect.core.design.R
 import com.truckconnect.core.design.component.TcButton
 import com.truckconnect.core.design.component.TcButtonSize
@@ -30,17 +31,9 @@ import com.truckconnect.core.design.component.TcChip
 import com.truckconnect.core.design.component.TcChipKind
 import com.truckconnect.core.design.component.TcField
 import com.truckconnect.core.design.component.TcIconBox
-import com.truckconnect.core.design.component.TcScaffold
-import com.truckconnect.core.design.theme.TcDimens
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.theme.TcThemeState
 
-/**
- * Driver Login Screen (D1)
- *
- * Updated per Owner Directive (v2):
- * - Authenticates using Mobile Number and Password (no PIN code).
- * - Hosted in TcScaffold for edge-to-edge system insets and IME awareness.
- */
 @Composable
 fun DriverLoginScreen(
     onLoginClick: () -> Unit = {},
@@ -52,23 +45,45 @@ fun DriverLoginScreen(
     val dimens = TcThemeState.dimens
     val isMalayalam = TcThemeState.isMalayalam
 
-    var phone by remember { mutableStateOf("+91 94470 12345") }
-    var password by remember { mutableStateOf("") }
+    var phone by remember { mutableStateOf("+91 94470 12891") }
+    var password by remember { mutableStateOf("••••••••") }
     var isPasswordVisible by remember { mutableStateOf(false) }
 
-    TcScaffold(
-        imeAware = true
-    ) { paddingValues ->
+    TcScreen(
+        imeAware = true,
+        pinnedBottomActions = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                TcButton(
+                    onClick = onLoginClick,
+                    variant = TcButtonVariant.Primary,
+                    size = TcButtonSize.Lg,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = if (isMalayalam) "ലോഗിൻ ചെയ്യുക" else "Login")
+                }
+
+                TcButton(
+                    onClick = onRegisterClick,
+                    variant = TcButtonVariant.Text,
+                    size = TcButtonSize.Text
+                ) {
+                    Text(
+                        text = if (isMalayalam)
+                            "അക്കൗണ്ട് ഇല്ലേ? പുതിയ ഡ്രൈവറായി രജിസ്റ്റർ ചെയ്യുക"
+                        else
+                            "New driver? Register here",
+                        color = colors.accent
+                    )
+                }
+            }
+        }
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(paddingValues)
-                .padding(
-                    start = dimens.ScreenPaddingHorizontal,
-                    end = dimens.ScreenPaddingHorizontal,
-                    top = dimens.Padding12,
-                    bottom = dimens.ScreenPaddingBottom
-                ),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap14)
         ) {
             Row(
@@ -98,8 +113,10 @@ fun DriverLoginScreen(
             )
 
             Text(
-                text = if (isMalayalam) "തുടരുന്നതിന് നിങ്ങളുടെ മൊബൈൽ നമ്പറും പാസ്‌വേഡും നൽകുക" 
-                       else "Enter your mobile number and password to continue",
+                text = if (isMalayalam)
+                    "തുടരുന്നതിന് നിങ്ങളുടെ മൊബൈൽ നമ്പറും പാസ്‌വേഡും നൽകുക"
+                else
+                    "Enter your mobile phone number and password to access your trips.",
                 style = typography.body,
                 color = colors.muted
             )
@@ -107,7 +124,7 @@ fun DriverLoginScreen(
             TcField(
                 value = phone,
                 onValueChange = { phone = it },
-                label = if (isMalayalam) "മൊബൈൽ നമ്പർ" else "Mobile number",
+                label = if (isMalayalam) "മൊബൈൽ നമ്പർ" else "Mobile phone number",
                 leadingIcon = {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_phone),
@@ -142,24 +159,6 @@ fun DriverLoginScreen(
                     )
                 }
             )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            TcButton(
-                onClick = onLoginClick,
-                variant = TcButtonVariant.Primary,
-                size = TcButtonSize.Lg
-            ) {
-                Text(text = if (isMalayalam) "ലോഗിൻ" else "Login")
-            }
-
-            TcButton(
-                onClick = onRegisterClick,
-                variant = TcButtonVariant.Text,
-                size = TcButtonSize.Text
-            ) {
-                Text(text = if (isMalayalam) "ഡ്രൈവറായി രജിസ്റ്റർ ചെയ്യുക" else "Register as Driver")
-            }
         }
     }
 }

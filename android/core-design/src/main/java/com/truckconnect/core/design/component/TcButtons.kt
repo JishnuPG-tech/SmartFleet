@@ -21,7 +21,7 @@ import com.truckconnect.core.design.theme.TcShapes
 import com.truckconnect.core.design.theme.TcThemeState
 
 enum class TcButtonVariant {
-    Primary, Outline, Ok, No, Text
+    Primary, Outline, Ok, No, Text, Crit, CritOutline
 }
 
 enum class TcButtonSize {
@@ -69,6 +69,8 @@ fun TcButton(
         TcButtonVariant.Outline -> colors.surface
         TcButtonVariant.Ok -> colors.ok
         TcButtonVariant.No -> colors.crit
+        TcButtonVariant.Crit -> colors.crit
+        TcButtonVariant.CritOutline -> colors.surface
         TcButtonVariant.Text -> Color.Transparent
     }
 
@@ -77,12 +79,16 @@ fun TcButton(
         TcButtonVariant.Outline -> colors.text
         TcButtonVariant.Ok -> Color.White
         TcButtonVariant.No -> Color.White
+        TcButtonVariant.Crit -> Color.White
+        TcButtonVariant.CritOutline -> colors.crit
         TcButtonVariant.Text -> colors.accent
     }
 
-    val border = if (variant == TcButtonVariant.Outline) {
-        BorderStroke(1.dp, colors.border2)
-    } else null
+    val border = when (variant) {
+        TcButtonVariant.Outline -> BorderStroke(1.5.dp, colors.border2)
+        TcButtonVariant.CritOutline -> BorderStroke(1.5.dp, colors.crit)
+        else -> null
+    }
 
     val padding = if (size == TcButtonSize.Sm) {
         PaddingValues(horizontal = TcDimens.ButtonSmPaddingHorizontal, vertical = 0.dp)

@@ -1,10 +1,8 @@
 package com.truckconnect.feature.auth
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -18,7 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.truckconnect.core.design.component.TcLogoTile
-import com.truckconnect.core.design.theme.TcDimens
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.theme.TcThemeState
 import kotlinx.coroutines.delay
 
@@ -41,41 +39,44 @@ fun SplashScreen(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colors.accent)
+    TcScreen(
+        accentFullBleed = true,
+        pinnedBottomActions = {
+            Text(
+                text = "v2.1.0 · Build 42 · Powered by SmartFleet Engine",
+                style = typography.note,
+                color = colors.accentInk.copy(alpha = 0.75f),
+                modifier = Modifier.padding(bottom = dimens.Padding4)
+            )
+        }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(
-                    start = dimens.ScreenPaddingHorizontal,
-                    end = dimens.ScreenPaddingHorizontal,
-                    bottom = dimens.Padding14
-                ),
+                .padding(horizontal = dimens.ScreenPaddingHorizontal),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(
                 dimens.Gap18,
                 alignment = Alignment.CenterVertically
             )
         ) {
-            Box(
+            TcLogoTile(
+                isLarge = true,
                 modifier = Modifier.clickable(
                     interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) {
-                    logoTapCount++
-                    if (logoTapCount >= 5) {
-                        onOpenGallery()
+                    indication = null,
+                    onClick = {
+                        logoTapCount++
+                        if (logoTapCount >= 5) {
+                            onOpenGallery()
+                        }
                     }
-                }
-            ) {
-                TcLogoTile()
-            }
+                )
+            )
 
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(dimens.Gap6)
             ) {
                 Text(
                     text = "TruckConnect",
@@ -83,21 +84,14 @@ fun SplashScreen(
                     color = colors.accentInk
                 )
                 Text(
-                    text = if (isMalayalam) "ലോഡ് · യാത്ര · ഡെലിവറി" else "Dispatch · Track · Deliver",
+                    text = if (isMalayalam)
+                        "കേരളത്തിന്റെ പ്രീമിയം ഫ്ലീറ്റ് നെറ്റ്വർക്ക്"
+                    else
+                        "Enterprise Logistics & Fleet Operations",
                     style = typography.body,
-                    color = colors.accentInk.copy(alpha = 0.8f),
-                    modifier = Modifier.padding(top = dimens.Gap6)
+                    color = colors.accentInk.copy(alpha = 0.90f)
                 )
             }
         }
-
-        Text(
-            text = "v2.1.0 · Kerala",
-            style = typography.xsmall,
-            color = colors.accentInk.copy(alpha = 0.7f),
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = dimens.Padding34)
-        )
     }
 }

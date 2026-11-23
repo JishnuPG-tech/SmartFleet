@@ -1,9 +1,15 @@
 package com.truckconnect.app
 
 import android.os.Bundle
+import android.os.SystemClock
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -70,7 +76,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            var currentTheme by remember { mutableStateOf(TcTheme.Indigo) }
+            var currentTheme by remember { mutableStateOf(TcTheme.Emerald) }
             var currentMode by remember { mutableStateOf(TcMode.Auto) }
             var isMalayalam by remember { mutableStateOf(false) }
 
@@ -167,6 +173,20 @@ fun TruckConnectAppNav(
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = hiltViewModel()
 
+    var lastNavigationTime by remember { mutableStateOf(0L) }
+    fun safeNavigate(route: String, builder: (androidx.navigation.NavOptionsBuilder.() -> Unit)? = null) {
+        val now = SystemClock.uptimeMillis()
+        if (now - lastNavigationTime < 300L) return
+        lastNavigationTime = now
+        if (builder != null) {
+            navController.navigate(route, builder)
+        } else {
+            navController.navigate(route) {
+                launchSingleTop = true
+            }
+        }
+    }
+
     fun navigateAdminTab(tabIndex: Int) {
         val destination = when (tabIndex) {
             AdminTab.HOME.ordinal -> NavDestinations.ADMIN_DASHBOARD
@@ -176,12 +196,17 @@ fun TruckConnectAppNav(
             AdminTab.MORE.ordinal -> NavDestinations.ADMIN_MORE
             else -> NavDestinations.ADMIN_DASHBOARD
         }
-        if (navController.currentBackStackEntry?.destination?.route != destination) {
+        val current = navController.currentBackStackEntry?.destination?.route
+        if (current != destination) {
+            val now = SystemClock.uptimeMillis()
+            if (now - lastNavigationTime < 250L) return
+            lastNavigationTime = now
             navController.navigate(destination) {
                 popUpTo(NavDestinations.ADMIN_DASHBOARD) {
-                    saveState = false
+                    saveState = true
                 }
                 launchSingleTop = true
+                restoreState = true
             }
         }
     }
@@ -194,19 +219,42 @@ fun TruckConnectAppNav(
             3 -> NavDestinations.DRIVER_PROFILE
             else -> NavDestinations.DRIVER_HOME
         }
-        if (navController.currentBackStackEntry?.destination?.route != destination) {
+        val current = navController.currentBackStackEntry?.destination?.route
+        if (current != destination) {
+            val now = SystemClock.uptimeMillis()
+            if (now - lastNavigationTime < 250L) return
+            lastNavigationTime = now
             navController.navigate(destination) {
                 popUpTo(NavDestinations.DRIVER_HOME) {
-                    saveState = false
+                    saveState = true
                 }
                 launchSingleTop = true
+                restoreState = true
             }
         }
     }
 
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing)
+            ) + fadeIn(animationSpec = tween(150))
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(150))
+        },
+        popEnterTransition = {
+            fadeIn(animationSpec = tween(150))
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.End,
+                animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing)
+            ) + fadeOut(animationSpec = tween(150))
+        }
     ) {
         // --- AUTH FLOW ---
         composable(NavDestinations.SPLASH) {
@@ -329,13 +377,13 @@ fun TruckConnectAppNav(
             MoreScreen(
                 onProfileClick = { navController.navigate(NavDestinations.SETTINGS_PROFILE) },
                 onMenuItemClick = { item ->
-                    when (item) {
-                        "Reports" -> navController.navigate(NavDestinations.ADMIN_REPORTS)
-                        "Vehicles" -> navController.navigate(NavDestinations.ADMIN_VEHICLES)
-                        "Driver approvals" -> navController.navigate(NavDestinations.ADMIN_DRIVER_APPROVALS)
-                        "App versions" -> navController.navigate(NavDestinations.ADMIN_APP_VERSIONS)
-                        "Audit log" -> navController.navigate(NavDestinations.ADMIN_AUDIT_LOG)
-                        "Settings" -> navController.navigate(NavDestinations.ADMIN_SETTINGS)
+                    when {
+                        item.contains("Report") -> safeNavigate(NavDestinations.ADMIN_REPORTS)
+                        item.contains("Vehicle") -> safeNavigate(NavDestinations.ADMIN_VEHICLES)
+                        item.contains("approval") -> safeNavigate(NavDestinations.ADMIN_DRIVER_APPROVALS)
+                        item.contains("version") -> safeNavigate(NavDestinations.ADMIN_APP_VERSIONS)
+                        item.contains("Audit") -> safeNavigate(NavDestinations.ADMIN_AUDIT_LOG)
+                        item.contains("Setting") -> safeNavigate(NavDestinations.ADMIN_SETTINGS)
                     }
                 },
                 onSignOutClick = {

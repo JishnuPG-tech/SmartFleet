@@ -32,7 +32,7 @@ import com.truckconnect.core.design.component.TcFab
 import com.truckconnect.core.design.component.TcField
 import com.truckconnect.core.design.component.TcIconButton
 import com.truckconnect.core.design.component.TcNavItems
-import com.truckconnect.core.design.component.TcScaffold
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.component.TcSegmented
 import com.truckconnect.core.design.theme.TcDimens
 import com.truckconnect.core.design.theme.TcThemeState
@@ -90,23 +90,19 @@ fun ShipmentsScreen(
         matchesSearch && matchesFilter
     }
 
-    TcScaffold(
-        topBar = {
-            TcAppBar(
-                title = "Shipments",
-                actions = {
-                    TcIconButton(onClick = { isSearchActive = !isSearchActive }) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_search),
-                            contentDescription = "Search",
-                            modifier = Modifier.size(dimens.IconSizeDefault),
-                            tint = if (isSearchActive) colors.accent else colors.text2
-                        )
-                    }
-                }
-            )
+    TcScreen(
+        title = "Shipments",
+        topBarActions = {
+            TcIconButton(onClick = { isSearchActive = !isSearchActive }) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_search),
+                    contentDescription = "Search",
+                    modifier = Modifier.size(dimens.IconSizeDefault),
+                    tint = if (isSearchActive) colors.accent else colors.text2
+                )
+            }
         },
-        bottomBar = {
+        bottomNav = {
             TcBottomNav(
                 tabs = TcNavItems.AdminTabs,
                 selectedIndex = AdminTab.SHIPMENTS.ordinal,
@@ -116,25 +112,13 @@ fun ShipmentsScreen(
         },
         fab = {
             TcFab(
-                onClick = onFabClick,
-                modifier = Modifier.padding(
-                    end = dimens.ScreenPaddingHorizontal,
-                    bottom = dimens.Gap14
-                )
+                onClick = onFabClick
             )
-        }
-    ) { paddingValues ->
+        },
+        isScrollable = true
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .padding(
-                    start = dimens.ScreenPaddingHorizontal,
-                    end = dimens.ScreenPaddingHorizontal,
-                    top = dimens.Gap10,
-                    bottom = dimens.Gap10
-                ),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap10)
         ) {
             if (isSearchActive) {

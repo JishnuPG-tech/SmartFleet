@@ -38,7 +38,7 @@ import com.truckconnect.core.design.component.TcIconButton
 import com.truckconnect.core.design.component.TcKpiTile
 import com.truckconnect.core.design.component.TcNavItems
 import com.truckconnect.core.design.component.TcProgressBar
-import com.truckconnect.core.design.component.TcScaffold
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.theme.TcDimens
 import com.truckconnect.core.design.theme.TcThemeState
 
@@ -65,42 +65,30 @@ fun DashboardScreen(
     val typography = TcThemeState.typography
     val dimens = TcThemeState.dimens
 
-    TcScaffold(
-        topBar = {
-            TcAppBar(
-                title = "Hello, Anil",
-                actions = {
-                    TcIconButton(onClick = onBellClick, hasPip = true) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_bell),
-                            contentDescription = "Alerts",
-                            modifier = Modifier.size(dimens.IconSizeDefault),
-                            tint = colors.text2
-                        )
-                    }
-                }
-            )
+    TcScreen(
+        title = "Hello, Anil",
+        topBarActions = {
+            TcIconButton(onClick = onBellClick, hasPip = true) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_bell),
+                    contentDescription = "Alerts",
+                    modifier = Modifier.size(dimens.IconSizeDefault),
+                    tint = colors.text2
+                )
+            }
         },
-        bottomBar = {
+        bottomNav = {
             TcBottomNav(
                 tabs = TcNavItems.AdminTabs,
                 selectedIndex = 0,
                 onTabSelected = onTabSelected,
                 isDriver = false
             )
-        }
-    ) { paddingValues ->
+        },
+        isScrollable = true
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .padding(
-                    start = dimens.ScreenPaddingHorizontal,
-                    end = dimens.ScreenPaddingHorizontal,
-                    top = dimens.Gap10,
-                    bottom = dimens.Gap10
-                ),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap10)
         ) {
             // 2x2 KPI Grid with token-accurate subtext colors

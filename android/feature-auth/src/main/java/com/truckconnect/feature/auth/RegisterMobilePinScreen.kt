@@ -3,6 +3,7 @@ package com.truckconnect.feature.auth
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,23 +21,14 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.truckconnect.core.design.R
-import com.truckconnect.core.design.component.TcAppBar
 import com.truckconnect.core.design.component.TcButton
 import com.truckconnect.core.design.component.TcButtonSize
 import com.truckconnect.core.design.component.TcButtonVariant
 import com.truckconnect.core.design.component.TcField
-import com.truckconnect.core.design.component.TcScaffold
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.component.TcStepsBar
-import com.truckconnect.core.design.theme.TcDimens
 import com.truckconnect.core.design.theme.TcThemeState
 
-/**
- * Driver Registration Step 1 (D2)
- *
- * Updated per Owner Directive (v2):
- * - Sets account Password rather than a 4-digit PIN.
- * - Uses TcScaffold with system insets and IME awareness.
- */
 @Composable
 fun RegisterMobilePinScreen(
     onBackClick: () -> Unit = {},
@@ -52,25 +44,24 @@ fun RegisterMobilePinScreen(
     var confirmPassword by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
 
-    TcScaffold(
-        topBar = {
-            TcAppBar(
-                title = if (isMalayalam) "ഡ്രൈവറായി രജിസ്റ്റർ ചെയ്യുക" else "Register as Driver",
-                onBackClick = onBackClick
-            )
-        },
-        imeAware = true
-    ) { paddingValues ->
+    TcScreen(
+        title = if (isMalayalam) "ഡ്രൈവറായി രജിസ്റ്റർ ചെയ്യുക" else "Register as Driver",
+        onBackClick = onBackClick,
+        imeAware = true,
+        isScrollable = true,
+        pinnedBottomActions = {
+            TcButton(
+                onClick = onNextClick,
+                variant = TcButtonVariant.Primary,
+                size = TcButtonSize.Lg,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = if (isMalayalam) "തുടരുക" else "Continue")
+            }
+        }
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(paddingValues)
-                .padding(
-                    start = dimens.ScreenPaddingHorizontal,
-                    end = dimens.ScreenPaddingHorizontal,
-                    top = dimens.Gap10,
-                    bottom = dimens.ScreenPaddingBottom
-                ),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap14)
         ) {
             TcStepsBar(totalSteps = 3, currentStep = 0)
@@ -81,10 +72,16 @@ fun RegisterMobilePinScreen(
                 color = colors.muted
             )
 
+            Text(
+                text = if (isMalayalam) "ലോഗിൻ വിവരങ്ങൾ നൽകുക" else "Enter login details",
+                style = typography.h1,
+                color = colors.text
+            )
+
             TcField(
                 value = phone,
                 onValueChange = { phone = it },
-                label = if (isMalayalam) "മൊബൈൽ നമ്പർ" else "Mobile number",
+                label = if (isMalayalam) "മൊബൈൽ നമ്പർ" else "Mobile phone number",
                 leadingIcon = {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_phone),
@@ -98,7 +95,7 @@ fun RegisterMobilePinScreen(
             TcField(
                 value = password,
                 onValueChange = { password = it },
-                label = if (isMalayalam) "പാസ്‌വേഡ് സജ്ജമാക്കുക" else "Set password",
+                label = if (isMalayalam) "പാസ്‌വേഡ് സൃഷ്ടിക്കുക" else "Create password",
                 visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 leadingIcon = {
                     Icon(
@@ -123,11 +120,11 @@ fun RegisterMobilePinScreen(
             TcField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
-                label = if (isMalayalam) "പാസ്‌വേഡ് സ്ഥിരീകരിക്കുക" else "Confirm password",
+                label = if (isMalayalam) "പാസ്‌വേഡ് വീണ്ടും നൽകുക" else "Confirm password",
                 visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 leadingIcon = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_check),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_lock),
                         contentDescription = null,
                         modifier = Modifier.size(dimens.Size18),
                         tint = colors.text2
@@ -135,15 +132,14 @@ fun RegisterMobilePinScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.weight(1f))
-
-            TcButton(
-                onClick = onNextClick,
-                variant = TcButtonVariant.Primary,
-                size = TcButtonSize.Lg
-            ) {
-                Text(text = if (isMalayalam) "അടുത്തത്" else "Next")
-            }
+            Text(
+                text = if (isMalayalam)
+                    "കുറഞ്ഞത് 8 അക്ഷരങ്ങളും സംഖ്യകളും അടങ്ങിയിരിക്കണം"
+                else
+                    "Must be at least 8 characters with a mix of letters and numbers",
+                style = typography.xsmall,
+                color = colors.muted
+            )
         }
     }
 }

@@ -1,11 +1,8 @@
 package com.truckconnect.feature.admin
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,15 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import com.truckconnect.core.design.R
-import com.truckconnect.core.design.component.TcAppBar
 import com.truckconnect.core.design.component.TcAvatar
 import com.truckconnect.core.design.component.TcButton
 import com.truckconnect.core.design.component.TcButtonSize
 import com.truckconnect.core.design.component.TcButtonVariant
 import com.truckconnect.core.design.component.TcCard
-import com.truckconnect.core.design.component.TcListRow
+import com.truckconnect.core.design.component.TcDetailItem
+import com.truckconnect.core.design.component.TcDetailList
 import com.truckconnect.core.design.component.TcPhotoBox
-import com.truckconnect.core.design.theme.TcDimens
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.theme.TcThemeState
 
 @Composable
@@ -38,19 +35,37 @@ fun ReviewDriverScreen(
     val typography = TcThemeState.typography
     val dimens = TcThemeState.dimens
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colors.bg)
-            .padding(bottom = dimens.ScreenPaddingBottom),
-        verticalArrangement = Arrangement.spacedBy(dimens.Gap10)
-    ) {
-        TcAppBar(title = "Review driver", onBackClick = onBackClick)
+    TcScreen(
+        title = "Review driver",
+        onBackClick = onBackClick,
+        isScrollable = true,
+        pinnedBottomActions = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(dimens.Gap10)
+            ) {
+                TcButton(
+                    onClick = onRejectClick,
+                    variant = TcButtonVariant.CritOutline,
+                    size = TcButtonSize.Lg,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(text = "Reject")
+                }
 
+                TcButton(
+                    onClick = onApproveClick,
+                    variant = TcButtonVariant.Primary,
+                    size = TcButtonSize.Lg,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(text = "Approve driver")
+                }
+            }
+        }
+    ) {
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = dimens.ScreenPaddingHorizontal),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap10)
         ) {
             // Header Row
@@ -59,7 +74,7 @@ fun ReviewDriverScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(dimens.Gap10)
             ) {
-                TcAvatar(text = "Rajan Nair")
+                TcAvatar(text = "Rajan Nair", isLarge = true)
                 Column {
                     Text(
                         text = "Rajan Nair",
@@ -74,50 +89,16 @@ fun ReviewDriverScreen(
                 }
             }
 
-            // Details Card
+            // Details Card using OD-8 TcDetailList
             TcCard {
-                Column {
-                    TcListRow {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(text = "Licence no.", style = typography.small, color = colors.muted)
-                            Text(text = "KL-0720110012345", style = typography.btnSm, color = colors.text)
-                        }
-                    }
-                    TcListRow {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(text = "Type / expiry", style = typography.small, color = colors.muted)
-                            Text(text = "HGMV · 14 Mar 2029", style = typography.btnSm, color = colors.text)
-                        }
-                    }
-                    TcListRow {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(text = "Vehicle", style = typography.small, color = colors.muted)
-                            Text(text = "Owner-operator · KL-08-BX-1571", style = typography.btnSm, color = colors.text)
-                        }
-                    }
-                    TcListRow(isLast = true) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(text = "Emergency", style = typography.small, color = colors.muted)
-                            Text(text = "Sreeja Nair (Spouse) · +91 94950 11223", style = typography.btnSm, color = colors.text)
-                        }
-                    }
-                }
+                TcDetailList(
+                    items = listOf(
+                        TcDetailItem("Licence no.", "KL-0720110012345"),
+                        TcDetailItem("Class / expiry", "HGMV · 14 Mar 2029"),
+                        TcDetailItem("Vehicle", "Owner-operator · KL-08-BX-1571"),
+                        TcDetailItem("Emergency contact", "Sreeja Nair (Spouse) · +91 94950 11223")
+                    )
+                )
             }
 
             // Photos Row
@@ -154,32 +135,6 @@ fun ReviewDriverScreen(
                     style = typography.xsmall,
                     color = colors.muted
                 )
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Action Row (Defect F1 fixed: weight(1f), spacedBy(dimens.Gap10))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(dimens.Gap10)
-            ) {
-                TcButton(
-                    onClick = onRejectClick,
-                    variant = TcButtonVariant.No,
-                    size = TcButtonSize.Lg,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(text = "Reject")
-                }
-
-                TcButton(
-                    onClick = onApproveClick,
-                    variant = TcButtonVariant.Ok,
-                    size = TcButtonSize.Lg,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(text = "Approve driver")
-                }
             }
         }
     }

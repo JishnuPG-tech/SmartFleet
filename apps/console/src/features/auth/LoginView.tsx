@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TruckIcon } from '../../shared/icons';
+import { EnterpriseLogo } from '../../shared/ui/EnterpriseLogo';
 import { fleetStore } from '../../shared/api/client';
 import { useToast } from '../../shared/ui/Toast';
 
@@ -127,16 +127,8 @@ export const LoginView: React.FC = () => {
         }}
       >
         {/* Brand Header */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24 }}>
-          <div className="logo" style={{ width: 42, height: 42, borderRadius: 12 }}>
-            <TruckIcon size={24} />
-          </div>
-          <div>
-            <b style={{ fontSize: 18, fontWeight: 800, letterSpacing: '-0.02em', display: 'block' }}>
-              TruckConnect
-            </b>
-            <small style={{ color: 'var(--muted)', fontSize: 12.5 }}>Operations Console</small>
-          </div>
+        <div style={{ marginBottom: 28 }}>
+          <EnterpriseLogo size={44} subtitle="Operations Command Console" />
         </div>
 
         <h2 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 4 }}>

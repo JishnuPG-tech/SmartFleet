@@ -34,7 +34,7 @@ import com.truckconnect.core.design.component.TcCard
 import com.truckconnect.core.design.component.TcChip
 import com.truckconnect.core.design.component.TcChipKind
 import com.truckconnect.core.design.component.TcListRow
-import com.truckconnect.core.design.component.TcScaffold
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.theme.TcDimens
 import com.truckconnect.core.design.theme.TcShapes
 import com.truckconnect.core.design.theme.TcThemeState
@@ -60,16 +60,13 @@ fun AppVersionScreen(
     var isChecking by remember { mutableStateOf(false) }
     var updateResultText by remember { mutableStateOf<String?>(null) }
 
-    TcScaffold(
-        topBar = {
-            TcAppBar(title = "App version", onBackClick = onBackClick)
-        }
-    ) { paddingValues ->
+    TcScreen(
+        title = "App version",
+        onBackClick = onBackClick,
+        isScrollable = true
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = dimens.ScreenPaddingHorizontal),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap12)
         ) {
             // App Logo Header

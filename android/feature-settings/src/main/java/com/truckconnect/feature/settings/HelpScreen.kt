@@ -36,7 +36,7 @@ import com.truckconnect.core.design.component.TcCard
 import com.truckconnect.core.design.component.TcHeroCard
 import com.truckconnect.core.design.component.TcIconBox
 import com.truckconnect.core.design.component.TcListRow
-import com.truckconnect.core.design.component.TcScaffold
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.theme.TcDimens
 import com.truckconnect.core.design.theme.TcThemeState
 
@@ -108,19 +108,13 @@ fun HelpScreen(
         }
     }
 
-    TcScaffold(
-        topBar = {
-            TcAppBar(
-                title = if (isMalayalam) "സഹായം" else "Help",
-                onBackClick = onBackClick
-            )
-        }
-    ) { paddingValues ->
+    TcScreen(
+        title = if (isMalayalam) "സഹായം" else "Help",
+        onBackClick = onBackClick,
+        isScrollable = true
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = dimens.ScreenPaddingHorizontal),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap10)
         ) {
             // Video Guide Hero Card

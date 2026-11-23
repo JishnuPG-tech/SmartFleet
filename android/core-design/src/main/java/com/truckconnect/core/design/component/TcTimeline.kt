@@ -22,20 +22,26 @@ import androidx.compose.ui.draw.clip
 import com.truckconnect.core.design.theme.TcDimens
 import com.truckconnect.core.design.theme.TcThemeState
 
+import androidx.compose.material3.Icon
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
+import com.truckconnect.core.design.R
+
 data class TcTimelineStep(
     val title: String,
     val subtitle: String? = null,
-    val isPending: Boolean = false
+    val isPending: Boolean = false,
+    val isCurrent: Boolean = false
 )
 
 /**
- * Vertical milestone timeline component.
- *
- * Fixes:
- * - BUG-12: Uses Modifier.height(IntrinsicSize.Min) on step rows so the vertical rail
- *   measures the exact intrinsic height of the text content rather than expanding to screen height.
- * - Defect F2: Perfectly centers dots on the 2dp rail.
- * - Enforces zero magic numbers by deriving all dimensions from TcDimens.
+ * OD-2 / Section 3: Professional Milestone Timeline
+ * - Done = solid accent circle 20 dp with check icon
+ * - Current = accent circle 20 dp with truck glyph
+ * - Pending = 20 dp hollow circle, 1.5 dp border2
+ * - Rail 2 dp border, centered on nodes
+ * - No glow / halo rings
  */
 @Composable
 fun TcTimeline(
@@ -47,55 +53,84 @@ fun TcTimeline(
     val typography = TcThemeState.typography
     val dimens = TcThemeState.dimens
 
+    // Automatically determine current step if not explicitly set
+    val firstPendingIndex = steps.indexOfFirst { it.isPending }
+    val currentIndex = if (firstPendingIndex > 0) firstPendingIndex - 1 else if (firstPendingIndex == 0) 0 else steps.lastIndex
+
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = dimens.CardBorder * 6)
+            .padding(start = 4.dp)
     ) {
         steps.forEachIndexed { index, step ->
             val isLast = index == steps.lastIndex
+            val isCurrentNode = step.isCurrent || (index == currentIndex && !step.isPending)
+            val isDoneNode = !step.isPending && !isCurrentNode
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(IntrinsicSize.Min)
             ) {
-                // Left column: Dot and Rail (centered)
+                // Left column: Node & Rail (centered)
                 Box(
-                    modifier = Modifier.width(dimens.CardBorder * 18),
+                    modifier = Modifier.width(24.dp),
                     contentAlignment = Alignment.TopCenter
                 ) {
-                    // Vertical rail
+                    // Vertical rail (2dp border centered on nodes)
                     if (!isLast) {
                         Box(
                             modifier = Modifier
-                                .width(dimens.CardBorder * 2)
+                                .width(2.dp)
                                 .fillMaxHeight()
-                                .offset(y = dimens.CardBorder * 6)
+                                .offset(y = 10.dp)
                                 .background(colors.border)
                         )
                     }
 
-                    // Dot (12dp circle)
-                    if (step.isPending) {
-                        Box(
-                            modifier = Modifier
-                                .size(dimens.CardBorder * 12)
-                                .offset(y = dimens.CardBorder * 3)
-                                .clip(CircleShape)
-                                .background(colors.bg)
-                                .border(dimens.CardBorder, colors.border2, CircleShape)
-                        )
-                    } else {
-                        Box(
-                            modifier = Modifier
-                                .size(dimens.CardBorder * 12)
-                                .offset(y = dimens.CardBorder * 3)
-                                .clip(CircleShape)
-                                .background(colors.accent)
-                                .border(dimens.CardBorder * 3, colors.bg, CircleShape)
-                                .border(dimens.CardBorder, colors.accent, CircleShape)
-                        )
+                    // Node (20 dp)
+                    when {
+                        step.isPending -> {
+                            Box(
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clip(CircleShape)
+                                    .background(colors.bg)
+                                    .border(1.5.dp, colors.border2, CircleShape)
+                            )
+                        }
+                        isCurrentNode -> {
+                            Box(
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clip(CircleShape)
+                                    .background(colors.accent),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.ic_truck),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(12.dp),
+                                    tint = colors.accentInk
+                                )
+                            }
+                        }
+                        else -> { // Done
+                            Box(
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clip(CircleShape)
+                                    .background(colors.accent),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.ic_check),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(12.dp),
+                                    tint = colors.accentInk
+                                )
+                            }
+                        }
                     }
                 }
 
@@ -104,8 +139,8 @@ fun TcTimeline(
                     modifier = Modifier
                         .weight(1f)
                         .padding(
-                            start = dimens.CardBorder * 12,
-                            bottom = if (isLast) dimens.CardBorder * 0 else dimens.CardBorder * 12
+                            start = 12.dp,
+                            bottom = if (isLast) 0.dp else 16.dp
                         )
                 ) {
                     Text(

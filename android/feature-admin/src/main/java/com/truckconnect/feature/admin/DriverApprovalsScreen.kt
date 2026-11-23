@@ -1,18 +1,14 @@
 package com.truckconnect.feature.admin
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.truckconnect.core.design.component.TcAppBar
 import com.truckconnect.core.design.component.TcAvatar
 import com.truckconnect.core.design.component.TcButton
 import com.truckconnect.core.design.component.TcButtonSize
@@ -20,7 +16,7 @@ import com.truckconnect.core.design.component.TcButtonVariant
 import com.truckconnect.core.design.component.TcCard
 import com.truckconnect.core.design.component.TcChip
 import com.truckconnect.core.design.component.TcChipKind
-import com.truckconnect.core.design.theme.TcDimens
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.theme.TcThemeState
 
 @Composable
@@ -37,23 +33,16 @@ fun DriverApprovalsScreen(
         Triple("Anoop Das", "Company fleet · LMV", "7:40 pm")
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colors.bg)
+    TcScreen(
+        title = "Driver approvals",
+        onBackClick = onBackClick,
+        topBarActions = {
+            TcChip(text = "2 new", kind = TcChipKind.Warn)
+        },
+        isScrollable = true
     ) {
-        TcAppBar(
-            title = "Driver approvals",
-            onBackClick = onBackClick,
-            actions = {
-                TcChip(text = "2 new", kind = TcChipKind.Warn)
-            }
-        )
-
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = dimens.ScreenPaddingHorizontal),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap10)
         ) {
             Text(

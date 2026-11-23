@@ -3,11 +3,7 @@ package com.truckconnect.feature.admin
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,19 +12,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.truckconnect.core.design.component.TcAppBar
 import com.truckconnect.core.design.component.TcCard
 import com.truckconnect.core.design.component.TcChip
 import com.truckconnect.core.design.component.TcChipKind
-import com.truckconnect.core.design.component.TcScaffold
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.component.TcSegmented
-import com.truckconnect.core.design.theme.TcDimens
 import com.truckconnect.core.design.theme.TcThemeState
 
-/**
- * Audit Log Screen (X9)
- * Chronological log of administrative actions, status changes, and milestones.
- */
 @Composable
 fun AuditLogScreen(
     onBackClick: () -> Unit = {}
@@ -48,17 +38,13 @@ fun AuditLogScreen(
         Triple("Rajan Nair · Sent SOS emergency alert", "Near Thrissur · Engine breakdown", "21 Nov, 2:14 pm")
     )
 
-    TcScaffold(
-        topBar = {
-            TcAppBar(title = "Audit log", onBackClick = onBackClick)
-        }
-    ) { paddingValues ->
+    TcScreen(
+        title = "Audit log",
+        onBackClick = onBackClick,
+        isScrollable = true
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.ScreenPaddingHorizontal),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap12)
         ) {
             TcSegmented(

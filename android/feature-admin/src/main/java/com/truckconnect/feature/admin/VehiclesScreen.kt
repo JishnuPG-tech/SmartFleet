@@ -1,11 +1,8 @@
 package com.truckconnect.feature.admin
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,16 +23,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.truckconnect.core.design.R
-import com.truckconnect.core.design.component.TcAppBar
 import com.truckconnect.core.design.component.TcButton
 import com.truckconnect.core.design.component.TcCard
 import com.truckconnect.core.design.component.TcChip
 import com.truckconnect.core.design.component.TcChipKind
 import com.truckconnect.core.design.component.TcField
 import com.truckconnect.core.design.component.TcIconButton
-import com.truckconnect.core.design.component.TcScaffold
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.component.TcSegmented
-import com.truckconnect.core.design.theme.TcDimens
 import com.truckconnect.core.design.theme.TcThemeState
 
 data class VehicleItem(
@@ -46,10 +41,6 @@ data class VehicleItem(
     val expiry: String
 )
 
-/**
- * Admin Vehicles Screen (M11 / X4)
- * Complete interactive vehicle management with Add Vehicle modal sheet.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VehiclesScreen(
@@ -83,29 +74,23 @@ fun VehiclesScreen(
         else -> vehiclesList
     }
 
-    TcScaffold(
-        topBar = {
-            TcAppBar(
-                title = "Vehicles",
-                onBackClick = onBackClick,
-                actions = {
-                    TcIconButton(onClick = { showAddVehicleSheet = true }) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_plus),
-                            contentDescription = "Add",
-                            modifier = Modifier.size(dimens.IconSizeDefault),
-                            tint = colors.text2
-                        )
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
+    TcScreen(
+        title = "Vehicles",
+        onBackClick = onBackClick,
+        topBarActions = {
+            TcIconButton(onClick = { showAddVehicleSheet = true }) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_plus),
+                    contentDescription = "Add",
+                    modifier = Modifier.size(dimens.IconSizeDefault),
+                    tint = colors.text2
+                )
+            }
+        },
+        isScrollable = true
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = dimens.ScreenPaddingHorizontal),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap10)
         ) {
             TcSegmented(
@@ -118,17 +103,22 @@ fun VehiclesScreen(
                 TcCard(onClick = { onVehicleClick(item.plate) }) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Column {
+                        Column(verticalArrangement = Arrangement.spacedBy(dimens.Gap4)) {
                             Text(
                                 text = item.plate,
                                 style = typography.btnSm,
                                 color = colors.text
                             )
                             Text(
-                                text = "${item.type} · ${item.expiry}",
+                                text = item.type,
+                                style = typography.small,
+                                color = colors.muted
+                            )
+                            Text(
+                                text = item.expiry,
                                 style = typography.xsmall,
                                 color = colors.muted
                             )
@@ -138,58 +128,50 @@ fun VehiclesScreen(
                 }
             }
         }
+    }
 
-        // Add Vehicle Modal Sheet (X4)
-        if (showAddVehicleSheet) {
-            ModalBottomSheet(
-                onDismissRequest = { showAddVehicleSheet = false },
-                containerColor = colors.surface
+    if (showAddVehicleSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showAddVehicleSheet = false },
+            containerColor = colors.surface
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(dimens.ScreenPaddingHorizontal)
+                    .padding(bottom = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(dimens.Gap12)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = dimens.ScreenPaddingHorizontal)
-                        .padding(bottom = 32.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
-                ) {
-                    Text(
-                        text = "Add new vehicle",
-                        style = typography.h2,
-                        color = colors.text
-                    )
-
-                    TcField(
-                        value = newPlate,
-                        onValueChange = { newPlate = it.uppercase() },
-                        placeholder = "Registration (e.g. KL-07-CD-3344)"
-                    )
-
-                    TcField(
-                        value = newType,
-                        onValueChange = { newType = it },
-                        placeholder = "Vehicle type & capacity (e.g. Lorry · 10 t)"
-                    )
-
-                    TcButton(
-                        text = "Register vehicle",
-                        onClick = {
-                            if (newPlate.isNotBlank()) {
-                                vehiclesList.add(
-                                    0,
-                                    VehicleItem(
-                                        plate = newPlate,
-                                        type = newType,
-                                        status = "Available",
-                                        kind = TcChipKind.Info,
-                                        expiry = "Permit valid"
-                                    )
+                Text(text = "Add new vehicle", style = typography.h2, color = colors.text)
+                TcField(
+                    value = newPlate,
+                    onValueChange = { newPlate = it },
+                    label = "Registration plate (e.g. KL-07-AZ-9999)"
+                )
+                TcField(
+                    value = newType,
+                    onValueChange = { newType = it },
+                    label = "Vehicle category & payload"
+                )
+                TcButton(
+                    onClick = {
+                        if (newPlate.isNotBlank()) {
+                            vehiclesList.add(
+                                VehicleItem(
+                                    plate = newPlate.uppercase(),
+                                    type = newType,
+                                    status = "Available",
+                                    kind = TcChipKind.Info,
+                                    expiry = "Fitness active"
                                 )
-                                newPlate = ""
-                                showAddVehicleSheet = false
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                            )
+                            newPlate = ""
+                            showAddVehicleSheet = false
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = "Add vehicle")
                 }
             }
         }

@@ -37,7 +37,7 @@ import com.truckconnect.core.design.component.TcChipKind
 import com.truckconnect.core.design.component.TcField
 import com.truckconnect.core.design.component.TcIconBox
 import com.truckconnect.core.design.component.TcListRow
-import com.truckconnect.core.design.component.TcScaffold
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.component.TcToggle
 import com.truckconnect.core.design.theme.TcDimens
 import com.truckconnect.core.design.theme.TcThemeState
@@ -84,17 +84,13 @@ fun SecurityScreen(
         )
     }
 
-    TcScaffold(
-        topBar = {
-            TcAppBar(title = "Security", onBackClick = onBackClick)
-        }
-    ) { paddingValues ->
+    TcScreen(
+        title = "Security",
+        onBackClick = onBackClick,
+        isScrollable = true
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.ScreenPaddingHorizontal),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap12)
         ) {
             // Options Card

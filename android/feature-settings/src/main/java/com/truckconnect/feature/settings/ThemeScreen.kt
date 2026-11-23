@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,12 +28,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import com.truckconnect.core.design.R
-import com.truckconnect.core.design.component.TcAppBar
 import com.truckconnect.core.design.component.TcCard
-import com.truckconnect.core.design.component.TcScaffold
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.component.TcSegmented
-import com.truckconnect.core.design.theme.TcDimens
-import com.truckconnect.core.design.theme.TcShapes
 import com.truckconnect.core.design.theme.TcThemeState
 
 @Composable
@@ -50,7 +46,7 @@ fun ThemeScreen(
     var modeIndex by remember { mutableIntStateOf(2) } // Auto is selected
     val modeOptions = listOf("Light", "Dark", "Auto")
 
-    var selectedThemeIndex by remember { mutableIntStateOf(0) } // Indigo selected
+    var selectedThemeIndex by remember { mutableIntStateOf(1) } // Emerald default
 
     val themes = listOf(
         Triple("Indigo", com.truckconnect.core.design.theme.ThemeSwatchIndigo, "indigo"),
@@ -59,78 +55,86 @@ fun ThemeScreen(
         Triple("Sunset", com.truckconnect.core.design.theme.ThemeSwatchSunset, "sunset")
     )
 
-    TcScaffold(
-        topBar = {
-            TcAppBar(title = "Theme", onBackClick = onBackClick)
-        }
-    ) { paddingValues ->
+    TcScreen(
+        title = "Theme",
+        onBackClick = onBackClick,
+        isScrollable = true
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = dimens.ScreenPaddingHorizontal),
-            verticalArrangement = Arrangement.spacedBy(dimens.Gap12)
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(dimens.Gap14)
         ) {
-            TcSegmented(
-                options = modeOptions,
-                selectedIndex = modeIndex,
-                onSelect = {
-                    modeIndex = it
-                    onModeSelect(modeOptions[it])
+            // Mode Card
+            TcCard {
+                Column(verticalArrangement = Arrangement.spacedBy(dimens.Gap8)) {
+                    Text(text = "Appearance", style = typography.btnSm, color = colors.text)
+                    TcSegmented(
+                        options = modeOptions,
+                        selectedIndex = modeIndex,
+                        onSelect = {
+                            modeIndex = it
+                            onModeSelect(modeOptions[it])
+                        }
+                    )
                 }
-            )
+            }
 
-            Text(
-                text = "Pick a colour theme. All meet WCAG AA contrast.",
-                style = typography.small,
-                color = colors.muted
-            )
+            // Accent Palette Card
+            TcCard {
+                Column(verticalArrangement = Arrangement.spacedBy(dimens.Gap10)) {
+                    Text(text = "Primary accent color", style = typography.btnSm, color = colors.text)
 
-            // 2x2 Grid of Theme Swatches
-            for (row in 0 until 2) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(dimens.Gap10)
-                ) {
-                    for (col in 0 until 2) {
-                        val index = row * 2 + col
-                        val (name, color, key) = themes[index]
-                        val isSelected = index == selectedThemeIndex
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(dimens.Gap8)
+                    ) {
+                        themes.forEachIndexed { index, (name, swatchColor, key) ->
+                            val isSelected = index == selectedThemeIndex
 
-                        TcCard(
-                            modifier = Modifier
-                                .weight(1f)
-                                .border(
-                                    border = if (isSelected) BorderStroke(dimens.CardBorder * 2, colors.accent) else BorderStroke(dimens.CardBorder, colors.border),
-                                    shape = TcShapes.Card
-                                ),
-                            onClick = {
-                                selectedThemeIndex = index
-                                onThemeSelect(key)
-                            }
-                        ) {
-                            Column(verticalArrangement = Arrangement.spacedBy(dimens.Gap8)) {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clip(RoundedCornerShape(dimens.Radius12))
+                                    .background(if (isSelected) colors.accentSoft else colors.surface)
+                                    .border(
+                                        BorderStroke(
+                                            width = if (isSelected) dimens.CardBorder * 2 else dimens.CardBorder,
+                                            color = if (isSelected) colors.accent else colors.border
+                                        ),
+                                        RoundedCornerShape(dimens.Radius12)
+                                    )
+                                    .clickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = null,
+                                        onClick = {
+                                            selectedThemeIndex = index
+                                            onThemeSelect(key)
+                                        }
+                                    )
+                                    .padding(dimens.Padding8),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(dimens.Gap6)
+                            ) {
                                 Box(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(dimens.KeypadKeyHeight)
-                                        .clip(TcShapes.InputAdmin)
-                                        .background(color),
+                                        .size(dimens.Size28)
+                                        .clip(RoundedCornerShape(dimens.Radius8))
+                                        .background(swatchColor),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     if (isSelected) {
                                         Icon(
                                             imageVector = ImageVector.vectorResource(R.drawable.ic_check),
-                                            contentDescription = "Selected",
-                                            modifier = Modifier.size(dimens.Size24),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(dimens.Size16),
                                             tint = Color.White
                                         )
                                     }
                                 }
                                 Text(
                                     text = name,
-                                    style = typography.btnSm,
-                                    color = colors.text
+                                    style = typography.caption,
+                                    color = if (isSelected) colors.accent else colors.text
                                 )
                             }
                         }

@@ -49,7 +49,7 @@ import com.truckconnect.core.design.component.TcIconButton
 import com.truckconnect.core.design.component.TcMapPinData
 import com.truckconnect.core.design.component.TcNavItems
 import com.truckconnect.core.design.component.TcOsmMapSurface
-import com.truckconnect.core.design.component.TcScaffold
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.component.TcSegmented
 import com.truckconnect.core.design.theme.TcDimens
 import com.truckconnect.core.design.theme.TcThemeState
@@ -190,35 +190,30 @@ fun LiveMapScreen(
         )
     }
 
-    TcScaffold(
-        topBar = {
-            TcAppBar(
-                title = "Live map",
-                actions = {
-                    TcIconButton(onClick = { showFilterSheet = true }) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_filter),
-                            contentDescription = "Filter",
-                            modifier = Modifier.size(dimens.IconSizeDefault),
-                            tint = colors.text2
-                        )
-                    }
-                }
-            )
+    TcScreen(
+        title = "Live map",
+        topBarActions = {
+            TcIconButton(onClick = { showFilterSheet = true }) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_filter),
+                    contentDescription = "Filter",
+                    modifier = Modifier.size(dimens.IconSizeDefault),
+                    tint = colors.text2
+                )
+            }
         },
-        bottomBar = {
+        bottomNav = {
             TcBottomNav(
                 tabs = TcNavItems.AdminTabs,
                 selectedIndex = AdminTab.MAP.ordinal,
                 onTabSelected = onTabSelected,
                 isDriver = false
             )
-        }
-    ) { paddingValues ->
+        },
+        useDefaultPadding = false
+    ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier = Modifier.fillMaxSize()
         ) {
             // Live OpenStreetMap + Organic Map Surface (Zero API Key)
             TcOsmMapSurface(

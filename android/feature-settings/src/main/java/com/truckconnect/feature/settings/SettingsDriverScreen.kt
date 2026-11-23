@@ -1,12 +1,9 @@
 package com.truckconnect.feature.settings
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -20,13 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import com.truckconnect.core.design.R
-import com.truckconnect.core.design.component.TcAppBar
 import com.truckconnect.core.design.component.TcCard
 import com.truckconnect.core.design.component.TcIconBox
 import com.truckconnect.core.design.component.TcListRow
-import com.truckconnect.core.design.component.TcScaffold
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.component.TcSegmented
-import com.truckconnect.core.design.theme.TcDimens
 import com.truckconnect.core.design.theme.TcThemeState
 
 @Composable
@@ -43,26 +38,20 @@ fun SettingsDriverScreen(
     val textSizeOptions = listOf("Normal", "Large")
 
     val settingsItems = listOf(
-        Triple(R.drawable.ic_palette, "Theme", ""),
+        Triple(R.drawable.ic_palette, "Theme", "Emerald · Auto"),
         Triple(R.drawable.ic_globe, if (isMalayalam) "ഭാഷ" else "Language", if (isMalayalam) "മലയാളം" else "English"),
         Triple(R.drawable.ic_vol, "Voice read-out", "On"),
-        Triple(R.drawable.ic_bell, "Notifications", ""),
-        Triple(R.drawable.ic_help, if (isMalayalam) "സഹായം" else "Help", "")
+        Triple(R.drawable.ic_bell, "Notifications", "Alerts & sounds"),
+        Triple(R.drawable.ic_help, if (isMalayalam) "സഹായം" else "Help", "Support & guides")
     )
 
-    TcScaffold(
-        topBar = {
-            TcAppBar(
-                title = if (isMalayalam) "ക്രമീകരണങ്ങൾ" else "Settings",
-                onBackClick = onBackClick
-            )
-        }
-    ) { paddingValues ->
+    TcScreen(
+        title = if (isMalayalam) "ക്രമീകരണങ്ങൾ" else "Settings",
+        onBackClick = onBackClick,
+        isScrollable = true
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = dimens.ScreenPaddingHorizontal),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap10)
         ) {
             // Driver settings list with larger spacing

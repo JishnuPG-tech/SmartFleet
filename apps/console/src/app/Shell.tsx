@@ -18,6 +18,7 @@ import {
   LogOutIcon,
   MenuIcon,
 } from '../shared/icons';
+import { EnterpriseLogo } from '../shared/ui/EnterpriseLogo';
 import { Avatar } from '../shared/ui/Avatar';
 import { ThemePopover } from '../shared/theme/ThemePopover';
 import { AlertPopover } from '../features/alerts/AlertPopover';
@@ -26,6 +27,32 @@ import { ShipmentFormModal } from '../features/shipments/ShipmentFormModal';
 import { fleetStore } from '../shared/api/client';
 import { useToast } from '../shared/ui/Toast';
 import { useLanguage } from '../shared/i18n/LanguageContext';
+
+const LiveSyncBadge: React.FC<{ isMalayalam: boolean }> = ({ isMalayalam }) => {
+  const [secondsAgo, setSecondsAgo] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSecondsAgo((s) => (s >= 25 ? 0 : s + 5));
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="sync-badge">
+      <span className="sync-live-label">{isMalayalam ? 'തത്സമയം' : 'LIVE'}</span>
+      <span>
+        {secondsAgo === 0
+          ? isMalayalam
+            ? 'ഇപ്പോൾ'
+            : 'connected'
+          : isMalayalam
+          ? `${secondsAgo} സെക്കന്റ് മുൻപ്`
+          : `${secondsAgo}s ago`}
+      </span>
+    </div>
+  );
+};
 
 export const Shell: React.FC = () => {
   const location = useLocation();
@@ -39,21 +66,8 @@ export const Shell: React.FC = () => {
   const [isNewShipmentOpen, setIsNewShipmentOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [globalSearch, setGlobalSearch] = useState('');
-  const [secondsAgo, setSecondsAgo] = useState(0);
 
   // Sync listener for store mutations
-  const [, setTick] = useState(0);
-  useEffect(() => {
-    return fleetStore.subscribe(() => setTick((t) => t + 1));
-  }, []);
-
-  // Heartbeat clock
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setSecondsAgo((s) => (s >= 25 ? 0 : s + 5));
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
 
   // Close popovers on navigation
   useEffect(() => {
@@ -111,15 +125,9 @@ export const Shell: React.FC = () => {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', width: '100%' }}>
       {/* Sidebar Navigation */}
-      <aside className="sidebar" style={isSidebarCollapsed ? { display: 'none' } : undefined}>
-        <div className="brand">
-          <div className="logo">
-            <TruckIcon size={20} />
-          </div>
-          <div>
-            <b>TruckConnect</b>
-            <small>{isMalayalam ? 'ഓപ്പറേഷൻസ് കൺസോൾ' : 'Operations console'}</small>
-          </div>
+      <aside className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
+        <div className="brand" style={{ padding: '4px 6px 20px' }}>
+          <EnterpriseLogo size={36} subtitle={isMalayalam ? 'ഓപ്പറേഷൻസ് കൺസോൾ' : 'Operations Console'} />
         </div>
 
         <div className="sec">{isMalayalam ? 'വർക്ക്‌സ്‌പേസ്' : 'Workspace'}</div>
@@ -227,18 +235,7 @@ export const Shell: React.FC = () => {
           </>
         )}
 
-        <div className="sync">
-          <span className="dot pulse" />
-          <span>
-            {secondsAgo === 0
-              ? isMalayalam
-                ? 'തത്സമയം · ഇപ്പോൾ'
-                : 'Live · just now'
-              : isMalayalam
-              ? `തത്സമയം · ${secondsAgo} സെക്കന്റ് മുൻപ്`
-              : `Live · ${secondsAgo}s ago`}
-          </span>
-        </div>
+        <LiveSyncBadge isMalayalam={isMalayalam} />
 
         {currentUser && (
           <div className="side-foot" style={{ marginTop: 14 }}>

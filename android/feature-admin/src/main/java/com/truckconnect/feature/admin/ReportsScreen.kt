@@ -1,15 +1,9 @@
 package com.truckconnect.feature.admin
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -23,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import com.truckconnect.core.design.R
-import com.truckconnect.core.design.component.TcAppBar
 import com.truckconnect.core.design.component.TcBarChart
 import com.truckconnect.core.design.component.TcButton
 import com.truckconnect.core.design.component.TcButtonVariant
@@ -31,9 +24,8 @@ import com.truckconnect.core.design.component.TcCard
 import com.truckconnect.core.design.component.TcDonut
 import com.truckconnect.core.design.component.TcIconButton
 import com.truckconnect.core.design.component.TcKpiTile
-import com.truckconnect.core.design.component.TcScaffold
+import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.component.TcSegmented
-import com.truckconnect.core.design.theme.TcDimens
 import com.truckconnect.core.design.theme.TcThemeState
 
 @Composable
@@ -50,30 +42,23 @@ fun ReportsScreen(
     var periodIndex by remember { mutableIntStateOf(1) } // "Month" is on in mockup
     val periodOptions = listOf("Week", "Month", "Quarter")
 
-    TcScaffold(
-        topBar = {
-            TcAppBar(
-                title = "Reports",
-                onBackClick = onBackClick,
-                actions = {
-                    TcIconButton(onClick = onDownloadClick) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_download),
-                            contentDescription = "Download",
-                            modifier = Modifier.size(dimens.IconSizeDefault),
-                            tint = colors.text2
-                        )
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
+    TcScreen(
+        title = "Reports",
+        onBackClick = onBackClick,
+        topBarActions = {
+            TcIconButton(onClick = onDownloadClick) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_download),
+                    contentDescription = "Download",
+                    modifier = Modifier.size(dimens.IconSizeDefault),
+                    tint = colors.text2
+                )
+            }
+        },
+        isScrollable = true
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = dimens.ScreenPaddingHorizontal),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap10)
         ) {
             TcSegmented(
@@ -118,35 +103,25 @@ fun ReportsScreen(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(dimens.Gap16)
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    TcDonut(
-                        completedPercent = 0.96f,
-                        cancelledPercent = 0.03f
-                    )
-                    Column(verticalArrangement = Arrangement.spacedBy(dimens.Gap6)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(dimens.Gap4)) {
                         Text(
-                            text = "Completed vs cancelled",
+                            text = "Fleet status split",
                             style = typography.btnSm,
                             color = colors.text
                         )
                         Text(
-                            text = "● 246 completed",
-                            style = typography.small,
-                            color = colors.ok
-                        )
-                        Text(
-                            text = "● 8 cancelled",
-                            style = typography.small,
-                            color = colors.crit
+                            text = "Moving · Idle · Off",
+                            style = typography.xsmall,
+                            color = colors.muted
                         )
                     }
+                    TcDonut(progress = 0.72f)
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Action Row (Defect F1 fixed: weight(1f), spacedBy(dimens.Gap10))
+            // Action Row: Export PDF / Export Excel
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(dimens.Gap10)
@@ -156,7 +131,16 @@ fun ReportsScreen(
                     variant = TcButtonVariant.Outline,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(text = "Export PDF")
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_doc),
+                        contentDescription = null,
+                        modifier = Modifier.size(dimens.IconSizeDefault),
+                        tint = colors.text
+                    )
+                    Text(
+                        text = "Export PDF",
+                        modifier = Modifier.padding(start = dimens.Gap6)
+                    )
                 }
 
                 TcButton(
@@ -164,7 +148,16 @@ fun ReportsScreen(
                     variant = TcButtonVariant.Outline,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(text = "Export Excel")
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_download),
+                        contentDescription = null,
+                        modifier = Modifier.size(dimens.IconSizeDefault),
+                        tint = colors.text
+                    )
+                    Text(
+                        text = "Export Excel",
+                        modifier = Modifier.padding(start = dimens.Gap6)
+                    )
                 }
             }
         }
