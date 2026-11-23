@@ -146,34 +146,40 @@ fun TcOsmMapSurface(
             update = { map ->
                 map.overlays.clear()
 
-                // 1. NH-66 Kerala Highway Polyline Route
-                if (showRoute) {
-                    val routePoints = listOf(
-                        GeoPoint(12.51, 74.99), // Kasaragod
-                        GeoPoint(12.21, 75.14), // Kanhangad
-                        GeoPoint(12.08, 75.20), // Payyanur
-                        GeoPoint(11.87, 75.37), // Kannur
-                        GeoPoint(11.75, 75.49), // Thalassery
-                        GeoPoint(11.59, 75.59), // Vadakara
-                        GeoPoint(11.26, 75.78), // Kozhikode
-                        GeoPoint(11.07, 76.07), // Malappuram
-                        GeoPoint(10.85, 76.05), // Tirur
-                        GeoPoint(10.65, 76.00), // Ponnani
-                        GeoPoint(10.53, 76.21), // Thrissur
-                        GeoPoint(10.22, 76.20), // Chalakudy
-                        GeoPoint(10.14, 76.35), // Angamaly
-                        GeoPoint(10.02, 76.31), // Aluva
-                        GeoPoint(9.93, 76.27)   // Kochi
-                    )
+                // 1. Draw individual trip path for the selected vehicle ONLY
+                val selectedPin = pins.find { it.id == selectedPinId }
+                if (showRoute && selectedPin != null && selectedPin.routeOrigin != null && selectedPin.routeDestination != null) {
+                    val pathPoints = mutableListOf<GeoPoint>()
+                    pathPoints.add(GeoPoint(selectedPin.routeOrigin.first, selectedPin.routeOrigin.second))
+                    selectedPin.intermediateWaypoints.forEach { (lat, lng) ->
+                        pathPoints.add(GeoPoint(lat, lng))
+                    }
+                    pathPoints.add(GeoPoint(selectedPin.routeDestination.first, selectedPin.routeDestination.second))
 
                     val polyline = Polyline(map).apply {
-                        setPoints(routePoints)
+                        setPoints(pathPoints)
                         outlinePaint.color = colors.accent.toArgb()
-                        outlinePaint.strokeWidth = 8f
+                        outlinePaint.strokeWidth = 6f
                         outlinePaint.strokeCap = Paint.Cap.ROUND
                         outlinePaint.strokeJoin = Paint.Join.ROUND
                     }
                     map.overlays.add(polyline)
+
+                    // Origin marker (small dot)
+                    val originMarker = Marker(map).apply {
+                        position = GeoPoint(selectedPin.routeOrigin.first, selectedPin.routeOrigin.second)
+                        setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+                        title = "Pickup"
+                    }
+                    map.overlays.add(originMarker)
+
+                    // Destination marker (flag)
+                    val destMarker = Marker(map).apply {
+                        position = GeoPoint(selectedPin.routeDestination.first, selectedPin.routeDestination.second)
+                        setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+                        title = "Drop"
+                    }
+                    map.overlays.add(destMarker)
                 }
 
                 // 2. Add Cached Vehicle Markers

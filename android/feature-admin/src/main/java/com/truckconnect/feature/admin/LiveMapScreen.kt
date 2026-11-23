@@ -91,7 +91,7 @@ fun LiveMapScreen(
     val typography = TcThemeState.typography
     val dimens = TcThemeState.dimens
 
-    val vehicles = remember {
+    val activeAssignedVehicles = remember {
         listOf(
             VehicleTrackInfo(
                 id = "TC-2026-000131",
@@ -122,34 +122,6 @@ fun LiveMapScreen(
                 phone = "+919876543211"
             ),
             VehicleTrackInfo(
-                id = "TC-2026-000141",
-                regNumber = "KL-08-BX-1572",
-                driverName = "Rajan Nair",
-                shipmentId = "TC-2026-000141",
-                status = "SOS Alert",
-                kind = TcChipKind.Crit,
-                speed = "0 km/h",
-                updated = "4 min",
-                eta = "Delayed",
-                lat = 10.53,
-                lng = 76.21,
-                phone = "+919876543212"
-            ),
-            VehicleTrackInfo(
-                id = "TC-2026-000138",
-                regNumber = "KL-02-HR-3797",
-                driverName = "Venugopal R",
-                shipmentId = "TC-2026-000138",
-                status = "Available",
-                kind = TcChipKind.Info,
-                speed = "0 km/h",
-                updated = "1 h",
-                eta = "Ready",
-                lat = 11.87,
-                lng = 75.37,
-                phone = "+919876543213"
-            ),
-            VehicleTrackInfo(
                 id = "TC-2026-000125",
                 regNumber = "KL-05-LN-4910",
                 driverName = "Haridas M",
@@ -166,27 +138,43 @@ fun LiveMapScreen(
         )
     }
 
+    val vehicles = activeAssignedVehicles
+
     var selectedVehicleId by remember { mutableStateOf("TC-2026-000131") }
     val currentVehicle = vehicles.firstOrNull { it.id == selectedVehicleId } ?: vehicles[0]
 
     var showFilterSheet by remember { mutableStateOf(false) }
     var filterIndex by remember { mutableStateOf(0) }
-    val filterOptions = listOf("All", "Moving", "Delayed", "SOS")
+    val filterOptions = listOf("All Active", "Moving", "Delayed")
 
     val filteredVehicles = when (filterIndex) {
-        1 -> vehicles.filter { it.kind == TcChipKind.Accent }
-        2 -> vehicles.filter { it.kind == TcChipKind.Warn }
-        3 -> vehicles.filter { it.kind == TcChipKind.Crit }
+        1 -> vehicles.filter { it.speed != "0 km/h" }
+        2 -> vehicles.filter { it.kind == TcChipKind.Warn || it.kind == TcChipKind.Crit }
         else -> vehicles
     }
 
     val mapPins = filteredVehicles.map { v ->
+        val origin = when (v.id) {
+            "TC-2026-000131" -> 12.51 to 74.99 // Kasaragod
+            "TC-2026-000133" -> 11.87 to 75.37 // Kannur
+            "TC-2026-000125" -> 9.93 to 76.27  // Kochi
+            else -> 10.53 to 76.21
+        }
+        val destination = when (v.id) {
+            "TC-2026-000131" -> 11.07 to 76.07 // Malappuram
+            "TC-2026-000133" -> 11.26 to 75.78 // Kozhikode
+            "TC-2026-000125" -> 11.26 to 75.78 // Kozhikode
+            else -> 10.85 to 76.05
+        }
         TcMapPinData(
             lng = v.lng,
             lat = v.lat,
             kind = v.kind,
             id = v.id,
-            isSelected = v.id == selectedVehicleId
+            isSelected = v.id == selectedVehicleId,
+            routeOrigin = origin,
+            routeDestination = destination,
+            intermediateWaypoints = listOf(v.lat to v.lng)
         )
     }
 

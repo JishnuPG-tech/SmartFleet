@@ -2,6 +2,7 @@ package com.truckconnect.feature.admin
 
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -110,15 +111,23 @@ fun ShipmentDetailScreen(
                     )
                     DropdownMenuItem(
                         text = { Text("Duplicate shipment", style = typography.btnSm, color = colors.text) },
-                        onClick = { showMenu = false }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Route playback", style = typography.btnSm, color = colors.accent) },
-                        onClick = { showMenu = false }
+                        onClick = {
+                            showMenu = false
+                            Toast.makeText(context, "Shipment duplicated as draft", Toast.LENGTH_SHORT).show()
+                        }
                     )
                     DropdownMenuItem(
                         text = { Text("Share tracking link", style = typography.btnSm, color = colors.text) },
-                        onClick = { showMenu = false }
+                        onClick = {
+                            showMenu = false
+                            val sendIntent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(Intent.EXTRA_TEXT, "Track shipment TC-2026-000131 (Kasaragod → Malappuram): https://truckconnect.in/track/TC-2026-000131")
+                                type = "text/plain"
+                            }
+                            val shareIntent = Intent.createChooser(sendIntent, "Share tracking link")
+                            context.startActivity(shareIntent)
+                        }
                     )
                     DropdownMenuItem(
                         text = { Text("Cancel shipment", style = typography.btnSm, color = colors.crit) },
@@ -190,7 +199,7 @@ fun ShipmentDetailScreen(
 
             // Route Details
             Text(
-                text = "Route & Contacts",
+                text = "Route",
                 style = typography.label,
                 color = colors.muted,
                 modifier = Modifier.padding(top = 4.dp)
@@ -200,63 +209,11 @@ fun ShipmentDetailScreen(
                 items = listOf(
                     TcDetailItem(
                         label = "Pickup",
-                        value = "Kasaragod APMC Market",
-                        trailingContent = {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Text(
-                                    text = "Kasaragod",
-                                    style = typography.btnSm,
-                                    color = colors.text
-                                )
-                                TcIconButton(
-                                    onClick = {
-                                        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:+919447012345"))
-                                        context.startActivity(intent)
-                                    },
-                                    modifier = Modifier.size(34.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.ic_phone),
-                                        contentDescription = "Call pickup",
-                                        modifier = Modifier.size(16.dp),
-                                        tint = colors.accent
-                                    )
-                                }
-                            }
-                        }
+                        value = "Kasaragod APMC Market"
                     ),
                     TcDetailItem(
                         label = "Drop",
-                        value = "Malappuram Wholesale Hub",
-                        trailingContent = {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Text(
-                                    text = "Malappuram",
-                                    style = typography.btnSm,
-                                    color = colors.text
-                                )
-                                TcIconButton(
-                                    onClick = {
-                                        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:+919846098765"))
-                                        context.startActivity(intent)
-                                    },
-                                    modifier = Modifier.size(34.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.ic_phone),
-                                        contentDescription = "Call consignee",
-                                        modifier = Modifier.size(16.dp),
-                                        tint = colors.accent
-                                    )
-                                }
-                            }
-                        }
+                        value = "Malappuram Wholesale Hub"
                     )
                 )
             )

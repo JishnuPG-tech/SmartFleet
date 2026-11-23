@@ -499,6 +499,9 @@ fun TruckConnectAppNav(
 
         composable(NavDestinations.DRIVER_HISTORY) {
             DriverHistoryScreen(
+                onTripClick = { tripId ->
+                    navController.navigate(NavDestinations.DRIVER_ACTIVE_TRIP)
+                },
                 onTabSelected = { tab -> navigateDriverTab(tab) }
             )
         }

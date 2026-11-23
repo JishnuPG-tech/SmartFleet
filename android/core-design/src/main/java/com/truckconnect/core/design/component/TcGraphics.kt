@@ -62,7 +62,10 @@ data class TcMapPinData(
     val lat: Double,
     val kind: TcChipKind = TcChipKind.Accent,
     val id: String = "",
-    val isSelected: Boolean = false
+    val isSelected: Boolean = false,
+    val routeOrigin: Pair<Double, Double>? = null, // lat to lng
+    val routeDestination: Pair<Double, Double>? = null, // lat to lng
+    val intermediateWaypoints: List<Pair<Double, Double>> = emptyList()
 )
 
 @Composable

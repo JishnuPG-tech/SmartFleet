@@ -55,9 +55,6 @@ import com.truckconnect.core.design.theme.TcThemeState
 @Composable
 fun DriverDetailScreen(
     onBackClick: () -> Unit = {},
-    onEditClick: () -> Unit = {},
-    onResetPasswordClick: () -> Unit = {},
-    onRevokeDeviceClick: () -> Unit = {},
     driverName: String = "Suresh Kumar",
     driverPhone: String = "+91 94470 12891"
 ) {
@@ -66,48 +63,10 @@ fun DriverDetailScreen(
     val typography = TcThemeState.typography
     val dimens = TcThemeState.dimens
 
-    var showRevokeDialog by remember { mutableStateOf(false) }
-    var showResetDialog by remember { mutableStateOf(false) }
-    var passwordResetNotice by remember { mutableStateOf<String?>(null) }
-
     TcScreen(
         title = "Driver",
         onBackClick = onBackClick,
-        isScrollable = true,
-        topBarActions = {
-            TcIconButton(onClick = onEditClick) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_edit),
-                    contentDescription = "Edit profile",
-                    modifier = Modifier.size(dimens.IconSizeDefault),
-                    tint = colors.text
-                )
-            }
-        },
-        pinnedBottomActions = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                TcButton(
-                    onClick = { showResetDialog = true },
-                    variant = TcButtonVariant.Outline,
-                    size = TcButtonSize.Lg,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(text = "Reset password")
-                }
-
-                TcButton(
-                    onClick = { showRevokeDialog = true },
-                    variant = TcButtonVariant.CritOutline,
-                    size = TcButtonSize.Lg,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(text = "Revoke device")
-                }
-            }
-        }
+        isScrollable = true
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(14.dp)
@@ -253,36 +212,5 @@ fun DriverDetailScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
         }
-
-        // Revoke Device Confirmation Dialog
-        TcConfirmDialog(
-            isOpen = showRevokeDialog,
-            onDismiss = { showRevokeDialog = false },
-            onConfirm = {
-                showRevokeDialog = false
-                onRevokeDeviceClick()
-            },
-            title = "Revoke Device Session?",
-            message = "This will immediately sign out Suresh Kumar from Samsung Galaxy A14. The driver must re-authenticate with their credentials before accepting any further jobs.",
-            confirmLabel = "Revoke Session",
-            dismissLabel = "Cancel",
-            isDestructive = true
-        )
-
-        // Reset Password Dialog
-        TcConfirmDialog(
-            isOpen = showResetDialog,
-            onDismiss = { showResetDialog = false },
-            onConfirm = {
-                showResetDialog = false
-                onResetPasswordClick()
-                passwordResetNotice = "Temporary password generated: TC-PASS-9821"
-            },
-            title = "Reset Driver Password?",
-            message = "Generate a new temporary password for Suresh Kumar? The driver will be required to change it on their next login.",
-            confirmLabel = "Reset Password",
-            dismissLabel = "Cancel",
-            isDestructive = false
-        )
     }
 }

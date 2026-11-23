@@ -67,16 +67,6 @@ fun DashboardScreen(
 
     TcScreen(
         title = "Hello, Anil",
-        topBarActions = {
-            TcIconButton(onClick = onBellClick, hasPip = true) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_bell),
-                    contentDescription = "Alerts",
-                    modifier = Modifier.size(dimens.IconSizeDefault),
-                    tint = colors.text2
-                )
-            }
-        },
         bottomNav = {
             TcBottomNav(
                 tabs = TcNavItems.AdminTabs,
@@ -133,58 +123,6 @@ fun DashboardScreen(
                     onClick = { onKpiClick("delayed") },
                     modifier = Modifier.weight(1f)
                 )
-            }
-
-            // SOS Emergency Card
-            TcCard(onClick = onSosCardClick) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(dimens.Gap10)
-                    ) {
-                        TcIconBox(
-                            iconRes = R.drawable.ic_warn,
-                            kind = TcChipKind.Crit,
-                            modifier = Modifier.size(dimens.Size36)
-                        )
-                        Column {
-                            Text(
-                                text = "SOS · Rajan Nair",
-                                style = typography.btnSm,
-                                color = colors.crit
-                            )
-                            Text(
-                                text = "Near Thrissur · 4 min ago",
-                                style = typography.xsmall,
-                                color = colors.muted
-                            )
-                        }
-                    }
-
-                    TcButton(
-                        onClick = {
-                            val dialIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:+919876543212"))
-                            context.startActivity(dialIntent)
-                        },
-                        variant = TcButtonVariant.No,
-                        size = TcButtonSize.Sm
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_phone),
-                            contentDescription = null,
-                            modifier = Modifier.size(dimens.Size14),
-                            tint = colors.accentInk
-                        )
-                        Text(
-                            text = "Call",
-                            modifier = Modifier.padding(start = dimens.Gap4)
-                        )
-                    }
-                }
             }
 
             // Section Header: Live trips / View map

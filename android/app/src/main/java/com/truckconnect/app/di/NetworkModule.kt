@@ -9,6 +9,9 @@ import com.truckconnect.app.BuildConfig
 import com.truckconnect.core.data.TokenManager
 import com.truckconnect.core.network.AuthInterceptor
 import com.truckconnect.core.network.api.AuthApiService
+import com.truckconnect.core.network.api.DirectoryApiService
+import com.truckconnect.core.network.api.ShipmentApiService
+import com.truckconnect.core.network.api.TrackingApiService
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -64,5 +67,23 @@ object NetworkModule {
     @Singleton
     fun provideAuthApiService(retrofit: Retrofit): AuthApiService {
         return retrofit.create(AuthApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideShipmentApiService(retrofit: Retrofit): ShipmentApiService {
+        return retrofit.create(ShipmentApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDirectoryApiService(retrofit: Retrofit): DirectoryApiService {
+        return retrofit.create(DirectoryApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTrackingApiService(retrofit: Retrofit): TrackingApiService {
+        return retrofit.create(TrackingApiService::class.java)
     }
 }

@@ -205,6 +205,7 @@ fun TcScreen(
                             .then(paddingModifier)
                     ) {
                         content()
+                        Spacer(modifier = Modifier.height(28.dp))
                     }
                 } else {
                     Box(

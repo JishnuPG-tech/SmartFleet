@@ -55,16 +55,6 @@ fun DriverHomeEmptyScreen(
 
     TcScreen(
         title = if (isMalayalam) "സുപ്രഭാതം, Suresh" else "Good morning, Suresh",
-        topBarActions = {
-            TcIconButton(onClick = onAlertsClick, hasPip = true) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_bell),
-                    contentDescription = "Alerts",
-                    modifier = Modifier.size(dimens.IconSizeDefault),
-                    tint = colors.text2
-                )
-            }
-        },
         bottomNav = {
             TcBottomNav(
                 tabs = TcNavItems.driverTabs(

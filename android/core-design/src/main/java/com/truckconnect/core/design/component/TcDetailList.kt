@@ -18,6 +18,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.truckconnect.core.design.theme.TcThemeState
 
@@ -25,13 +27,15 @@ data class TcDetailItem(
     val label: String,
     val value: String,
     val isDestructive: Boolean = false,
+    val isStacked: Boolean = false,
     val trailingContent: (@Composable () -> Unit)? = null,
     val onClick: (() -> Unit)? = null
 )
 
 /**
- * OD-8 / Section 4: TcDetailList
- * Clean label/value rows separated by 1 dp dividers (replaces redundant nested cards).
+ * OD-8 / Section 3.1: TcDetailList
+ * Responsive two-column or stacked layout with strict weight constraints
+ * to eliminate all text collisions and overlaps.
  */
 @Composable
 fun TcDetailList(
@@ -63,24 +67,57 @@ fun TcDetailList(
                 Modifier.fillMaxWidth()
             }
 
-            Row(
-                modifier = rowModifier.padding(vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = item.label,
-                    style = typography.body,
-                    color = colors.muted
-                )
-                if (item.trailingContent != null) {
-                    item.trailingContent()
-                } else {
+            if (item.isStacked || (item.label.length > 20 && item.value.length > 25)) {
+                Column(
+                    modifier = rowModifier.padding(vertical = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
                     Text(
-                        text = item.value,
-                        style = typography.btnSm,
-                        color = if (item.isDestructive) colors.crit else colors.text
+                        text = item.label,
+                        style = typography.caption,
+                        color = colors.muted
                     )
+                    if (item.trailingContent != null) {
+                        item.trailingContent()
+                    } else {
+                        Text(
+                            text = item.value,
+                            style = typography.btnSm,
+                            color = if (item.isDestructive) colors.crit else colors.text
+                        )
+                    }
+                }
+            } else {
+                Row(
+                    modifier = rowModifier.padding(vertical = 12.dp),
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = item.label,
+                        style = typography.caption,
+                        color = colors.muted,
+                        modifier = Modifier.weight(0.38f),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    if (item.trailingContent != null) {
+                        Box(
+                            modifier = Modifier.weight(0.62f),
+                            contentAlignment = Alignment.CenterEnd
+                        ) {
+                            item.trailingContent()
+                        }
+                    } else {
+                        Text(
+                            text = item.value,
+                            style = typography.btnSm,
+                            color = if (item.isDestructive) colors.crit else colors.text,
+                            modifier = Modifier.weight(0.62f),
+                            textAlign = TextAlign.End,
+                            softWrap = true
+                        )
+                    }
                 }
             }
 
