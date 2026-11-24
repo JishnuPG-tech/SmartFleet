@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Chart, registerables } from 'chart.js';
-import { TruckIcon, UserIcon, BoxIcon, ClockIcon, SosIcon, CloseIcon, DocIcon, WarnIcon } from '../../shared/icons';
+import { TruckIcon, UserIcon, BoxIcon, ClockIcon, SosIcon, CloseIcon, DocIcon, WarnIcon, NavigationIcon } from '../../shared/icons';
 import { StatusChip } from '../../shared/ui/StatusChip';
 import { fleetStore } from '../../shared/api/client';
 import { ACTIVE_STATUSES, SHIPMENT_FLOW, Shipment } from '../../shared/api/types';
 import { useToast } from '../../shared/ui/Toast';
 import { useLanguage } from '../../shared/i18n/LanguageContext';
+import { openGoogleMapsTracking } from '../../shared/utils/gmaps';
 
 Chart.register(...registerables);
 
@@ -331,8 +332,8 @@ export const DashboardView: React.FC = () => {
               <h3>{isMalayalam ? 'തത്സമയ ട്രിപ്പുകൾ' : 'Live trips'}</h3>
               <p>{isMalayalam ? 'സജീവ ഷിപ്പ്‌മെന്റുകളുടെ നിലവിലെ പുരോഗതി' : 'Active shipments and their milestone progress'}</p>
             </div>
-            <button className="btn sm" onClick={() => navigate('/map')}>
-              {isMalayalam ? 'മാപ്പ് കാണുക' : 'Open map'}
+            <button className="btn sm" onClick={() => navigate('/tracking')}>
+              {isMalayalam ? 'ട്രാക്കിംഗ് ഹബ്ബ്' : 'Tracking Hub'}
             </button>
           </div>
           <div style={{ paddingTop: 12 }}>
@@ -364,7 +365,37 @@ export const DashboardView: React.FC = () => {
                     {renderStepper(s.status)}
                     <small style={{ marginTop: 6 }}>{s.status}</small>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
+                    <button
+                      type="button"
+                      className="btn sm"
+                      style={{
+                        padding: '0 8px',
+                        height: 28,
+                        fontSize: 11.5,
+                        gap: 4,
+                        borderColor: 'var(--c1)',
+                        color: 'var(--c1)',
+                        background: 'transparent',
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openGoogleMapsTracking({
+                          origin: s.pAddr || s.from,
+                          destination: s.dAddr || s.to,
+                          driverName: driver?.name,
+                        });
+                        showToast(
+                          isMalayalam
+                            ? `${s.id} ഗൂഗിൾ മാപ്പിൽ തുറക്കുന്നു...`
+                            : `Opening Google Maps for ${s.id}...`
+                        );
+                      }}
+                      title="Open Google Maps live tracking"
+                    >
+                      <NavigationIcon size={12} />
+                      {isMalayalam ? 'മാപ്പ്' : 'Track'}
+                    </button>
                     <StatusChip
                       status={s.delayed ? 'Delayed' : 'OK'}
                       label={s.delayed ? (isMalayalam ? 'വൈകി' : 'Delayed') : (isMalayalam ? 'കൃത്യസമയത്ത്' : 'On time')}

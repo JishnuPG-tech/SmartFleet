@@ -4,8 +4,9 @@ import { Drawer } from '../../shared/ui/Drawer';
 import { Shipment, SHIPMENT_FLOW } from '../../shared/api/types';
 import { fleetStore } from '../../shared/api/client';
 import { StatusChip } from '../../shared/ui/StatusChip';
-import { CamIcon, DocIcon } from '../../shared/icons';
+import { CamIcon, DocIcon, NavigationIcon, ExternalLinkIcon } from '../../shared/icons';
 import { useToast } from '../../shared/ui/Toast';
+import { openGoogleMapsTracking } from '../../shared/utils/gmaps';
 
 interface ShipmentDrawerProps {
   shipmentId: string | null;
@@ -151,6 +152,24 @@ export const ShipmentDrawer: React.FC<ShipmentDrawerProps> = ({
 
       {/* Action Buttons */}
       <div style={{ display: 'flex', gap: 10, marginTop: 24, flexWrap: 'wrap' }}>
+        <button
+          type="button"
+          className="btn primary"
+          style={{ gap: 6 }}
+          onClick={() => {
+            openGoogleMapsTracking({
+              origin: shipment.pAddr || shipment.from,
+              destination: shipment.dAddr || shipment.to,
+              driverName: driver?.name,
+            });
+            showToast(`Opening Google Maps live navigation for ${shipment.id}...`);
+          }}
+          data-testid="drawer:btn_track_gmaps"
+        >
+          <NavigationIcon size={14} /> Track on Google Maps
+          <ExternalLinkIcon size={12} style={{ opacity: 0.8 }} />
+        </button>
+
         <button
           type="button"
           className="btn"

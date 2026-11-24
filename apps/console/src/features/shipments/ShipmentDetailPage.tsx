@@ -4,7 +4,8 @@ import { fleetStore } from '../../shared/api/client';
 import { StatusChip } from '../../shared/ui/StatusChip';
 import { SHIPMENT_FLOW } from '../../shared/api/types';
 import { useToast } from '../../shared/ui/Toast';
-import { CamIcon, MapPinIcon, DocIcon } from '../../shared/icons';
+import { CamIcon, MapPinIcon, DocIcon, NavigationIcon, ExternalLinkIcon } from '../../shared/icons';
+import { openGoogleMapsTracking } from '../../shared/utils/gmaps';
 
 type DetailTab = 'overview' | 'timeline' | 'route' | 'docs' | 'pod' | 'audit';
 
@@ -57,16 +58,32 @@ export const ShipmentDetailPage: React.FC = () => {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button
-              className="btn"
-              onClick={() => navigate(`/map`)}
-              data-testid="shipment:btn_live_map"
-            >
-              <MapPinIcon size={14} /> View on Live Map
-            </button>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             <button
               className="btn primary"
+              style={{ gap: 6 }}
+              onClick={() => {
+                openGoogleMapsTracking({
+                  origin: shipment.pAddr || shipment.from,
+                  destination: shipment.dAddr || shipment.to,
+                  driverName: driver?.name,
+                });
+                showToast(`Opening Google Maps live navigation for ${shipment.id}...`);
+              }}
+              data-testid="shipment:btn_track_gmaps"
+            >
+              <NavigationIcon size={14} /> Track on Google Maps
+              <ExternalLinkIcon size={12} style={{ opacity: 0.8 }} />
+            </button>
+            <button
+              className="btn"
+              onClick={() => navigate('/tracking')}
+              data-testid="shipment:btn_tracking_hub"
+            >
+              <MapPinIcon size={14} /> Tracking Hub
+            </button>
+            <button
+              className="btn"
               onClick={() => showToast('Consignment waybill dispatched to driver app')}
             >
               Push Notification to Driver
@@ -184,22 +201,75 @@ export const ShipmentDetailPage: React.FC = () => {
 
       {activeTab === 'route' && (
         <div className="card" style={{ padding: 24 }}>
-          <h3 style={{ fontSize: 15, fontWeight: 800, marginBottom: 12 }}>Planned Road Corridor &amp; Geofences</h3>
-          <p style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 16 }}>
-            Route corridor: {shipment.from} Logistics Zone ──► NH-66 Corridor ──► {shipment.to} Yard (Geofence radius: 250m)
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>Google Maps Highway Corridor &amp; Navigation</h3>
+            <button
+              className="btn primary sm"
+              style={{ gap: 6 }}
+              onClick={() => {
+                openGoogleMapsTracking({
+                  origin: shipment.pAddr || shipment.from,
+                  destination: shipment.dAddr || shipment.to,
+                  driverName: driver?.name,
+                });
+                showToast(`Opening Google Maps navigation...`);
+              }}
+            >
+              <NavigationIcon size={13} /> Open in Google Maps
+              <ExternalLinkIcon size={11} />
+            </button>
+          </div>
+
+          <p style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 18 }}>
+            Direct navigation route via Kerala State Highway network from {shipment.from} to {shipment.to}.
           </p>
+
           <div
             style={{
-              height: 320,
+              padding: 24,
               borderRadius: 12,
               background: 'var(--surface-2)',
               border: '1px solid var(--border)',
-              display: 'grid',
-              placeItems: 'center',
-              color: 'var(--muted)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 16,
             }}
           >
-            🗺️ OpenFreeMap Positron Corridor Map · Real-time GPS Breadcrumbs Active
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
+              <div style={{ background: 'var(--surface)', padding: 14, borderRadius: 8, border: '1px solid var(--border-2)' }}>
+                <span style={{ fontSize: 11, color: 'var(--muted)', textTransform: 'uppercase', fontWeight: 700 }}>Pickup Location</span>
+                <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4 }}>{shipment.from}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-2)', marginTop: 2 }}>{shipment.pAddr || `${shipment.from} Industrial Hub`}</div>
+              </div>
+
+              <div style={{ background: 'var(--surface)', padding: 14, borderRadius: 8, border: '1px solid var(--border-2)' }}>
+                <span style={{ fontSize: 11, color: 'var(--muted)', textTransform: 'uppercase', fontWeight: 700 }}>Drop Destination</span>
+                <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4 }}>{shipment.to}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-2)', marginTop: 2 }}>{shipment.dAddr || `${shipment.to} Logistics Yard`}</div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, paddingTop: 8 }}>
+              <div style={{ fontSize: 12.5, color: 'var(--text-2)' }}>
+                Driver: <b style={{ color: 'var(--text)' }}>{driver?.name || 'Assigned Driver'}</b> ({vehicle?.reg || 'Vehicle'})
+              </div>
+
+              <button
+                type="button"
+                className="btn primary"
+                style={{ gap: 6, fontWeight: 600 }}
+                onClick={() => {
+                  openGoogleMapsTracking({
+                    origin: shipment.pAddr || shipment.from,
+                    destination: shipment.dAddr || shipment.to,
+                    driverName: driver?.name,
+                  });
+                }}
+              >
+                <NavigationIcon size={14} /> Launch Full Google Maps Live Navigation
+                <ExternalLinkIcon size={12} />
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -92,11 +92,11 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     },
     {
       id: 'cmd-map',
-      title: 'Navigation: Go to Live Map',
-      meta: 'Track fleet',
+      title: 'Navigation: Go to Live Fleet Tracking',
+      meta: 'Google Maps navigation',
       icon: <TruckIcon size={16} />,
       action: () => {
-        navigate('/map');
+        navigate('/tracking');
         onClose();
       },
     },

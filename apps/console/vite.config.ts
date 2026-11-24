@@ -28,7 +28,6 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
           charts: ['chart.js', 'react-chartjs-2'],
-          map: ['maplibre-gl'],
         },
       },
     },
