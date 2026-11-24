@@ -65,8 +65,8 @@ export const AlertsCenterPage: React.FC = () => {
   return (
     <div className="view-anim">
       {/* Alert KPIs */}
-      <div className="grid" style={{ marginBottom: 16 }}>
-        <div className="card kpi s3">
+      <div className="kpi-grid">
+        <div className="card kpi">
           <div className="l">
             <span>Critical Emergency (SOS)</span>
             <span className="ic" style={{ background: 'color-mix(in srgb, var(--crit) 15%, transparent)', color: 'var(--crit)' }}>
@@ -79,7 +79,7 @@ export const AlertsCenterPage: React.FC = () => {
           <div className="f">High priority panic signals</div>
         </div>
 
-        <div className="card kpi s3">
+        <div className="card kpi">
           <div className="l">
             <span>Delayed Milestones</span>
             <span className="ic" style={{ background: 'color-mix(in srgb, var(--serious) 15%, transparent)', color: 'var(--serious)' }}>
@@ -90,7 +90,7 @@ export const AlertsCenterPage: React.FC = () => {
           <div className="f">Requires ETA realignment</div>
         </div>
 
-        <div className="card kpi s3">
+        <div className="card kpi">
           <div className="l">
             <span>Pending Driver Response</span>
             <span className="ic">
@@ -103,7 +103,7 @@ export const AlertsCenterPage: React.FC = () => {
           <div className="f">&gt; 10m without acceptance</div>
         </div>
 
-        <div className="card kpi s3">
+        <div className="card kpi">
           <div className="l">
             <span>Document Renewals</span>
             <span className="ic">
@@ -139,12 +139,12 @@ export const AlertsCenterPage: React.FC = () => {
           <table className="tbl" data-testid="alerts:table">
             <thead>
               <tr>
-                <th>Severity</th>
-                <th>Alert Title</th>
-                <th>Context / Details</th>
-                <th>Associated Entity</th>
-                <th>Status</th>
-                <th>Action</th>
+                <th style={{ width: 110 }}>Severity</th>
+                <th style={{ width: 250 }}>Alert Title</th>
+                <th style={{ minWidth: 260 }}>Context / Details</th>
+                <th style={{ width: 140 }}>Associated Entity</th>
+                <th style={{ width: 110 }}>Status</th>
+                <th style={{ width: 180, textAlign: 'right' }}>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -157,29 +157,40 @@ export const AlertsCenterPage: React.FC = () => {
               ) : (
                 filteredAlerts.map((a) => (
                   <tr key={a.id} data-testid={`alerts:row_${a.id}`}>
-                    <td>
+                    <td className="nowrap">
                       <span className={`chip s-${a.type}`}>{a.type}</span>
                     </td>
-                    <td style={{ fontWeight: 700 }}>
+                    <td className="nowrap" style={{ fontWeight: 700 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span className={`ai s-${a.type}`} style={{ width: 24, height: 24, borderRadius: 6 }}>
+                        <span className={`ai s-${a.type}`} style={{ width: 24, height: 24, borderRadius: 6, flexShrink: 0 }}>
                           {getAlertIcon(a.ic)}
                         </span>
-                        {a.title}
+                        <span>{a.title}</span>
                       </div>
                     </td>
-                    <td>{a.sub}</td>
-                    <td className="mono">{a.sid || 'General'}</td>
-                    <td>
+                    <td className="wrap-cell">{a.sub}</td>
+                    <td className="mono nowrap">{a.sid || 'General'}</td>
+                    <td className="nowrap">
                       <StatusChip
                         status={a.done ? 'OK' : a.type}
                         label={a.done ? 'Resolved' : 'Active'}
                       />
                     </td>
-                    <td>
-                      <div style={{ display: 'flex', gap: 6 }}>
+                    <td style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                        {a.id.startsWith('alt-app-') && (
+                          <button
+                            type="button"
+                            className="btn sm primary"
+                            onClick={() => navigate('/fleet')}
+                            data-testid={`alerts:btn_review_${a.id}`}
+                          >
+                            Review KYC
+                          </button>
+                        )}
                         {!a.done && (
                           <button
+                            type="button"
                             className="btn sm"
                             onClick={() => setResolvingAlert(a)}
                             data-testid={`alerts:btn_resolve_${a.id}`}
@@ -189,6 +200,7 @@ export const AlertsCenterPage: React.FC = () => {
                         )}
                         {a.sid && (
                           <button
+                            type="button"
                             className="btn sm primary"
                             onClick={() => navigate(`/shipments/${a.sid}`)}
                             data-testid={`alerts:btn_view_${a.id}`}

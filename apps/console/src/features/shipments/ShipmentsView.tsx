@@ -7,7 +7,8 @@ import { ShipmentDrawer } from './ShipmentDrawer';
 import { ShipmentFormModal } from './ShipmentFormModal';
 import { CancelShipmentModal } from './CancelShipmentModal';
 import { useToast } from '../../shared/ui/Toast';
-import { DownloadIcon } from '../../shared/icons';
+import { DownloadIcon, NavigationIcon } from '../../shared/icons';
+import { openGoogleMapsTracking } from '../../shared/utils/gmaps';
 
 const FILTERS = ['All', 'Active', 'Pending', 'Delivered', 'Cancelled'] as const;
 type FilterType = (typeof FILTERS)[number];
@@ -119,19 +120,20 @@ export const ShipmentsView: React.FC = () => {
           <table className="tbl" data-testid="shipments:table">
             <thead>
               <tr>
-                <th>Shipment</th>
-                <th>Route</th>
+                <th style={{ width: 140 }}>Shipment</th>
+                <th style={{ width: 180 }}>Route</th>
                 <th>Goods</th>
                 <th>Driver</th>
-                <th>Vehicle</th>
-                <th>Scheduled</th>
-                <th>Status</th>
+                <th style={{ width: 130 }}>Vehicle</th>
+                <th style={{ width: 140 }}>Scheduled</th>
+                <th style={{ width: 110 }}>Status</th>
+                <th style={{ width: 130, textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredShipments.length === 0 ? (
                 <tr>
-                  <td colSpan={7} style={{ textAlign: 'center', padding: '40px', color: 'var(--muted)' }}>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '40px', color: 'var(--muted)' }}>
                     No shipments match the selected criteria.
                   </td>
                 </tr>
@@ -148,16 +150,16 @@ export const ShipmentsView: React.FC = () => {
                       onClick={() => setSelectedDrawerId(s.id)}
                       data-testid={`shipments:row_${s.id}`}
                     >
-                      <td className="mono" style={{ fontWeight: 700 }}>
+                      <td className="mono nowrap" style={{ fontWeight: 700 }}>
                         {s.id}
                       </td>
-                      <td>
+                      <td className="nowrap">
                         {s.from} → {s.to}
                       </td>
-                      <td>
+                      <td className="wrap-cell">
                         {s.goods} · {s.wt} t
                       </td>
-                      <td>
+                      <td className="nowrap">
                         {driver ? (
                           <div className="person">
                             <Avatar name={driver.name} size={28} />
@@ -167,10 +169,52 @@ export const ShipmentsView: React.FC = () => {
                           <span style={{ color: 'var(--muted)' }}>Unassigned</span>
                         )}
                       </td>
-                      <td className="mono">{vehicle ? vehicle.reg : '—'}</td>
-                      <td>{formatDateTime(s.sched)}</td>
-                      <td>
+                      <td className="mono nowrap">{vehicle ? vehicle.reg : '—'}</td>
+                      <td className="nowrap">{formatDateTime(s.sched)}</td>
+                      <td className="nowrap">
                         <StatusChip status={statusLabel} />
+                      </td>
+                      <td style={{ textAlign: 'right' }}>
+                        <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', alignItems: 'center' }}>
+                          {ACTIVE_STATUSES.includes(s.status) && s.driver && (
+                            <button
+                              type="button"
+                              className="btn sm"
+                              style={{
+                                padding: '0 8px',
+                                height: 26,
+                                fontSize: 11,
+                                gap: 4,
+                                borderColor: 'var(--c1)',
+                                color: 'var(--c1)',
+                                background: 'transparent',
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openGoogleMapsTracking({
+                                  origin: s.pAddr || s.from,
+                                  destination: s.dAddr || s.to,
+                                  driverName: driver?.name,
+                                });
+                                showToast(`Opening Google Maps for ${s.id}...`);
+                              }}
+                              title="Open live Google Maps tracking"
+                            >
+                              <NavigationIcon size={11} /> Track
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            className="btn sm"
+                            style={{ padding: '0 8px', height: 26, fontSize: 11 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedDrawerId(s.id);
+                            }}
+                          >
+                            Details
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );

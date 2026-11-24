@@ -3,7 +3,6 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { Shell } from './Shell';
 import { LoginView } from '../features/auth/LoginView';
 import { DashboardView } from '../features/dashboard/DashboardView';
-import { LiveTrackingHubView } from '../features/map/LiveTrackingHubView';
 import { ShipmentsView } from '../features/shipments/ShipmentsView';
 import { ShipmentDetailPage } from '../features/shipments/ShipmentDetailPage';
 import { FleetView } from '../features/fleet/FleetView';
@@ -45,11 +44,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'map',
-        element: <LiveTrackingHubView />,
+        element: <Navigate to="/shipments" replace />,
       },
       {
         path: 'tracking',
-        element: <LiveTrackingHubView />,
+        element: <Navigate to="/shipments" replace />,
       },
       {
         path: 'shipments',

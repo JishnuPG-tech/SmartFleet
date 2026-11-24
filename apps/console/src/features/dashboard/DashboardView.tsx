@@ -207,8 +207,8 @@ export const DashboardView: React.FC = () => {
   return (
     <div className="view-anim">
       {/* 4 KPI Metrics */}
-      <div className="grid">
-        <div className="card kpi s3">
+      <div className="kpi-grid">
+        <div className="card kpi">
           <div className="l">
             <span>{isMalayalam ? 'ഓട്ടത്തിൽ' : 'On trip'}</span>
             <span className="ic">
@@ -221,7 +221,7 @@ export const DashboardView: React.FC = () => {
           </div>
         </div>
 
-        <div className="card kpi s3">
+        <div className="card kpi">
           <div className="l">
             <span>{isMalayalam ? 'ലഭ്യമായവർ' : 'Available'}</span>
             <span className="ic">
@@ -234,7 +234,7 @@ export const DashboardView: React.FC = () => {
           </div>
         </div>
 
-        <div className="card kpi s3">
+        <div className="card kpi">
           <div className="l">
             <span>{isMalayalam ? 'നിയോഗം കാക്കുന്നു' : 'Pending assignment'}</span>
             <span className="ic">
@@ -247,7 +247,7 @@ export const DashboardView: React.FC = () => {
           </div>
         </div>
 
-        <div className="card kpi s3">
+        <div className="card kpi">
           <div className="l">
             <span>{isMalayalam ? 'വൈകിയവ' : 'Delayed'}</span>
             <span className="ic">
@@ -332,8 +332,8 @@ export const DashboardView: React.FC = () => {
               <h3>{isMalayalam ? 'തത്സമയ ട്രിപ്പുകൾ' : 'Live trips'}</h3>
               <p>{isMalayalam ? 'സജീവ ഷിപ്പ്‌മെന്റുകളുടെ നിലവിലെ പുരോഗതി' : 'Active shipments and their milestone progress'}</p>
             </div>
-            <button className="btn sm" onClick={() => navigate('/tracking')}>
-              {isMalayalam ? 'ട്രാക്കിംഗ് ഹബ്ബ്' : 'Tracking Hub'}
+            <button className="btn sm" onClick={() => navigate('/shipments')}>
+              {isMalayalam ? 'എല്ലാ ഷിപ്പ്‌മെന്റുകളും' : 'View All Shipments'}
             </button>
           </div>
           <div style={{ paddingTop: 12 }}>

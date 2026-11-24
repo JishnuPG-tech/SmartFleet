@@ -3,7 +3,6 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   TruckIcon,
   DashboardIcon,
-  MapPinIcon,
   BoxIcon,
   ReportsIcon,
   SearchIcon,
@@ -80,8 +79,6 @@ export const Shell: React.FC = () => {
 
   const ROUTE_META_EN: Record<string, [string, string]> = {
     '/dashboard': ['Dashboard', 'Operations Command Center · Kerala Fleet Network'],
-    '/map': ['Live Fleet Tracking', 'Live GPS telemetry, trip checkpoints & 1-click Google Maps navigation'],
-    '/tracking': ['Live Fleet Tracking', 'Live GPS telemetry, trip checkpoints & 1-click Google Maps navigation'],
     '/shipments': ['Shipments Dispatch', 'Create, allocate, and monitor consignment flows'],
     '/fleet': ['Drivers & Vehicles', 'Directory, compliance credentials, and registration reviews'],
     '/reports': ['Executive Analytics', 'Delivery SLAs and 90-day product targets'],
@@ -94,8 +91,6 @@ export const Shell: React.FC = () => {
 
   const ROUTE_META_ML: Record<string, [string, string]> = {
     '/dashboard': ['ഡാഷ്‌ബോർഡ്', 'ഓപ്പറേഷൻസ് കമാൻഡ് സെന്റർ · കേരള ഫ്ലീറ്റ് നെറ്റ്‌വർക്ക്'],
-    '/map': ['തത്സമയ ട്രാക്കിംഗ്', 'തത്സമയ ജിപിഎസ് ടെലിമെട്രി, ഗൂഗിൾ മാപ്പ് നാവിഗേഷൻ'],
-    '/tracking': ['തത്സമയ ട്രാക്കിംഗ്', 'തത്സമയ ജിപിഎസ് ടെലിമെട്രി, ഗൂഗിൾ മാപ്പ് നാവിഗേഷൻ'],
     '/shipments': ['ചരക്ക് നീക്കം', 'ഷിപ്പ്‌മെന്റുകൾ നിർമ്മിക്കുക, നിയോഗിക്കുക, നിരീക്ഷിക്കുക'],
     '/fleet': ['ഡ്രൈവർമാരും വാഹനങ്ങളും', 'രേഖകൾ, ലൈസൻസുകൾ, പരിശോധനകൾ'],
     '/reports': ['റിപ്പോർട്ടുകൾ', 'ഡെലിവറി പ്രകടനം, 90-ദിന ലക്ഷ്യങ്ങൾ'],
@@ -141,15 +136,6 @@ export const Shell: React.FC = () => {
           >
             <DashboardIcon />
             {isMalayalam ? 'ഡാഷ്‌ബോർഡ്' : 'Dashboard'}
-          </NavLink>
-
-          <NavLink
-            to="/map"
-            className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-            data-testid="nav:btn_map"
-          >
-            <MapPinIcon />
-            {isMalayalam ? 'തത്സമയ ട്രാക്കിംഗ്' : 'Live Tracking'}
           </NavLink>
 
           <NavLink

@@ -121,22 +121,22 @@ export const FleetView: React.FC = () => {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid" style={{ marginBottom: 16 }}>
+      <div className="kpi-grid">
         {currentTab === 'drivers' && (
           <>
-            <div className="card kpi s3">
+            <div className="card kpi">
               <div className="l">Total drivers</div>
               <div className="v mono">{drivers.length}</div>
             </div>
-            <div className="card kpi s3">
+            <div className="card kpi">
               <div className="l">Available</div>
               <div className="v mono">{drivers.filter((d) => d.status === 'Available').length}</div>
             </div>
-            <div className="card kpi s3">
+            <div className="card kpi">
               <div className="l">On trip</div>
               <div className="v mono">{drivers.filter((d) => d.status === 'On Trip').length}</div>
             </div>
-            <div className="card kpi s3">
+            <div className="card kpi">
               <div className="l">Licences expiring ≤30 d</div>
               <div className="v mono">{driversExpiringSoon}</div>
             </div>
@@ -145,19 +145,19 @@ export const FleetView: React.FC = () => {
 
         {currentTab === 'vehicles' && (
           <>
-            <div className="card kpi s3">
+            <div className="card kpi">
               <div className="l">Total vehicles</div>
               <div className="v mono">{vehicles.length}</div>
             </div>
-            <div className="card kpi s3">
+            <div className="card kpi">
               <div className="l">Available</div>
               <div className="v mono">{vehicles.filter((v) => v.status === 'Available').length}</div>
             </div>
-            <div className="card kpi s3">
+            <div className="card kpi">
               <div className="l">On trip</div>
               <div className="v mono">{vehicles.filter((v) => v.status === 'On Trip').length}</div>
             </div>
-            <div className="card kpi s3">
+            <div className="card kpi">
               <div className="l">In maintenance</div>
               <div className="v mono">{vehicles.filter((v) => v.status === 'Maintenance').length}</div>
             </div>
@@ -165,7 +165,7 @@ export const FleetView: React.FC = () => {
         )}
 
         {currentTab === 'approvals' && (
-          <div className="card kpi s3">
+          <div className="card kpi">
             <div className="l">Awaiting operator review</div>
             <div className="v mono">{approvals.length}</div>
           </div>

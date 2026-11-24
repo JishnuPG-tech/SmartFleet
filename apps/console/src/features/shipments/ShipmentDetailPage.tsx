@@ -4,7 +4,7 @@ import { fleetStore } from '../../shared/api/client';
 import { StatusChip } from '../../shared/ui/StatusChip';
 import { SHIPMENT_FLOW } from '../../shared/api/types';
 import { useToast } from '../../shared/ui/Toast';
-import { CamIcon, MapPinIcon, DocIcon, NavigationIcon, ExternalLinkIcon } from '../../shared/icons';
+import { CamIcon, BoxIcon, DocIcon, NavigationIcon, ExternalLinkIcon } from '../../shared/icons';
 import { openGoogleMapsTracking } from '../../shared/utils/gmaps';
 
 type DetailTab = 'overview' | 'timeline' | 'route' | 'docs' | 'pod' | 'audit';
@@ -77,10 +77,10 @@ export const ShipmentDetailPage: React.FC = () => {
             </button>
             <button
               className="btn"
-              onClick={() => navigate('/tracking')}
-              data-testid="shipment:btn_tracking_hub"
+              onClick={() => navigate('/shipments')}
+              data-testid="shipment:btn_shipments_hub"
             >
-              <MapPinIcon size={14} /> Tracking Hub
+              <BoxIcon size={14} /> Shipments Dispatch
             </button>
             <button
               className="btn"
