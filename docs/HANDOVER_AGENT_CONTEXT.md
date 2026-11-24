@@ -121,3 +121,63 @@ npm run dev
 5. **OpenStreetMap Integration**:
    - Zero-API-key OpenStreetMap standard tile surface (`osmdroid` MAPNIK) with Kerala highway corridor route polyline and live vehicle markers.
    - Interactive zoom buttons (+ / -) and recenter location control.
+
+---
+
+## 7. V3.2 Physical Device Verification & Defect Remediation (Latest Release)
+
+During testing on physical OnePlus/Oppo hardware (Android 14, 393 × 877 dp viewport), specific edge cases were isolated and resolved:
+
+### 1. "Start Trip" & History ANR / Process Crash
+- **Root Cause**: Android 14 (`SDK 34`) strictly enforces runtime background and foreground service restrictions. Invoking `Service.startForeground()` without `ACCESS_FINE_LOCATION` or `ACCESS_COARSE_LOCATION` granted or from non-permitted lifecycle states instantly raises `ForegroundServiceStartNotAllowedException`, terminating the application process.
+- **Remediation**:
+  - `LocationTrackingService.kt`: Added proactive permission validation before invoking `startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)`. Wrapped every service lifecycle callback (`onCreate`, `onStartCommand`, `onDestroy`, and notification channel setup) inside `try / catch (e: Throwable)` safety shields to guarantee zero unhandled crashes or ANRs.
+  - `ActiveTripScreen.kt`: Guarded `startForegroundService` behind runtime permission validation.
+  - `DriverHistoryScreen.kt` & `MainActivity.kt`: Tapping historical delivered trips routes directly to `DRIVER_DELIVERED` read-only summary, avoiding re-triggering active GPS foreground telemetry.
+
+### 2. Multi-Step Bar Elimination in "New Shipment"
+- **Issue**: Screen displayed an unnecessary `TcStepsBar` (`2 / 3 · Goods & schedule`) on what is designed as an immediate, single-page dispatch form.
+- **Remediation**: In `NewShipmentScreen.kt`, excised `TcStepsBar` and `2 / 3` step indicators completely. Transformed primary bottom button from "Next: assign driver" to "Create shipment", directly finalizing dispatch creation.
+
+### 3. Dynamic Detail Routing (Shipments & Drivers)
+- **Issue**: Tapping on distinct list items (e.g., Assigned, Rejected, Loaded, Delivered) previously fell back to a hardcoded "In transit" Kasaragod $\rightarrow$ Malappuram mock screen. Tapping any driver opened Suresh Kumar.
+- **Remediation**:
+  - `ShipmentDetailScreen.kt`: Implemented `ShipmentRepository.getShipment(id)` to map unique data for `TC-2026-000138` (Assigned), `TC-2026-000141` (Rejected), `TC-2026-000131` (In transit), `TC-2026-000133` (Loaded), and `TC-2026-000125` (Delivered). Dynamically loads matching route, consignee, driver, vehicle, and stage-specific milestones.
+  - `DriverDetailScreen.kt`: Implemented `DriverDetailsRepository.getDriver(name)` supporting dynamic lookups for Suresh Kumar, Rajan Nair, Venugopal R, Shaji Varghese, and Haridas M with live vehicle assignments and ratings.
+  - `MainActivity.kt`: Added `selectedShipmentId` and `selectedDriverName` state holders.
+
+### 4. Job Alert Destination Truncation & Layout Balance
+- **Issue**: Destination banner rendered `Palakkad →` with the destination city clipped due to oversize typography (`30.sp`). Massive empty void existed at the bottom of the screen.
+- **Remediation**:
+  - `TcType.kt`: Adjusted `jobAlertDestination` font size from `30.sp` to `22.sp` across all theme profiles. Routes like `Palakkad → Kozhikode` now display cleanly on a single line on 360dp+ viewports.
+  - `JobAlertScreen.kt`: Applied `Arrangement.SpaceEvenly` and balanced vertical spacers, distributing HUD elements symmetrically.
+
+### 5. Driver Approvals Button Squishing
+- **Issue**: "Review" button was squished into an oval green pill against the right screen border due to horizontal row cramping next to the status chip.
+- **Remediation**: In `DriverApprovalsScreen.kt`, separated items into a clean 2-row layout: Row 1 displays driver status chip and arrival timestamp; Row 2 provides equal-weight `Approve` (outline) and `Review` (primary) full-width touch targets.
+
+### 6. Operations Console (Web) Zero-Key Map Routing
+- **Remediation**: In `apps/console`, replaced heavyweight MapLibre GL bundle with native Google Maps external direction routing (`apps/console/src/shared/utils/gmaps.ts`), eliminating WebGL overhead and Google API key billing requirements. Automatically opens turn-by-turn navigation in a new tab.
+
+---
+
+## 8. Quick Commands for Mobile AI Agents
+
+When working via remote agents or phone terminals, use these standard operational commands:
+
+```bash
+# Check repository status
+git status
+
+# Build Android APK (Release / Direct Debug)
+cd android
+./gradlew :app:assembleDirectDebug
+
+# Run Web Console
+cd apps/console
+npm run dev
+
+# Run Backend
+cd backend
+npm run dev
+```
