@@ -285,17 +285,13 @@ export const LiveMapView: React.FC = () => {
   }, []);
 
   const activeShipments = useMemo(
-    () => fleetStore.shipments.filter((s) => ACTIVE_STATUSES.includes(s.status)),
+    () =>
+      fleetStore.shipments.filter(
+        (s) => ACTIVE_STATUSES.includes(s.status) && Boolean(s.driver) && Boolean(s.vehicle)
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [fleetStore.shipments]
   );
-
-  // Default selection
-  useEffect(() => {
-    if (!selectedShipmentId && activeShipments.length > 0) {
-      setSelectedShipmentId(activeShipments[0].id);
-    }
-  }, [activeShipments, selectedShipmentId]);
 
   // Live motion tick
   useEffect(() => {
@@ -344,7 +340,9 @@ export const LiveMapView: React.FC = () => {
     });
   }, [activeShipments, searchFilter, statusFilter]);
 
-  const selectedShipment = activeShipments.find((s) => s.id === selectedShipmentId) || activeShipments[0];
+  const selectedShipment = selectedShipmentId
+    ? activeShipments.find((s) => s.id === selectedShipmentId) || null
+    : null;
   const selectedDriver = selectedShipment
     ? fleetStore.drivers.find((d) => d.id === selectedShipment.driver)
     : null;
@@ -396,6 +394,11 @@ export const LiveMapView: React.FC = () => {
     }
 
     mapRef.current = map;
+
+    // Deselect vehicle when clicking map background
+    map.on('click', () => {
+      setSelectedShipmentId(null);
+    });
 
     const ro = new ResizeObserver(() => {
       map.resize();
@@ -503,10 +506,22 @@ export const LiveMapView: React.FC = () => {
     });
   }, [activeShipments, selectedShipmentId, speeds]);
 
-  // Render Origin and Destination Endpoint Markers on Map
+  // Render Origin and Destination Endpoint Markers on Map ONLY when a vehicle is selected
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !selectedShipment) return;
+    if (!map) return;
+
+    if (!selectedShipment) {
+      if (endpointsRef.current.origin) {
+        endpointsRef.current.origin.remove();
+        endpointsRef.current.origin = undefined;
+      }
+      if (endpointsRef.current.destination) {
+        endpointsRef.current.destination.remove();
+        endpointsRef.current.destination = undefined;
+      }
+      return;
+    }
 
     const fromCoord = KERALA_CITIES[selectedShipment.from] || DETAILED_WAYPOINTS[selectedShipment.from] || [76.2673, 9.9312];
     const toCoord = KERALA_CITIES[selectedShipment.to] || DETAILED_WAYPOINTS[selectedShipment.to] || [75.7804, 11.2588];
@@ -546,14 +561,25 @@ export const LiveMapView: React.FC = () => {
     }
   }, [selectedShipment]);
 
-  // Render GeoJSON Route Path (Traveled + Remaining) on Map
+  // Render GeoJSON Route Path (Traveled + Remaining) on Map ONLY when a vehicle is selected
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !isMapReady || !selectedShipment || !selectedTelemetry) return;
+    if (!map || !isMapReady) return;
 
     const sourceId = 'selected-route-source';
     const traveledLayerId = 'route-traveled-layer';
     const remainingLayerId = 'route-remaining-layer';
+
+    if (!selectedShipment || !selectedTelemetry) {
+      const source = map.getSource(sourceId) as maplibregl.GeoJSONSource | undefined;
+      if (source) {
+        source.setData({
+          type: 'FeatureCollection',
+          features: [],
+        });
+      }
+      return;
+    }
 
     const geojson: GeoJSON.FeatureCollection = {
       type: 'FeatureCollection',
@@ -761,7 +787,10 @@ export const LiveMapView: React.FC = () => {
                     type="button"
                     className="icon-btn"
                     style={{ width: 24, height: 24, border: 0, background: 'none' }}
-                    onClick={() => setIsMiniHudVisible(false)}
+                    onClick={() => {
+                      setIsMiniHudVisible(false);
+                      setSelectedShipmentId(null);
+                    }}
                     title="Dismiss"
                   >
                     <CloseIcon size={12} />
@@ -867,15 +896,27 @@ export const LiveMapView: React.FC = () => {
                       · {selectedVehicle.type} ({selectedVehicle.cap} t)
                     </span>
                   </div>
-                  <button
-                    type="button"
-                    className="btn sm"
-                    style={{ padding: '0 8px' }}
-                    onClick={() => handleLocateVehicle(selectedShipment.id)}
-                    title="Locate and track camera"
-                  >
-                    <TruckIcon size={14} /> Locate
-                  </button>
+                  <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                    <button
+                      type="button"
+                      className="btn sm"
+                      style={{ padding: '0 8px' }}
+                      onClick={() => handleLocateVehicle(selectedShipment.id)}
+                      title="Locate and track camera"
+                    >
+                      <TruckIcon size={14} /> Locate
+                    </button>
+                    <button
+                      type="button"
+                      className="icon-btn"
+                      style={{ width: 24, height: 24, borderRadius: 4 }}
+                      onClick={() => setSelectedShipmentId(null)}
+                      title="Deselect vehicle"
+                      aria-label="Deselect vehicle"
+                    >
+                      <CloseIcon size={12} />
+                    </button>
+                  </div>
                 </div>
 
                 <div className="kv" style={{ marginTop: 10 }}>

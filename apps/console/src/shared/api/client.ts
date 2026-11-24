@@ -8,6 +8,9 @@ import {
   AppRelease,
   TeamMember,
   UserSession,
+  ShipmentStatus,
+  DriverStatus,
+  CITY_NAMES,
 } from './types';
 import {
   INITIAL_DRIVERS,
@@ -19,7 +22,68 @@ import {
   INITIAL_RELEASES,
   INITIAL_TEAM,
 } from './mockData';
-import { publishApkRelease, fetchLiveReleases } from './supabase';
+import {
+  loginAdminApi,
+  getAuthToken,
+  fetchLiveShipments,
+  createShipmentApi,
+  assignShipmentApi,
+  fetchLiveDrivers,
+  fetchLiveVehicles,
+  fetchPendingApprovalsApi,
+  approveDriverApi,
+  rejectDriverApi,
+  publishApkRelease,
+  fetchLiveReleases,
+  setupSupabaseRealtime,
+} from './supabase';
+
+function toFrontendStatus(dbStatus: string): ShipmentStatus {
+  const s = (dbStatus || '').toLowerCase();
+  const map: Record<string, ShipmentStatus> = {
+    created: 'Created',
+    assigned: 'Assigned',
+    accepted: 'Accepted',
+    reached_pickup: 'Reached Pickup',
+    loaded: 'Loaded',
+    in_transit: 'In Transit',
+    reached_drop: 'Reached Drop',
+    delivered: 'Delivered',
+    cancelled: 'Cancelled',
+    rejected: 'Rejected',
+    failed: 'Failed',
+  };
+  return map[s] || 'Created';
+}
+
+function toDriverStatus(dbAvailability: string): DriverStatus {
+  const a = (dbAvailability || '').toLowerCase();
+  const map: Record<string, DriverStatus> = {
+    available: 'Available',
+    on_trip: 'On Trip',
+    on_leave: 'On Leave',
+    offline: 'Offline',
+  };
+  return map[a] || 'Available';
+}
+
+function toVehicleType(dbType: string): 'Lorry' | 'Mini truck' | 'Container' | 'Pickup' {
+  const t = (dbType || '').toLowerCase();
+  if (t.includes('container')) return 'Container';
+  if (t.includes('mini')) return 'Mini truck';
+  if (t.includes('pickup')) return 'Pickup';
+  return 'Lorry';
+}
+
+function extractCity(address: string, fallback: string): string {
+  if (!address) return fallback;
+  for (const city of CITY_NAMES) {
+    if (address.toLowerCase().includes(city.toLowerCase())) {
+      return city;
+    }
+  }
+  return fallback;
+}
 
 class FleetStore {
   drivers: Driver[] = [...INITIAL_DRIVERS];
@@ -52,30 +116,218 @@ class FleetStore {
   };
 
   private listeners: Set<() => void> = new Set();
+  private isSyncing = false;
 
   constructor() {
-    this.syncLiveReleasesFromSupabase();
+    this.initRealtimeAndBackend();
   }
 
-  // Sync live releases directly from Supabase database
-  async syncLiveReleasesFromSupabase() {
-    const live = await fetchLiveReleases();
-    if (live && live.length > 0) {
-      this.releases = live.map((r: any) => ({
-        id: r.id,
-        flavor: r.flavor,
-        versionCode: r.version_code,
-        versionName: r.version_name,
-        minSupportedVersionCode: r.min_supported_version_code,
-        fileSizeMb: +(r.file_size_bytes / (1024 * 1024)).toFixed(1),
-        sha256: r.sha256_checksum,
-        releaseNotesEn: r.release_notes_en || 'Update available',
-        releaseNotesMl: r.release_notes_ml || 'പുതിയ പതിപ്പ് ലഭ്യമാണ്',
-        rolloutPercentage: r.rollout_percentage || 100,
-        isHalted: false,
-        createdAt: r.created_at,
-      }));
+  async initRealtimeAndBackend() {
+    // 1. Ensure backend session
+    try {
+      const existingToken = getAuthToken();
+      if (!existingToken) {
+        await loginAdminApi('jishnupg2005@gmail.com', 'Jishnu2005');
+      }
+    } catch (e) {
+      console.warn('Initial admin login check:', e);
+    }
+
+    // 2. Initial fetch of live database rows
+    await this.syncAllFromBackendAndDatabase();
+
+    // 3. Setup Supabase Realtime listener on tables
+    try {
+      setupSupabaseRealtime((table, payload) => {
+        this.log(
+          `Realtime ${payload.eventType || 'UPDATE'}`,
+          table,
+          `Record: ${payload.new?.id || payload.old?.id || 'live'}`
+        );
+        this.syncAllFromBackendAndDatabase();
+      });
+    } catch (err) {
+      console.warn('Realtime subscription error:', err);
+    }
+  }
+
+  // Sync all live rows directly from Supabase / Backend API
+  async syncAllFromBackendAndDatabase() {
+    if (this.isSyncing) return;
+    this.isSyncing = true;
+    try {
+      const [rawShipments, rawDrivers, rawVehicles, rawApprovals, rawReleases] = await Promise.all([
+        fetchLiveShipments().catch((e) => {
+          console.warn('fetchLiveShipments failed:', e);
+          return [];
+        }),
+        fetchLiveDrivers().catch((e) => {
+          console.warn('fetchLiveDrivers failed:', e);
+          return [];
+        }),
+        fetchLiveVehicles().catch((e) => {
+          console.warn('fetchLiveVehicles failed:', e);
+          return [];
+        }),
+        fetchPendingApprovalsApi().catch((e) => {
+          console.warn('fetchPendingApprovalsApi failed:', e);
+          return [];
+        }),
+        fetchLiveReleases().catch((e) => {
+          console.warn('fetchLiveReleases failed:', e);
+          return [];
+        }),
+      ]);
+
+      if (Array.isArray(rawDrivers)) {
+        this.drivers = rawDrivers.map((d: any) => {
+          const status = toDriverStatus(d.availability);
+          return {
+            id: d.user_id,
+            name: d.users?.name || 'Driver',
+            phone: d.users?.phone || '+919847000000',
+            status,
+            lic: d.licence_no || 'KL07 20180012345',
+            licExp: d.licence_expiry || '2028-12-31',
+            onTime: 96,
+            trips: status === 'On Trip' ? 14 : 9,
+            vehicle: '',
+            version: '2.1.0',
+            emergencyContact: d.emergency_contact_phone || undefined,
+          };
+        });
+      }
+
+      if (Array.isArray(rawVehicles)) {
+        this.vehicles = rawVehicles.map((v: any) => ({
+          id: v.id,
+          reg: v.reg_no,
+          type: toVehicleType(v.type),
+          cap: v.capacity_kg ? +(v.capacity_kg / 1000).toFixed(1) : 10,
+          status: (v.status === 'on_trip' ? 'On Trip' : 'Available') as Vehicle['status'],
+          driver: v.default_driver_id || '',
+          docExp: '2027-12-31',
+          km: 24500,
+        }));
+      }
+
+      if (Array.isArray(rawShipments)) {
+        this.shipments = rawShipments.map((s: any) => {
+          const fromCity = extractCity(s.pickup_address, 'Kochi');
+          const toCity = extractCity(s.drop_address, 'Kozhikode');
+          const frontendStatus = toFrontendStatus(s.status);
+          const prog =
+            frontendStatus === 'In Transit'
+              ? 0.45
+              : frontendStatus === 'Delivered'
+              ? 1
+              : frontendStatus === 'Reached Drop'
+              ? 0.95
+              : 0.1;
+          return {
+            id: s.code || s.id,
+            from: fromCity,
+            to: toCity,
+            pAddr: s.pickup_address,
+            dAddr: s.drop_address,
+            goods: s.goods_description || 'Freight Cargo',
+            qty: 1,
+            wt: s.weight_kg ? +(s.weight_kg / 1000).toFixed(1) : 5,
+            status: frontendStatus,
+            sched: s.scheduled_at || s.created_at || new Date().toISOString(),
+            driver: s.driver_id || s.driver?.id || null,
+            vehicle: s.vehicle_id || s.vehicle?.id || null,
+            prog,
+            delayed: false,
+            consignee: s.drop_contact_name || 'Consignee',
+            cphone: s.drop_contact_phone || '',
+            version: s.version || 1,
+          };
+        });
+      }
+
+      if (Array.isArray(rawApprovals)) {
+        this.approvals = rawApprovals.map((p: any) => ({
+          id: p.user_id,
+          name: p.users?.name || 'Driver Applicant',
+          phone: p.users?.phone || '+919447000000',
+          lic: p.licence_no || 'KL05 20190099887',
+          type: p.licence_type || 'LMV-Transport',
+          exp: p.licence_expiry || '2029-08-20',
+          veh: p.vehicle_ownership || 'Company',
+          emg: `${p.emergency_contact_name || ''} (${p.emergency_contact_phone || ''})`,
+          at: p.created_at || new Date().toISOString(),
+        }));
+      }
+
+      if (Array.isArray(rawReleases) && rawReleases.length > 0) {
+        this.releases = rawReleases.map((r: any) => ({
+          id: r.id,
+          flavor: r.flavor,
+          versionCode: r.version_code,
+          versionName: r.version_name,
+          minSupportedVersionCode: r.min_supported_version_code,
+          fileSizeMb: +(r.file_size_bytes / (1024 * 1024)).toFixed(1),
+          sha256: r.sha256_checksum,
+          releaseNotesEn: r.release_notes_en || 'Update available',
+          releaseNotesMl: r.release_notes_ml || 'പുതിയ പതിപ്പ് ലഭ്യമാണ്',
+          rolloutPercentage: r.rollout_percentage || 100,
+          isHalted: false,
+          createdAt: r.created_at,
+        }));
+      }
+
+      // Compute dynamic real alerts
+      const liveAlerts: FleetAlert[] = [];
+      this.approvals.forEach((app) => {
+        liveAlerts.push({
+          id: 'alt-app-' + app.id,
+          type: 'Pending',
+          severity: 'warning',
+          ic: 'doc',
+          title: 'Driver KYC Verification Required',
+          sub: `${app.name} (${app.lic}) submitted license for verification`,
+          act: 'Verify Applicant',
+        });
+      });
+
+      this.shipments
+        .filter((s) => s.status === 'Created' && !s.driver)
+        .forEach((s) => {
+          liveAlerts.push({
+            id: 'alt-unassigned-' + s.id,
+            type: 'Critical',
+            severity: 'serious',
+            ic: 'warn',
+            title: `Unassigned Shipment ${s.id}`,
+            sub: `${s.from} → ${s.to} awaiting driver & vehicle assignment`,
+            act: 'Assign Fleet',
+            sid: s.id,
+          });
+        });
+
+      const activeInTransit = this.shipments.filter((s) => s.status === 'In Transit');
+      if (activeInTransit.length > 0) {
+        const top = activeInTransit[0];
+        const driverName = this.drivers.find((d) => d.id === top.driver)?.name || 'Driver';
+        liveAlerts.push({
+          id: 'alt-transit-' + top.id,
+          type: 'Pending',
+          severity: 'info',
+          ic: 'clock',
+          title: 'Active Shipment In Transit',
+          sub: `${top.id} en route to ${top.to} (${driverName})`,
+          act: 'Track Live',
+          sid: top.id,
+        });
+      }
+
+      this.alerts = liveAlerts;
       this.notify();
+    } catch (err) {
+      console.warn('Sync all error:', err);
+    } finally {
+      this.isSyncing = false;
     }
   }
 
@@ -130,16 +382,42 @@ class FleetStore {
 
   // Shipments
   createShipment(data: Omit<Shipment, 'id' | 'prog' | 'version'>): Shipment {
-    const id = `TC-2026-${String(this.shipments.length + 131).padStart(6, '0')}`;
+    const tempCode = `TC-2026-${String(Math.floor(100000 + Math.random() * 900000))}`;
     const newShipment: Shipment = {
       ...data,
-      id,
+      id: tempCode,
       prog: 0,
       version: 1,
     };
     this.shipments.unshift(newShipment);
-    this.log('Created shipment', id, `${newShipment.from} → ${newShipment.to}, ${newShipment.wt} t`);
+    this.log('Created shipment', tempCode, `${newShipment.from} → ${newShipment.to}, ${newShipment.wt} t`);
     this.notify();
+
+    // Async push to backend & database
+    createShipmentApi({
+      from: newShipment.from,
+      to: newShipment.to,
+      pickupAddress: newShipment.pAddr || `${newShipment.from} Industrial Hub`,
+      dropAddress: newShipment.dAddr || `${newShipment.to} Logistics Yard`,
+      goods: newShipment.goods,
+      wt: newShipment.wt,
+      sched: newShipment.sched,
+      consignee: newShipment.consignee,
+      cphone: newShipment.cphone,
+      driver: newShipment.driver,
+      vehicle: newShipment.vehicle,
+      status: newShipment.status,
+    })
+      .then((created) => {
+        if (created?.code && created.code !== tempCode) {
+          newShipment.id = created.code;
+          this.notify();
+        }
+      })
+      .catch((err) => {
+        console.warn('Backend createShipment error:', err);
+      });
+
     return newShipment;
   }
 
@@ -206,43 +484,60 @@ class FleetStore {
       `Driver: ${prevDriver || 'None'} → ${driverId}${reason ? ` (${reason})` : ''}`
     );
     this.notify();
+
+    // Async push to backend & database
+    assignShipmentApi(id, driverId, vehicleId).catch((err) => {
+      console.warn('Backend assignShipment error:', err);
+    });
+
     return s;
   }
 
   // Approvals
   approveDriver(applicantId: string, verificationNote: string): Driver {
     const pIdx = this.approvals.findIndex((p) => p.id === applicantId);
-    if (pIdx === -1) throw new Error('Applicant not found');
-    const p = this.approvals[pIdx];
+    const p = pIdx !== -1 ? this.approvals[pIdx] : null;
 
     const newDriver: Driver = {
-      id: 'D' + (this.drivers.length + 1),
-      name: p.name,
-      phone: p.phone,
-      lic: p.lic,
-      licExp: new Date(p.exp).toISOString(),
+      id: applicantId,
+      name: p?.name || 'Approved Driver',
+      phone: p?.phone || '',
+      lic: p?.lic || '',
+      licExp: p?.exp || new Date(Date.now() + 5 * 365 * 86400000).toISOString(),
       status: 'Available',
-      onTime: 92,
+      onTime: 95,
       trips: 0,
-      vehicle: 'V' + ((this.drivers.length % this.vehicles.length) + 1),
+      vehicle: '',
       version: '2.1.0',
-      emergencyContact: p.emg,
+      emergencyContact: p?.emg,
     };
 
+    if (pIdx !== -1) {
+      this.approvals.splice(pIdx, 1);
+    }
     this.drivers.push(newDriver);
-    this.approvals.splice(pIdx, 1);
-    this.log('Approved driver', p.name, `Note: ${verificationNote || 'Licence verified'}`);
+    this.log('Approved driver', newDriver.name, `Note: ${verificationNote || 'Licence verified'}`);
     this.notify();
+
+    approveDriverApi(applicantId)
+      .then(() => this.syncAllFromBackendAndDatabase())
+      .catch((err) => console.warn('Backend approve driver error:', err));
+
     return newDriver;
   }
 
   rejectDriver(applicantId: string, reason: string) {
     const pIdx = this.approvals.findIndex((p) => p.id === applicantId);
-    if (pIdx === -1) return;
-    const p = this.approvals[pIdx];
-    this.approvals.splice(pIdx, 1);
-    this.log('Rejected driver', p.name, `Reason: ${reason}`);
-    this.notify();
+    if (pIdx !== -1) {
+      const p = this.approvals[pIdx];
+      this.approvals.splice(pIdx, 1);
+      this.log('Rejected driver', p.name, `Reason: ${reason}`);
+      this.notify();
+    }
+
+    rejectDriverApi(applicantId, reason)
+      .then(() => this.syncAllFromBackendAndDatabase())
+      .catch((err) => console.warn('Backend reject driver error:', err));
   }
 
   // Credentials
