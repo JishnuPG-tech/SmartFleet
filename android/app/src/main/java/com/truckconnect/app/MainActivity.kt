@@ -173,6 +173,9 @@ fun TruckConnectAppNav(
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = hiltViewModel()
 
+    var selectedShipmentId by remember { mutableStateOf("TC-2026-000131") }
+    var selectedDriverName by remember { mutableStateOf("Suresh Kumar") }
+
     var lastNavigationTime by remember { mutableStateOf(0L) }
     fun safeNavigate(route: String, builder: (androidx.navigation.NavOptionsBuilder.() -> Unit)? = null) {
         val now = SystemClock.uptimeMillis()
@@ -190,10 +193,9 @@ fun TruckConnectAppNav(
     fun navigateAdminTab(tabIndex: Int) {
         val destination = when (tabIndex) {
             AdminTab.HOME.ordinal -> NavDestinations.ADMIN_DASHBOARD
-            AdminTab.MAP.ordinal -> NavDestinations.ADMIN_LIVEMAP
             AdminTab.SHIPMENTS.ordinal -> NavDestinations.ADMIN_SHIPMENTS
-            AdminTab.FLEET.ordinal -> NavDestinations.ADMIN_FLEET
-            AdminTab.MORE.ordinal -> NavDestinations.ADMIN_MORE
+            AdminTab.DRIVERS.ordinal -> NavDestinations.ADMIN_FLEET
+            AdminTab.PROFILE.ordinal -> NavDestinations.ADMIN_MORE
             else -> NavDestinations.ADMIN_DASHBOARD
         }
         val current = navController.currentBackStackEntry?.destination?.route
@@ -215,8 +217,8 @@ fun TruckConnectAppNav(
         val destination = when (tabIndex) {
             0 -> NavDestinations.DRIVER_HOME
             1 -> NavDestinations.DRIVER_HISTORY
-            2 -> NavDestinations.DRIVER_ALERTS
-            3 -> NavDestinations.DRIVER_PROFILE
+            2 -> NavDestinations.DRIVER_PROFILE
+            3 -> NavDestinations.DRIVER_SETTINGS
             else -> NavDestinations.DRIVER_HOME
         }
         val current = navController.currentBackStackEntry?.destination?.route
@@ -342,10 +344,13 @@ fun TruckConnectAppNav(
         // --- ADMIN MAIN TABS ---
         composable(NavDestinations.ADMIN_DASHBOARD) {
             DashboardScreen(
-                onBellClick = { navController.navigate(NavDestinations.ADMIN_ALERTS_CENTRE) },
-                onSosCardClick = { navigateAdminTab(AdminTab.MAP.ordinal) },
-                onViewMapClick = { navigateAdminTab(AdminTab.MAP.ordinal) },
-                onTripClick = { navController.navigate(NavDestinations.ADMIN_SHIPMENT_DETAIL) },
+                onBellClick = { },
+                onSosCardClick = { },
+                onViewMapClick = { },
+                onTripClick = { id ->
+                    selectedShipmentId = id
+                    navController.navigate(NavDestinations.ADMIN_SHIPMENT_DETAIL)
+                },
                 onKpiClick = { navController.navigate(NavDestinations.ADMIN_SHIPMENTS) },
                 onTabSelected = { tab -> navigateAdminTab(tab) }
             )
@@ -353,14 +358,20 @@ fun TruckConnectAppNav(
 
         composable(NavDestinations.ADMIN_LIVEMAP) {
             LiveMapScreen(
-                onTimelineClick = { navController.navigate(NavDestinations.ADMIN_SHIPMENT_DETAIL) },
+                onTimelineClick = { id ->
+                    selectedShipmentId = id
+                    navController.navigate(NavDestinations.ADMIN_SHIPMENT_DETAIL)
+                },
                 onTabSelected = { tab -> navigateAdminTab(tab) }
             )
         }
 
         composable(NavDestinations.ADMIN_SHIPMENTS) {
             ShipmentsScreen(
-                onShipmentClick = { navController.navigate(NavDestinations.ADMIN_SHIPMENT_DETAIL) },
+                onShipmentClick = { id ->
+                    selectedShipmentId = id
+                    navController.navigate(NavDestinations.ADMIN_SHIPMENT_DETAIL)
+                },
                 onFabClick = { navController.navigate(NavDestinations.ADMIN_NEW_SHIPMENT) },
                 onTabSelected = { tab -> navigateAdminTab(tab) }
             )
@@ -368,7 +379,10 @@ fun TruckConnectAppNav(
 
         composable(NavDestinations.ADMIN_FLEET) {
             DriversScreen(
-                onDriverClick = { navController.navigate(NavDestinations.ADMIN_DRIVER_DETAIL) },
+                onDriverClick = { name ->
+                    selectedDriverName = name
+                    navController.navigate(NavDestinations.ADMIN_DRIVER_DETAIL)
+                },
                 onTabSelected = { tab -> navigateAdminTab(tab) }
             )
         }
@@ -476,6 +490,7 @@ fun TruckConnectAppNav(
 
         composable(NavDestinations.ADMIN_SHIPMENT_DETAIL) {
             ShipmentDetailScreen(
+                shipmentId = selectedShipmentId,
                 onBackClick = { navController.popBackStack() },
                 onReassignClick = { navController.navigate(NavDestinations.ADMIN_FLEET) },
                 onCancelShipmentClick = { navController.popBackStack() }
@@ -484,6 +499,7 @@ fun TruckConnectAppNav(
 
         composable(NavDestinations.ADMIN_DRIVER_DETAIL) {
             DriverDetailScreen(
+                driverName = selectedDriverName,
                 onBackClick = { navController.popBackStack() }
             )
         }
@@ -500,7 +516,7 @@ fun TruckConnectAppNav(
         composable(NavDestinations.DRIVER_HISTORY) {
             DriverHistoryScreen(
                 onTripClick = { tripId ->
-                    navController.navigate(NavDestinations.DRIVER_ACTIVE_TRIP)
+                    navController.navigate(NavDestinations.DRIVER_DELIVERED)
                 },
                 onTabSelected = { tab -> navigateDriverTab(tab) }
             )
@@ -572,7 +588,8 @@ fun TruckConnectAppNav(
                         item.contains("Notifications") -> navController.navigate(NavDestinations.SETTINGS_NOTIFICATIONS)
                         item.contains("Help") || item.contains("സഹായം") -> navController.navigate(NavDestinations.SETTINGS_HELP)
                     }
-                }
+                },
+                onTabSelected = { tab -> navigateDriverTab(tab) }
             )
         }
 

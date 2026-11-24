@@ -56,7 +56,7 @@ fun NewShipmentScreen(
                 size = TcButtonSize.Lg,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Next: assign driver")
+                Text(text = "Create shipment")
             }
         }
     ) {
@@ -64,13 +64,6 @@ fun NewShipmentScreen(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimens.Gap10)
         ) {
-            TcStepsBar(totalSteps = 3, currentStep = 1)
-
-            Text(
-                text = "2 / 3 · Goods & schedule",
-                style = typography.small,
-                color = colors.muted
-            )
 
             TcField(
                 value = pickup,

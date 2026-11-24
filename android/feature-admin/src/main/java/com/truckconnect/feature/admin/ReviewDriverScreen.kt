@@ -79,7 +79,8 @@ fun ReviewDriverScreen(
                                 delay(600)
                                 isProcessing = false
                                 isApproved = true
-                                Toast.makeText(context, "$driverName approved successfully! Credentials sent via SMS.", Toast.LENGTH_LONG).show()
+                                DriverApprovalsStore.approve(driverName)
+                                Toast.makeText(context, "$driverName approved successfully! Added to active fleet.", Toast.LENGTH_LONG).show()
                                 delay(400)
                                 onApproveClick()
                             }
@@ -127,7 +128,7 @@ fun ReviewDriverScreen(
                         TcDetailItem("Licence no.", "KL-0720110012345"),
                         TcDetailItem("Class / expiry", "HGMV · 14 Mar 2029"),
                         TcDetailItem("Vehicle", "Owner-operator · KL-08-BX-1571"),
-                        TcDetailItem("Emergency contact", "Sreeja Nair (Spouse) · +91 94950 11223")
+                        TcDetailItem("Phone", "+91 98470 55501")
                     )
                 )
             }

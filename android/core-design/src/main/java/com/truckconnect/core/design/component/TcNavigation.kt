@@ -31,26 +31,25 @@ import com.truckconnect.core.design.theme.TcShapes
 import com.truckconnect.core.design.theme.TcThemeState
 
 /**
- * Standard enum for Admin bottom navigation tabs (fixes BUG-03).
- * Order: Home, Map, Shipments, Fleet, More
+ * Standard enum for Admin bottom navigation tabs:
+ * Order: Home, Shipments, Drivers, Profile
  */
 enum class AdminTab(val title: String, val iconRes: Int) {
     HOME("Home", R.drawable.ic_home),
-    MAP("Map", R.drawable.ic_map),
     SHIPMENTS("Shipments", R.drawable.ic_box),
-    FLEET("Fleet", R.drawable.ic_truck),
-    MORE("More", R.drawable.ic_more)
+    DRIVERS("Drivers", R.drawable.ic_users),
+    PROFILE("Profile", R.drawable.ic_user)
 }
 
 /**
- * Standard enum for Driver bottom navigation tabs.
- * Order: Home, History, Alerts, Profile
+ * Standard enum for Driver bottom navigation tabs:
+ * Order: Home, History, Profile, Settings
  */
 enum class DriverTab(val defaultTitle: String, val iconRes: Int) {
     HOME("Home", R.drawable.ic_home),
     HISTORY("History", R.drawable.ic_clock),
-    ALERTS("Alerts", R.drawable.ic_bell),
-    PROFILE("Profile", R.drawable.ic_user)
+    PROFILE("Profile", R.drawable.ic_user),
+    SETTINGS("Settings", R.drawable.ic_cog)
 }
 
 data class TcNavItem(
@@ -64,13 +63,13 @@ object TcNavItems {
     fun driverTabs(
         homeLabel: String = "Home",
         historyLabel: String = "History",
-        alertsLabel: String = "Alerts",
-        profileLabel: String = "Profile"
+        profileLabel: String = "Profile",
+        settingsLabel: String = "Settings"
     ) = listOf(
         TcNavItem(R.drawable.ic_home, homeLabel),
         TcNavItem(R.drawable.ic_clock, historyLabel),
-        TcNavItem(R.drawable.ic_bell, alertsLabel),
-        TcNavItem(R.drawable.ic_user, profileLabel)
+        TcNavItem(R.drawable.ic_user, profileLabel),
+        TcNavItem(R.drawable.ic_cog, settingsLabel)
     )
 }
 

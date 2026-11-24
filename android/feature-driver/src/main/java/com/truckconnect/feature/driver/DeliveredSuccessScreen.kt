@@ -156,12 +156,12 @@ fun DeliveredSuccessScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = if (isMalayalam) "ഡ്രൈവർ ബത്ത / ഇന്ധനം" else "Trip allowance / Fuel",
+                            text = if (isMalayalam) "സ്റ്റാറ്റസ്" else "Delivery Status",
                             style = typography.caption,
                             color = colors.muted
                         )
                         Text(
-                            text = "₹4,850 (Credited)",
+                            text = if (isMalayalam) "ഡെലിവറി പൂർത്തിയായി" else "Delivered · Confirmed",
                             style = typography.btnSm,
                             fontWeight = FontWeight.Bold,
                             color = colors.accent

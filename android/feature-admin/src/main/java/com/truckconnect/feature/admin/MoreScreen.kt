@@ -58,11 +58,11 @@ fun MoreScreen(
     )
 
     TcScreen(
-        title = "More",
+        title = "Profile",
         bottomNav = {
             TcBottomNav(
                 tabs = TcNavItems.AdminTabs,
-                selectedIndex = AdminTab.MORE.ordinal,
+                selectedIndex = AdminTab.PROFILE.ordinal,
                 onTabSelected = onTabSelected,
                 isDriver = false
             )

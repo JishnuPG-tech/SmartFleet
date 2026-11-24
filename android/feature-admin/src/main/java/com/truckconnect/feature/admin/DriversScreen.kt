@@ -109,7 +109,7 @@ fun DriversScreen(
         bottomNav = {
             TcBottomNav(
                 tabs = TcNavItems.AdminTabs,
-                selectedIndex = AdminTab.FLEET.ordinal,
+                selectedIndex = AdminTab.DRIVERS.ordinal,
                 onTabSelected = onTabSelected,
                 isDriver = false
             )

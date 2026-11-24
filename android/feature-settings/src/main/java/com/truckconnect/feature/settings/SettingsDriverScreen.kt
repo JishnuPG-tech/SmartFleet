@@ -17,9 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import com.truckconnect.core.design.R
+import com.truckconnect.core.design.component.TcBottomNav
 import com.truckconnect.core.design.component.TcCard
 import com.truckconnect.core.design.component.TcIconBox
 import com.truckconnect.core.design.component.TcListRow
+import com.truckconnect.core.design.component.TcNavItems
 import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.component.TcSegmented
 import com.truckconnect.core.design.theme.TcThemeState
@@ -27,7 +29,8 @@ import com.truckconnect.core.design.theme.TcThemeState
 @Composable
 fun SettingsDriverScreen(
     onBackClick: () -> Unit = {},
-    onSettingClick: (String) -> Unit = {}
+    onSettingClick: (String) -> Unit = {},
+    onTabSelected: (Int) -> Unit = {}
 ) {
     val colors = TcThemeState.colors
     val typography = TcThemeState.typography
@@ -40,14 +43,26 @@ fun SettingsDriverScreen(
     val settingsItems = listOf(
         Triple(R.drawable.ic_palette, "Theme", "Emerald · Auto"),
         Triple(R.drawable.ic_globe, if (isMalayalam) "ഭാഷ" else "Language", if (isMalayalam) "മലയാളം" else "English"),
-        Triple(R.drawable.ic_vol, "Voice read-out", "On"),
-        Triple(R.drawable.ic_bell, "Notifications", "Alerts & sounds"),
+        Triple(R.drawable.ic_bell, "Notifications", "Mobile status bar alerts"),
         Triple(R.drawable.ic_help, if (isMalayalam) "സഹായം" else "Help", "Support & guides")
     )
 
     TcScreen(
         title = if (isMalayalam) "ക്രമീകരണങ്ങൾ" else "Settings",
         onBackClick = onBackClick,
+        bottomNav = {
+            TcBottomNav(
+                tabs = TcNavItems.driverTabs(
+                    homeLabel = if (isMalayalam) "ഹോം" else "Home",
+                    historyLabel = if (isMalayalam) "ചരിത്രം" else "History",
+                    profileLabel = if (isMalayalam) "പ്രൊഫൈൽ" else "Profile",
+                    settingsLabel = if (isMalayalam) "ക്രമീകരണം" else "Settings"
+                ),
+                selectedIndex = 3,
+                onTabSelected = onTabSelected,
+                isDriver = true
+            )
+        },
         isScrollable = true
     ) {
         Column(

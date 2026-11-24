@@ -6,6 +6,8 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ServiceInfo
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -37,19 +39,22 @@ class LocationTrackingService : Service(), LocationListener {
 
     override fun onCreate() {
         super.onCreate()
-        createNotificationChannel()
+        try {
+            createNotificationChannel()
 
-        // Acquire partial wake lock for heavy Kerala transport routes
-        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-        wakeLock = powerManager.newWakeLock(
-            PowerManager.PARTIAL_WAKE_LOCK,
-            "TruckConnect::LocationTrackingWakeLock"
-        ).apply {
-            setReferenceCounted(false)
-            acquire(8 * 60 * 60 * 1000L) // Max 8 hours
+            val powerManager = getSystemService(Context.POWER_SERVICE) as? PowerManager
+            wakeLock = powerManager?.newWakeLock(
+                PowerManager.PARTIAL_WAKE_LOCK,
+                "TruckConnect::LocationTrackingWakeLock"
+            )?.apply {
+                setReferenceCounted(false)
+                acquire(8 * 60 * 60 * 1000L) // Max 8 hours
+            }
+
+            locationManager = getSystemService(Context.LOCATION_SERVICE) as? LocationManager
+        } catch (e: Throwable) {
+            e.printStackTrace()
         }
-
-        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -61,11 +66,39 @@ class LocationTrackingService : Service(), LocationListener {
 
         currentShipmentId = intent?.getStringExtra(EXTRA_SHIPMENT_ID) ?: "TC-2026-000131"
 
-        val notification = buildTrackingNotification(currentShipmentId!!)
-        startForeground(NOTIFICATION_ID, notification)
+        try {
+            val notification = buildTrackingNotification(currentShipmentId!!)
 
-        startLocationUpdates()
-        startPeriodicSync()
+            val hasFine = checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            val hasCoarse = checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14+
+                if (hasFine || hasCoarse) {
+                    startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)
+                    startLocationUpdates()
+                    startPeriodicSync()
+                } else {
+                    stopSelf()
+                    return START_NOT_STICKY
+                }
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { // Android 10-13
+                if (hasFine || hasCoarse) {
+                    startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)
+                    startLocationUpdates()
+                    startPeriodicSync()
+                } else {
+                    startForeground(NOTIFICATION_ID, notification)
+                }
+            } else {
+                startForeground(NOTIFICATION_ID, notification)
+                startLocationUpdates()
+                startPeriodicSync()
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            stopSelf()
+            return START_NOT_STICKY
+        }
 
         return START_STICKY
     }
@@ -76,8 +109,8 @@ class LocationTrackingService : Service(), LocationListener {
                 if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     lm.requestLocationUpdates(
                         LocationManager.GPS_PROVIDER,
-                        15000L, // 15 seconds
-                        25f,    // 25 meters
+                        15000L,
+                        25f,
                         this
                     )
                 } else if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
@@ -89,8 +122,8 @@ class LocationTrackingService : Service(), LocationListener {
                     )
                 }
             }
-        } catch (e: SecurityException) {
-            // Location permission not granted
+        } catch (e: Throwable) {
+            e.printStackTrace()
         }
     }
 
@@ -98,10 +131,10 @@ class LocationTrackingService : Service(), LocationListener {
         syncJob?.cancel()
         syncJob = serviceScope.launch {
             while (isActive) {
-                delay(30000L) // Sync queued pings every 30 seconds
+                delay(30000L)
                 try {
                     trackingRepository.syncPendingPings()
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     // Handled gracefully offline
                 }
             }
@@ -111,23 +144,31 @@ class LocationTrackingService : Service(), LocationListener {
     override fun onLocationChanged(location: Location) {
         val speedKmh = location.speed * 3.6f
         serviceScope.launch {
-            trackingRepository.recordPing(
-                lat = location.latitude,
-                lng = location.longitude,
-                speedKmh = speedKmh,
-                bearing = location.bearing,
-                accuracy = location.accuracy,
-                shipmentId = currentShipmentId
-            )
+            try {
+                trackingRepository.recordPing(
+                    lat = location.latitude,
+                    lng = location.longitude,
+                    speedKmh = speedKmh,
+                    bearing = location.bearing,
+                    accuracy = location.accuracy,
+                    shipmentId = currentShipmentId
+                )
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        syncJob?.cancel()
-        locationManager?.removeUpdates(this)
-        wakeLock?.let {
-            if (it.isHeld) it.release()
+        try {
+            syncJob?.cancel()
+            locationManager?.removeUpdates(this)
+            wakeLock?.let {
+                if (it.isHeld) it.release()
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace()
         }
     }
 
@@ -135,15 +176,19 @@ class LocationTrackingService : Service(), LocationListener {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                "TruckConnect Trip Telemetry",
-                NotificationManager.IMPORTANCE_LOW
-            ).apply {
-                description = "Active trip background GPS telemetry service"
+            try {
+                val channel = NotificationChannel(
+                    CHANNEL_ID,
+                    "TruckConnect Trip Telemetry",
+                    NotificationManager.IMPORTANCE_LOW
+                ).apply {
+                    description = "Active trip background GPS telemetry service"
+                }
+                val nm = getSystemService(NotificationManager::class.java)
+                nm?.createNotificationChannel(channel)
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
-            val nm = getSystemService(NotificationManager::class.java)
-            nm.createNotificationChannel(channel)
         }
     }
 
@@ -159,27 +204,37 @@ class LocationTrackingService : Service(), LocationListener {
     }
 
     companion object {
-        const val CHANNEL_ID = "truckconnect_tracking_channel"
-        const val NOTIFICATION_ID = 20261
-        const val ACTION_STOP_TRACKING = "com.truckconnect.app.STOP_TRACKING"
-        const val EXTRA_SHIPMENT_ID = "extra_shipment_id"
+        const val NOTIFICATION_ID = 9001
+        const val CHANNEL_ID = "tc_location_tracking_channel"
+        const val ACTION_START_TRACKING = "START_TRACKING"
+        const val ACTION_STOP_TRACKING = "STOP_TRACKING"
+        const val EXTRA_SHIPMENT_ID = "EXTRA_SHIPMENT_ID"
 
-        fun startTracking(context: Context, shipmentId: String) {
-            val intent = Intent(context, LocationTrackingService::class.java).apply {
-                putExtra(EXTRA_SHIPMENT_ID, shipmentId)
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
-                context.startService(intent)
+        fun start(context: Context, shipmentId: String) {
+            try {
+                val intent = Intent(context, LocationTrackingService::class.java).apply {
+                    action = ACTION_START_TRACKING
+                    putExtra(EXTRA_SHIPMENT_ID, shipmentId)
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent)
+                } else {
+                    context.startService(intent)
+                }
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
         }
 
-        fun stopTracking(context: Context) {
-            val intent = Intent(context, LocationTrackingService::class.java).apply {
-                action = ACTION_STOP_TRACKING
+        fun stop(context: Context) {
+            try {
+                val intent = Intent(context, LocationTrackingService::class.java).apply {
+                    action = ACTION_STOP_TRACKING
+                }
+                context.startService(intent)
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
-            context.startService(intent)
         }
     }
 }

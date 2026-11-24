@@ -89,8 +89,8 @@ fun DriverAlertsScreen(
                 tabs = TcNavItems.driverTabs(
                     homeLabel = if (isMalayalam) "ഹോം" else "Home",
                     historyLabel = if (isMalayalam) "ചരിത്രം" else "History",
-                    alertsLabel = if (isMalayalam) "അറിയിപ്പുകൾ" else "Alerts",
-                    profileLabel = if (isMalayalam) "പ്രൊഫൈൽ" else "Profile"
+                    profileLabel = if (isMalayalam) "പ്രൊഫൈൽ" else "Profile",
+                    settingsLabel = if (isMalayalam) "ക്രമീകരണങ്ങൾ" else "Settings"
                 ),
                 selectedIndex = 2,
                 onTabSelected = onTabSelected,

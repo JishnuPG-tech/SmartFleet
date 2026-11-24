@@ -13,25 +13,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.truckconnect.core.design.R
 import com.truckconnect.core.design.component.TcAvatar
-import com.truckconnect.core.design.component.TcButton
-import com.truckconnect.core.design.component.TcButtonSize
-import com.truckconnect.core.design.component.TcButtonVariant
 import com.truckconnect.core.design.component.TcCard
 import com.truckconnect.core.design.component.TcChipKind
-import com.truckconnect.core.design.component.TcConfirmDialog
 import com.truckconnect.core.design.component.TcDetailItem
 import com.truckconnect.core.design.component.TcDetailList
 import com.truckconnect.core.design.component.TcIconButton
@@ -39,29 +31,117 @@ import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.component.TcStatus
 import com.truckconnect.core.design.theme.TcThemeState
 
-/**
- * E07: Admin Driver Detail Screen
- *
- * Full production features per Antigravity v3:
- * - Rebuilt on TcScreen with safe status bar, pill cutout, and 3-button nav insets.
- * - Back button with 48 dp target + Edit button in top bar.
- * - Avatar correctly shows SK initials.
- * - Real formatted Kerala mobile number (+91 94470 12891) with Call & WhatsApp buttons.
- * - OD-1 Status chip with icon, 12% tint background (no decorative dot).
- * - OD-4 Vector ic_star for Rating (no text glyphs).
- * - OD-8 TcDetailList with 1 dp dividers.
- * - Pinned Reset Password and Revoke device actions with TcConfirmDialogs.
- */
+data class AdminDriverInfo(
+    val name: String,
+    val initials: String,
+    val phone: String,
+    val status: String,
+    val statusKind: TcChipKind,
+    val trips: String,
+    val onTime: String,
+    val rating: String,
+    val vehicle: String,
+    val licence: String,
+    val registeredDevice: String,
+    val appVersion: String,
+    val lastTelemetry: String
+)
+
+object DriverDetailsRepository {
+    fun getDriver(name: String): AdminDriverInfo {
+        return when {
+            name.contains("Rajan", ignoreCase = true) -> AdminDriverInfo(
+                name = "Rajan Nair",
+                initials = "RN",
+                phone = "+91 98470 55501",
+                status = "On trip",
+                statusKind = TcChipKind.Accent,
+                trips = "38",
+                onTime = "91%",
+                rating = "4.8",
+                vehicle = "KL-08-BX-1571 · 12 t Tata Ultra",
+                licence = "HGMV · exp 14 Mar 2029",
+                registeredDevice = "Redmi Note 12 5G",
+                appVersion = "v3.0.0 · Active",
+                lastTelemetry = "1 min ago · Near Thrissur"
+            )
+            name.contains("Venugopal", ignoreCase = true) -> AdminDriverInfo(
+                name = "Venugopal R",
+                initials = "VR",
+                phone = "+91 94471 22334",
+                status = "Available",
+                statusKind = TcChipKind.Ok,
+                trips = "64",
+                onTime = "96%",
+                rating = "4.9",
+                vehicle = "KL-02-HR-3797 · 16 t BharatBenz",
+                licence = "HGMV · exp 22 Nov 2030",
+                registeredDevice = "OnePlus Nord CE 3",
+                appVersion = "v3.0.0 · Active",
+                lastTelemetry = "5 min ago · At Munnar Depot"
+            )
+            name.contains("Shaji", ignoreCase = true) -> AdminDriverInfo(
+                name = "Shaji Varghese",
+                initials = "SV",
+                phone = "+91 94472 33445",
+                status = "On leave",
+                statusKind = TcChipKind.Warn,
+                trips = "52",
+                onTime = "79%",
+                rating = "4.5",
+                vehicle = "KL-04-KP-4539 · 10 t Eicher",
+                licence = "HGMV · exp 18 Jan 2027",
+                registeredDevice = "Vivo Y200 5G",
+                appVersion = "v3.0.0 · Standby",
+                lastTelemetry = "Yesterday · Kochi Home Base"
+            )
+            name.contains("Haridas", ignoreCase = true) -> AdminDriverInfo(
+                name = "Haridas M",
+                initials = "HM",
+                phone = "+91 94473 44556",
+                status = "Offline",
+                statusKind = TcChipKind.Neutral,
+                trips = "41",
+                onTime = "88%",
+                rating = "4.7",
+                vehicle = "KL-05-LN-4910 · 10 t Ashok Leyland",
+                licence = "HGMV · exp 09 Sep 2028",
+                registeredDevice = "Realme 11 Pro",
+                appVersion = "v3.0.0 · Offline",
+                lastTelemetry = "4 hours ago · Palakkad Terminal"
+            )
+            else -> AdminDriverInfo(
+                name = "Suresh Kumar",
+                initials = "SK",
+                phone = "+91 94470 12891",
+                status = "On trip",
+                statusKind = TcChipKind.Accent,
+                trips = "49",
+                onTime = "82%",
+                rating = "4.6",
+                vehicle = "KL-07-AZ-1200 · 10 t Eicher Pro",
+                licence = "HGMV · exp 14 Aug 2029",
+                registeredDevice = "Samsung Galaxy A14",
+                appVersion = "v3.0.0 · Active",
+                lastTelemetry = "2 min ago · Near Kozhikode"
+            )
+        }
+    }
+}
+
 @Composable
 fun DriverDetailScreen(
     onBackClick: () -> Unit = {},
-    driverName: String = "Suresh Kumar",
-    driverPhone: String = "+91 94470 12891"
+    driverName: String = "Suresh Kumar"
 ) {
     val context = LocalContext.current
     val colors = TcThemeState.colors
     val typography = TcThemeState.typography
     val dimens = TcThemeState.dimens
+
+    val driver = remember(driverName) {
+        DriverDetailsRepository.getDriver(driverName)
+    }
 
     TcScreen(
         title = "Driver",
@@ -77,10 +157,10 @@ fun DriverDetailScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                TcAvatar(text = "SK", isLarge = true)
+                TcAvatar(text = driver.initials, isLarge = true)
 
                 Text(
-                    text = driverName,
+                    text = driver.name,
                     style = typography.btnLg,
                     color = colors.text
                 )
@@ -91,14 +171,15 @@ fun DriverDetailScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = driverPhone,
+                        text = driver.phone,
                         style = typography.body,
                         color = colors.muted
                     )
 
                     TcIconButton(
                         onClick = {
-                            val uri = Uri.parse("https://wa.me/919447012891")
+                            val cleanPhone = driver.phone.replace("[^0-9]".toRegex(), "")
+                            val uri = Uri.parse("https://wa.me/$cleanPhone")
                             val intent = Intent(Intent.ACTION_VIEW, uri)
                             context.startActivity(intent)
                         },
@@ -114,7 +195,7 @@ fun DriverDetailScreen(
 
                     TcIconButton(
                         onClick = {
-                            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:+919447012891"))
+                            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:${driver.phone}"))
                             context.startActivity(intent)
                         },
                         modifier = Modifier.size(32.dp)
@@ -128,15 +209,14 @@ fun DriverDetailScreen(
                     }
                 }
 
-                // OD-1 Status Chip (No dot)
                 TcStatus(
-                    text = "On trip",
-                    kind = TcChipKind.Accent,
+                    text = driver.status,
+                    kind = driver.statusKind,
                     modifier = Modifier.padding(top = 4.dp)
                 )
             }
 
-            // 3-col KPI Grid with OD-4 Vector Star
+            // 3-col KPI Grid
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -144,14 +224,14 @@ fun DriverDetailScreen(
                 TcCard(modifier = Modifier.weight(1f)) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(text = "Trips", style = typography.xsmall, color = colors.muted)
-                        Text(text = "49", style = typography.btnLg, color = colors.text)
+                        Text(text = driver.trips, style = typography.btnLg, color = colors.text)
                     }
                 }
 
                 TcCard(modifier = Modifier.weight(1f)) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(text = "On-time", style = typography.xsmall, color = colors.muted)
-                        Text(text = "82%", style = typography.btnLg, color = colors.text)
+                        Text(text = driver.onTime, style = typography.btnLg, color = colors.text)
                     }
                 }
 
@@ -162,7 +242,7 @@ fun DriverDetailScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Text(text = "4.6", style = typography.btnLg, color = colors.text)
+                            Text(text = driver.rating, style = typography.btnLg, color = colors.text)
                             Icon(
                                 imageVector = ImageVector.vectorResource(R.drawable.ic_star),
                                 contentDescription = "Rating star",
@@ -174,7 +254,7 @@ fun DriverDetailScreen(
                 }
             }
 
-            // OD-8 Details List with 1 dp dividers
+            // Details List
             Text(
                 text = "Vehicle & Credentials",
                 style = typography.label,
@@ -186,26 +266,26 @@ fun DriverDetailScreen(
                 items = listOf(
                     TcDetailItem(
                         label = "Vehicle",
-                        value = "KL-07-AZ-1200 · 10 t"
+                        value = driver.vehicle
                     ),
                     TcDetailItem(
                         label = "Licence",
-                        value = "HGMV · exp 2029",
+                        value = driver.licence,
                         trailingContent = {
                             TcStatus(text = "Valid", kind = TcChipKind.Ok)
                         }
                     ),
                     TcDetailItem(
                         label = "Registered Device",
-                        value = "Samsung Galaxy A14"
+                        value = driver.registeredDevice
                     ),
                     TcDetailItem(
                         label = "App Version",
-                        value = "v2.1.0 · Active"
+                        value = driver.appVersion
                     ),
                     TcDetailItem(
                         label = "Last Telemetry",
-                        value = "2 min ago · Near Kozhikode"
+                        value = driver.lastTelemetry
                     )
                 )
             )

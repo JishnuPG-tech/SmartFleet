@@ -1,5 +1,6 @@
 package com.truckconnect.feature.driver
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,10 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.truckconnect.core.design.R
@@ -32,6 +35,8 @@ import com.truckconnect.core.design.component.TcIconButton
 import com.truckconnect.core.design.component.TcNavItems
 import com.truckconnect.core.design.component.TcScreen
 import com.truckconnect.core.design.theme.TcThemeState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun DriverProfileScreen(
@@ -39,34 +44,27 @@ fun DriverProfileScreen(
     onLogoutClick: () -> Unit = {},
     onTabSelected: (Int) -> Unit = {}
 ) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     val colors = TcThemeState.colors
     val typography = TcThemeState.typography
     val dimens = TcThemeState.dimens
     val isMalayalam = TcThemeState.isMalayalam
 
     var showLogoutDialog by remember { mutableStateOf(false) }
+    var isCheckingUpdate by remember { mutableStateOf(false) }
 
     TcScreen(
         title = if (isMalayalam) "പ്രൊഫൈൽ" else "Driver profile",
-        topBarActions = {
-            TcIconButton(onClick = onSettingsClick) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_cog),
-                    contentDescription = "Settings",
-                    modifier = Modifier.size(dimens.IconSizeDefault),
-                    tint = colors.text2
-                )
-            }
-        },
         bottomNav = {
             TcBottomNav(
                 tabs = TcNavItems.driverTabs(
                     homeLabel = if (isMalayalam) "ഹോം" else "Home",
                     historyLabel = if (isMalayalam) "ചരിത്രം" else "History",
-                    alertsLabel = if (isMalayalam) "അറിയിപ്പുകൾ" else "Alerts",
-                    profileLabel = if (isMalayalam) "പ്രൊഫൈൽ" else "Profile"
+                    profileLabel = if (isMalayalam) "പ്രൊഫൈൽ" else "Profile",
+                    settingsLabel = if (isMalayalam) "ക്രമീകരണം" else "Settings"
                 ),
-                selectedIndex = 3,
+                selectedIndex = 2,
                 onTabSelected = onTabSelected,
                 isDriver = true
             )
@@ -134,9 +132,42 @@ fun DriverProfileScreen(
                         ),
                         TcDetailItem(
                             label = if (isMalayalam) "ആപ്പ് പതിപ്പ്" else "App version",
-                            value = "v2.1.0 (Build 42)"
+                            value = "v3.0.0 (Enterprise Production)"
                         )
                     )
+                )
+            }
+
+            // In-App Update Button
+            TcButton(
+                onClick = {
+                    isCheckingUpdate = true
+                    coroutineScope.launch {
+                        delay(600)
+                        isCheckingUpdate = false
+                        Toast.makeText(context, "SmartFleet is up to date (v3.0.0)", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                variant = TcButtonVariant.Outline,
+                size = TcButtonSize.Lg,
+                enabled = !isCheckingUpdate,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_download),
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                    tint = colors.text
+                )
+                Text(
+                    text = if (isCheckingUpdate) {
+                        if (isMalayalam) "പരിശോധിക്കുന്നു..." else "Checking for update..."
+                    } else {
+                        if (isMalayalam) "പുതിയ അപ്‌ഡേറ്റ് പരിശോധിക്കുക" else "Check for app update"
+                    },
+                    style = typography.btnSm,
+                    color = colors.text,
+                    modifier = Modifier.padding(start = 8.dp)
                 )
             }
 
@@ -145,9 +176,7 @@ fun DriverProfileScreen(
                 onClick = { showLogoutDialog = true },
                 variant = TcButtonVariant.CritOutline,
                 size = TcButtonSize.Lg,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_logout),

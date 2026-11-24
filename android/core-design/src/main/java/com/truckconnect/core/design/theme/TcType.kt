@@ -211,7 +211,7 @@ fun tcTypography(isDriver: Boolean, isMalayalam: Boolean = false): TcTypography 
             jobAlertDestination = TextStyle(
                 fontFamily = defaultFont,
                 fontWeight = FontWeight.ExtraBold,
-                fontSize = 30.sp
+                fontSize = 22.sp
             ),
             segmented = TextStyle(
                 fontFamily = defaultFont,
@@ -340,7 +340,7 @@ fun tcTypography(isDriver: Boolean, isMalayalam: Boolean = false): TcTypography 
             jobAlertDestination = TextStyle(
                 fontFamily = defaultFont,
                 fontWeight = FontWeight.ExtraBold,
-                fontSize = 30.sp
+                fontSize = 22.sp
             ),
             segmented = TextStyle(
                 fontFamily = defaultFont,

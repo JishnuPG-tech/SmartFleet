@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import com.truckconnect.core.design.R
 import com.truckconnect.core.design.component.TcAppBar
 import com.truckconnect.core.design.component.TcBottomNav
@@ -125,7 +126,7 @@ fun DashboardScreen(
                 )
             }
 
-            // Section Header: Live trips / View map
+            // Section Header: Live trips
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -137,16 +138,6 @@ fun DashboardScreen(
                     text = "Live trips · 7",
                     style = typography.h2,
                     color = colors.text
-                )
-                Text(
-                    text = "View map",
-                    style = typography.small,
-                    color = colors.accent,
-                    modifier = Modifier.clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = ripple(color = colors.accent),
-                        onClick = onViewMapClick
-                    )
                 )
             }
 
@@ -176,11 +167,50 @@ fun DashboardScreen(
                         color = colors.muted
                     )
                     TcProgressBar(progress = 0.62f)
-                    Text(
-                        text = "62% completed · ETA 2:40 pm",
-                        style = typography.xsmall,
-                        color = colors.muted
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "62% completed",
+                            style = typography.xsmall,
+                            color = colors.muted
+                        )
+                        Text(
+                            text = "ETA 2:40 pm",
+                            style = typography.xsmall,
+                            color = colors.accent
+                        )
+                    }
+                    TcButton(
+                        onClick = {
+                            val uri = Uri.parse("https://www.google.com/maps/dir/?api=1&origin=Kasaragod,Kerala&destination=Malappuram,Kerala&travelmode=driving")
+                            val mapIntent = Intent(Intent.ACTION_VIEW, uri).apply {
+                                setPackage("com.google.android.apps.maps")
+                            }
+                            try {
+                                context.startActivity(mapIntent)
+                            } catch (e: Exception) {
+                                context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+                            }
+                        },
+                        variant = TcButtonVariant.Outline,
+                        size = TcButtonSize.Sm,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_nav),
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                            tint = colors.accent
+                        )
+                        Text(
+                            text = "Track on Google Maps",
+                            style = typography.btnSm,
+                            modifier = Modifier.padding(start = 6.dp)
+                        )
+                    }
                 }
             }
 
@@ -210,11 +240,50 @@ fun DashboardScreen(
                         color = colors.muted
                     )
                     TcProgressBar(progress = 0.38f)
-                    Text(
-                        text = "38% completed · 45 min delay",
-                        style = typography.xsmall,
-                        color = colors.muted
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "38% completed",
+                            style = typography.xsmall,
+                            color = colors.muted
+                        )
+                        Text(
+                            text = "45 min delay",
+                            style = typography.xsmall,
+                            color = colors.crit
+                        )
+                    }
+                    TcButton(
+                        onClick = {
+                            val uri = Uri.parse("https://www.google.com/maps/dir/?api=1&origin=Thrissur,Kerala&destination=Kannur,Kerala&travelmode=driving")
+                            val mapIntent = Intent(Intent.ACTION_VIEW, uri).apply {
+                                setPackage("com.google.android.apps.maps")
+                            }
+                            try {
+                                context.startActivity(mapIntent)
+                            } catch (e: Exception) {
+                                context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+                            }
+                        },
+                        variant = TcButtonVariant.Outline,
+                        size = TcButtonSize.Sm,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_nav),
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                            tint = colors.accent
+                        )
+                        Text(
+                            text = "Track on Google Maps",
+                            style = typography.btnSm,
+                            modifier = Modifier.padding(start = 6.dp)
+                        )
+                    }
                 }
             }
         }

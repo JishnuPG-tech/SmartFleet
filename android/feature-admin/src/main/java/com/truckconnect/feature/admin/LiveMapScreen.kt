@@ -193,7 +193,7 @@ fun LiveMapScreen(
         bottomNav = {
             TcBottomNav(
                 tabs = TcNavItems.AdminTabs,
-                selectedIndex = AdminTab.MAP.ordinal,
+                selectedIndex = AdminTab.HOME.ordinal,
                 onTabSelected = onTabSelected,
                 isDriver = false
             )
