@@ -1,6 +1,8 @@
 # TruckConnect / SmartFleet: Comprehensive System & UI Upgrade Specification
 
 > **Architectural Reference**: Synthesized from the deep reverse engineering of industry leaders **Delhivery** (`com.delhiveryConsigneeApp`, React Native/Hermes) and **Shiprocket** (`com.shiprocket.shiprocket`, Flutter/Dart AOT), adapted for Kerala & Pan-India enterprise fleet logistics.
+>
+> 📖 **Complete In-Depth Technical Specification**: See [Reverse/COMPLETE_REVERSE_ENGINEERING_SPECIFICATION.md](file:///C:/Users/JISHNU%20PG/Videos/SmartFleet/Reverse/COMPLETE_REVERSE_ENGINEERING_SPECIFICATION.md) for full endpoint schemas, runtime bytecode analysis, and protocol comparisons.
 
 ---
 

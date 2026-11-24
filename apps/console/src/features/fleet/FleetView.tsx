@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fleetStore } from '../../shared/api/client';
 import { Driver, Vehicle, PendingApproval } from '../../shared/api/types';
 import { Avatar } from '../../shared/ui/Avatar';
@@ -10,6 +11,7 @@ import { PlusIcon } from '../../shared/icons';
 type SubTab = 'drivers' | 'vehicles' | 'approvals';
 
 export const FleetView: React.FC = () => {
+  const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState<SubTab>('drivers');
   const [filter, setFilter] = useState('All');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -198,7 +200,7 @@ export const FleetView: React.FC = () => {
                     <tr
                       key={d.id}
                       className="click"
-                      onClick={() => setEditingDriver(d)}
+                      onClick={() => navigate(`/fleet/driver/${d.id}`)}
                       data-testid={`driver:row_${d.id}`}
                     >
                       <td>

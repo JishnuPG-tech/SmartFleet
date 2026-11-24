@@ -85,14 +85,14 @@ fun JobDetailsScreen(
                             color = colors.muted
                         )
                         Text(
-                            text = "165 km · ~4.5 hrs",
+                            text = "140 km · ~3.5 hrs",
                             style = typography.caption,
                             color = colors.accent
                         )
                     }
 
                     Text(
-                        text = "Kasaragod → Malappuram",
+                        text = "Palakkad → Kozhikode",
                         style = typography.h2,
                         color = colors.text
                     )
@@ -104,7 +104,7 @@ fun JobDetailsScreen(
                         TcButton(
                             onClick = {
                                 try {
-                                    val gmmIntentUri = Uri.parse("google.navigation:q=11.07,76.07")
+                                    val gmmIntentUri = Uri.parse("google.navigation:q=11.2588,75.7804")
                                     val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri).apply {
                                         setPackage("com.google.android.apps.maps")
                                     }
@@ -132,7 +132,7 @@ fun JobDetailsScreen(
                         TcButton(
                             onClick = {
                                 try {
-                                    val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:+919876543210"))
+                                    val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:+918590731979"))
                                     context.startActivity(intent)
                                 } catch (e: Exception) {
                                     onCallOfficeClick()
@@ -149,11 +149,32 @@ fun JobDetailsScreen(
                                 tint = colors.text
                             )
                             Text(
-                                text = if (isMalayalam) "ഓഫീസ്" else "Call dispatch",
+                                text = if (isMalayalam) "ഓഫീസ്" else "Call admin",
                                 modifier = Modifier.padding(start = dimens.Gap6)
                             )
                         }
                     }
+                }
+            }
+
+            // Goods Card
+            TcCard {
+                Column(verticalArrangement = Arrangement.spacedBy(dimens.Gap8)) {
+                    Text(
+                        text = if (isMalayalam) "ചരക്ക് വിവരങ്ങൾ" else "Cargo details",
+                        style = typography.caption,
+                        color = colors.muted
+                    )
+                    Text(
+                        text = "Fresh Vegetables & Farm Produce (8.5 t)",
+                        style = typography.btnSm,
+                        color = colors.text
+                    )
+                    Text(
+                        text = "Vehicle: KL-07-AZ-1200 · 10 t Eicher Pro",
+                        style = typography.xsmall,
+                        color = colors.muted
+                    )
                 }
             }
 
@@ -166,12 +187,12 @@ fun JobDetailsScreen(
                         color = colors.muted
                     )
                     Text(
-                        text = "Kasaragod APMC Yard, Bay 4",
+                        text = "Palakkad APMC Market, Bay 3",
                         style = typography.btnSm,
                         color = colors.text
                     )
                     Text(
-                        text = "Contact: Suresh Babu (+91 94471 22334)",
+                        text = "Contact: Fresh Basket Kerala (+91 94470 33221)",
                         style = typography.xsmall,
                         color = colors.muted
                     )
@@ -186,12 +207,12 @@ fun JobDetailsScreen(
                         color = colors.muted
                     )
                     Text(
-                        text = "Malappuram Central Warehouse, Gate 2",
+                        text = "Kozhikode Wholesale Hub, Gate 2",
                         style = typography.btnSm,
                         color = colors.text
                     )
                     Text(
-                        text = "Contact: Venugopal R (+91 94472 33445)",
+                        text = "Contact: Malabar Logistics (+91 98470 00222)",
                         style = typography.xsmall,
                         color = colors.muted
                     )

@@ -23,6 +23,9 @@ build/
 */build/
 *.apk
 *.aab
+*.xapk
+Reverse/*_xapk/
+Reverse/analysis/
 local.properties
 .cxx/
 captures/

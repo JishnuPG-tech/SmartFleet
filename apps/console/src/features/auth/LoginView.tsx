@@ -80,14 +80,6 @@ export const LoginView: React.FC = () => {
         return;
       }
 
-      // Fallback for secondary staff dispatch credentials if needed
-      if (trimmedEmail === 'dispatch@truckconnect.in' && password === 'Dispatch@2026') {
-        fleetStore.login(trimmedEmail, 'dispatcher');
-        showToast('Welcome, Divya S (Dispatcher)');
-        navigate('/dashboard');
-        return;
-      }
-
       // Invalid credentials
       const nextFail = failCount + 1;
       setFailCount(nextFail);

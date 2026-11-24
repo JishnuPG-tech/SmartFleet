@@ -127,7 +127,7 @@ fun DeliveredSuccessScreen(
                             color = colors.muted
                         )
                         Text(
-                            text = "Kasaragod → Malappuram",
+                            text = "Palakkad → Kozhikode",
                             style = typography.btnSm,
                             color = colors.text
                         )

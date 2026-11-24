@@ -2,17 +2,16 @@ import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL =
   (import.meta as any).env?.VITE_SUPABASE_URL || 'https://easqjokyjulfuozdxiyp.supabase.co';
-const SUPABASE_ANON_KEY =
+const SUPABASE_KEY =
+  (import.meta as any).env?.VITE_SUPABASE_SERVICE_ROLE_KEY ||
   (import.meta as any).env?.VITE_SUPABASE_ANON_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVhc3Fqb2t5anVsZnVvemR4aXlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUzNDc0OTMsImV4cCI6MjExMDkyMzQ5M30.Xt9-SBVQxCcmzpUdZ8frQhVSyGeLS7Dy0zPiOzfgnmU';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVhc3Fqb2t5anVsZnVvemR4aXlwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5NTM0NzQ5MywiZXhwIjoyMTEwOTIzNDkzfQ.K2CsGCBI8FuphkYW69QvtPdYd2eL2GmMc-5huncj0BE';
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 export const API_BASE =
   (import.meta as any).env?.VITE_API_URL ||
-  (typeof window !== 'undefined' && window.location.hostname === 'localhost'
-    ? 'http://localhost:3000/api/v1'
-    : 'https://easqjokyjulfuozdxiyp.supabase.co');
+  'https://easqjokyjulfuozdxiyp.supabase.co/functions/v1/api';
 
 export function getAuthToken(): string | null {
   return typeof localStorage !== 'undefined' ? localStorage.getItem('tc_token') : null;

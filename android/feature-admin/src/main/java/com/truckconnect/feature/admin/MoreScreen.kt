@@ -80,15 +80,15 @@ fun MoreScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(dimens.Gap10)
                 ) {
-                    TcAvatar(text = "Anil Kumar")
+                    TcAvatar(text = "Jishnu P G")
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Anil Kumar",
+                            text = "Jishnu P G",
                             style = typography.btnSm,
                             color = colors.text
                         )
                         Text(
-                            text = "Owner · Super Admin",
+                            text = "jishnupg2005@gmail.com · Super Admin",
                             style = typography.xsmall,
                             color = colors.muted
                         )

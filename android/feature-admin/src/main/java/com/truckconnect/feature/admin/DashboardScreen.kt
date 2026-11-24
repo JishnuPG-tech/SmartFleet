@@ -67,7 +67,7 @@ fun DashboardScreen(
     val dimens = TcThemeState.dimens
 
     TcScreen(
-        title = "Hello, Anil",
+        title = "Hello, Jishnu",
         bottomNav = {
             TcBottomNav(
                 tabs = TcNavItems.AdminTabs,

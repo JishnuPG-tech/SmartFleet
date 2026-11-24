@@ -292,6 +292,11 @@ fun TruckConnectAppNav(
                     navController.navigate(NavDestinations.ADMIN_DASHBOARD) {
                         popUpTo(NavDestinations.ROLE_SELECT) { inclusive = true }
                     }
+                },
+                onSignInWithCreds = { email, pass ->
+                    navController.navigate(NavDestinations.ADMIN_DASHBOARD) {
+                        popUpTo(NavDestinations.ROLE_SELECT) { inclusive = true }
+                    }
                 }
             )
         }
@@ -299,6 +304,11 @@ fun TruckConnectAppNav(
         composable(NavDestinations.DRIVER_LOGIN) {
             DriverLoginScreen(
                 onLoginClick = {
+                    navController.navigate(NavDestinations.DRIVER_HOME) {
+                        popUpTo(NavDestinations.ROLE_SELECT) { inclusive = true }
+                    }
+                },
+                onLoginWithCreds = { phone, pass ->
                     navController.navigate(NavDestinations.DRIVER_HOME) {
                         popUpTo(NavDestinations.ROLE_SELECT) { inclusive = true }
                     }

@@ -100,48 +100,34 @@ fun LiveMapScreen(
                 shipmentId = "TC-2026-000131",
                 status = "In transit",
                 kind = TcChipKind.Accent,
-                speed = "54 km/h",
-                updated = "12 s",
-                eta = "2:40 pm",
-                lat = 10.85,
-                lng = 76.05,
-                phone = "+919876543210"
-            ),
-            VehicleTrackInfo(
-                id = "TC-2026-000133",
-                regNumber = "KL-08-BX-1571",
-                driverName = "Babu Thomas",
-                shipmentId = "TC-2026-000133",
-                status = "Loaded",
-                kind = TcChipKind.Accent,
-                speed = "48 km/h",
-                updated = "45 s",
-                eta = "4:15 pm",
-                lat = 11.26,
-                lng = 75.78,
-                phone = "+919876543211"
-            ),
-            VehicleTrackInfo(
-                id = "TC-2026-000125",
-                regNumber = "KL-05-LN-4910",
-                driverName = "Haridas M",
-                shipmentId = "TC-2026-000125",
-                status = "In transit",
-                kind = TcChipKind.Accent,
                 speed = "52 km/h",
-                updated = "30 s",
-                eta = "6:00 pm",
-                lat = 9.93,
-                lng = 76.27,
-                phone = "+919876543214"
+                updated = "10 s ago",
+                eta = "2:40 pm",
+                lat = 11.0735,
+                lng = 76.0740,
+                phone = "+919847012345"
+            ),
+            VehicleTrackInfo(
+                id = "TC-2026-000138",
+                regNumber = "KL-10-CY-4455",
+                driverName = "Venugopal R",
+                shipmentId = "TC-2026-000138",
+                status = "Assigned",
+                kind = TcChipKind.Info,
+                speed = "0 km/h",
+                updated = "1 min ago",
+                eta = "Tomorrow",
+                lat = 9.9312,
+                lng = 76.2673,
+                phone = "+919447011223"
             )
         )
     }
 
     val vehicles = activeAssignedVehicles
 
-    var selectedVehicleId by remember { mutableStateOf("TC-2026-000131") }
-    val currentVehicle = vehicles.firstOrNull { it.id == selectedVehicleId } ?: vehicles[0]
+    var selectedVehicleId by remember { mutableStateOf<String?>(null) }
+    val currentVehicle = vehicles.firstOrNull { it.id == selectedVehicleId }
 
     var showFilterSheet by remember { mutableStateOf(false) }
     var filterIndex by remember { mutableStateOf(0) }
@@ -155,15 +141,13 @@ fun LiveMapScreen(
 
     val mapPins = filteredVehicles.map { v ->
         val origin = when (v.id) {
-            "TC-2026-000131" -> 12.51 to 74.99 // Kasaragod
-            "TC-2026-000133" -> 11.87 to 75.37 // Kannur
-            "TC-2026-000125" -> 9.93 to 76.27  // Kochi
+            "TC-2026-000131" -> 10.7867 to 76.6548 // Palakkad APMC
+            "TC-2026-000138" -> 9.9312 to 76.2673   // Kochi Wharf
             else -> 10.53 to 76.21
         }
         val destination = when (v.id) {
-            "TC-2026-000131" -> 11.07 to 76.07 // Malappuram
-            "TC-2026-000133" -> 11.26 to 75.78 // Kozhikode
-            "TC-2026-000125" -> 11.26 to 75.78 // Kozhikode
+            "TC-2026-000131" -> 11.2588 to 75.7804 // Kozhikode Hub
+            "TC-2026-000138" -> 12.5102 to 74.9896 // Kasaragod Yard
             else -> 10.85 to 76.05
         }
         TcMapPinData(
@@ -225,112 +209,141 @@ fun LiveMapScreen(
                         bottom = dimens.Gap10
                     )
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(dimens.Gap10)
-                ) {
-                    // Header Row
-                    Row(
+                if (currentVehicle != null) {
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(dimens.Gap10)
+                        verticalArrangement = Arrangement.spacedBy(dimens.Gap10)
                     ) {
-                        TcAvatar(text = currentVehicle.driverName)
+                        // Header Row
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(dimens.Gap10)
+                        ) {
+                            TcAvatar(text = currentVehicle.driverName)
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = currentVehicle.regNumber,
+                                    style = typography.btnSm,
+                                    color = colors.text
+                                )
+                                Text(
+                                    text = "${currentVehicle.driverName} · ${currentVehicle.shipmentId}",
+                                    style = typography.xsmall,
+                                    color = colors.muted
+                                )
+                            }
+                            TcChip(text = currentVehicle.status, kind = currentVehicle.kind)
+                        }
+
+                        // 3 Stat Tiles Grid
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(dimens.Gap8)
+                        ) {
+                            // Tile 1: Speed
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clip(TcThemeState.shapes.Chip)
+                                    .background(colors.surface2)
+                                    .border(dimens.CardBorder, colors.border, TcThemeState.shapes.Chip)
+                                    .padding(vertical = dimens.Gap6, horizontal = dimens.Gap4),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(text = "Speed", style = typography.xsmall, color = colors.muted)
+                                Text(text = currentVehicle.speed, style = typography.btnSm, color = colors.text, textAlign = TextAlign.Center)
+                            }
+
+                            // Tile 2: Updated
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clip(TcThemeState.shapes.Chip)
+                                    .background(colors.surface2)
+                                    .border(dimens.CardBorder, colors.border, TcThemeState.shapes.Chip)
+                                    .padding(vertical = dimens.Gap6, horizontal = dimens.Gap4),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(text = "Updated", style = typography.xsmall, color = colors.muted)
+                                Text(text = currentVehicle.updated, style = typography.btnSm, color = colors.text, textAlign = TextAlign.Center)
+                            }
+
+                            // Tile 3: ETA
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clip(TcThemeState.shapes.Chip)
+                                    .background(colors.surface2)
+                                    .border(dimens.CardBorder, colors.border, TcThemeState.shapes.Chip)
+                                    .padding(vertical = dimens.Gap6, horizontal = dimens.Gap4),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(text = "ETA", style = typography.xsmall, color = colors.muted)
+                                Text(text = currentVehicle.eta, style = typography.btnSm, color = colors.text, textAlign = TextAlign.Center)
+                            }
+                        }
+
+                        // Two Button Actions
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(dimens.Gap10)
+                        ) {
+                            TcButton(
+                                onClick = { onTimelineClick(currentVehicle.shipmentId) },
+                                variant = TcButtonVariant.Outline,
+                                size = TcButtonSize.Sm,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(text = "Timeline")
+                            }
+
+                            TcButton(
+                                onClick = {
+                                    val dialIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:${currentVehicle.phone}"))
+                                    context.startActivity(dialIntent)
+                                },
+                                variant = TcButtonVariant.Primary,
+                                size = TcButtonSize.Sm,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.ic_phone),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(dimens.Size16),
+                                    tint = colors.accentInk
+                                )
+                                Text(
+                                    text = "Call Driver",
+                                    modifier = Modifier.padding(start = dimens.Gap6)
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_truck),
+                            contentDescription = null,
+                            modifier = Modifier.size(dimens.Size22),
+                            tint = colors.accent
+                        )
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = currentVehicle.regNumber,
+                                text = "Active Fleet (${vehicles.size} assigned)",
                                 style = typography.btnSm,
                                 color = colors.text
                             )
                             Text(
-                                text = "${currentVehicle.driverName} · ${currentVehicle.shipmentId}",
+                                text = "Tap any vehicle pin on the map to inspect its real-time path & driver.",
                                 style = typography.xsmall,
                                 color = colors.muted
-                            )
-                        }
-                        TcChip(text = currentVehicle.status, kind = currentVehicle.kind)
-                    }
-
-                    // 3 Stat Tiles Grid
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(dimens.Gap8)
-                    ) {
-                        // Tile 1: Speed
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .clip(TcThemeState.shapes.Chip)
-                                .background(colors.surface2)
-                                .border(dimens.CardBorder, colors.border, TcThemeState.shapes.Chip)
-                                .padding(vertical = dimens.Gap6, horizontal = dimens.Gap4),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(text = "Speed", style = typography.xsmall, color = colors.muted)
-                            Text(text = currentVehicle.speed, style = typography.btnSm, color = colors.text, textAlign = TextAlign.Center)
-                        }
-
-                        // Tile 2: Updated
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .clip(TcThemeState.shapes.Chip)
-                                .background(colors.surface2)
-                                .border(dimens.CardBorder, colors.border, TcThemeState.shapes.Chip)
-                                .padding(vertical = dimens.Gap6, horizontal = dimens.Gap4),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(text = "Updated", style = typography.xsmall, color = colors.muted)
-                            Text(text = currentVehicle.updated, style = typography.btnSm, color = colors.text, textAlign = TextAlign.Center)
-                        }
-
-                        // Tile 3: ETA
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .clip(TcThemeState.shapes.Chip)
-                                .background(colors.surface2)
-                                .border(dimens.CardBorder, colors.border, TcThemeState.shapes.Chip)
-                                .padding(vertical = dimens.Gap6, horizontal = dimens.Gap4),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(text = "ETA", style = typography.xsmall, color = colors.muted)
-                            Text(text = currentVehicle.eta, style = typography.btnSm, color = colors.text, textAlign = TextAlign.Center)
-                        }
-                    }
-
-                    // Two Button Actions
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(dimens.Gap10)
-                    ) {
-                        TcButton(
-                            onClick = { onTimelineClick(currentVehicle.shipmentId) },
-                            variant = TcButtonVariant.Outline,
-                            size = TcButtonSize.Sm,
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(text = "Timeline")
-                        }
-
-                        TcButton(
-                            onClick = {
-                                val dialIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:${currentVehicle.phone}"))
-                                context.startActivity(dialIntent)
-                            },
-                            variant = TcButtonVariant.Primary,
-                            size = TcButtonSize.Sm,
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_phone),
-                                contentDescription = null,
-                                modifier = Modifier.size(dimens.Size16),
-                                tint = colors.accentInk
-                            )
-                            Text(
-                                text = "Call",
-                                modifier = Modifier.padding(start = dimens.Gap6)
                             )
                         }
                     }

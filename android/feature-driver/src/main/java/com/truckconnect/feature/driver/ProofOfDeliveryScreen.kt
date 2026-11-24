@@ -50,8 +50,8 @@ fun ProofOfDeliveryScreen(
     val dimens = TcThemeState.dimens
     val isMalayalam = TcThemeState.isMalayalam
 
-    val configuredReceiverName = "Mathew Traders (Manager)"
-    val configuredDropContact = "+91 94472 33445"
+    val configuredReceiverName = "Malabar Logistics Depot"
+    val configuredDropContact = "+91 98470 00222"
     var enteredOtp by remember { mutableStateOf("") }
 
     TcScreen(
@@ -107,7 +107,7 @@ fun ProofOfDeliveryScreen(
                         color = colors.text
                     )
                     Text(
-                        text = "Contact: $configuredDropContact · Malappuram Central Warehouse",
+                        text = "Contact: $configuredDropContact · Kozhikode Wholesale Hub, Gate 2",
                         style = typography.small,
                         color = colors.muted
                     )

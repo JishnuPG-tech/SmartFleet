@@ -27,16 +27,6 @@ export const DriverDetailView: React.FC = () => {
   const assignedVehicle = fleetStore.vehicles.find((v) => v.id === driver.vehicle);
   const driverShipments = fleetStore.shipments.filter((s) => s.driver === driver.id);
 
-  const handleResetPin = () => {
-    const pin = fleetStore.resetDriverPin(driver.id);
-    showToast(`New one-time login PIN for ${driver.name}: ${pin}`);
-  };
-
-  const handleRevokeDevice = () => {
-    fleetStore.revokeDriverDevice(driver.id);
-    showToast(`Device session terminated for ${driver.name}.`);
-  };
-
   return (
     <div className="view-anim" style={{ maxWidth: 1080 }}>
       {/* Header Profile Card */}
@@ -60,12 +50,6 @@ export const DriverDetailView: React.FC = () => {
               data-testid="driver:btn_call"
             >
               <PhoneIcon size={14} /> Call Driver
-            </button>
-            <button className="btn" onClick={handleResetPin}>
-              Reset PIN
-            </button>
-            <button className="btn danger" onClick={handleRevokeDevice}>
-              Revoke Device
             </button>
           </div>
         </div>

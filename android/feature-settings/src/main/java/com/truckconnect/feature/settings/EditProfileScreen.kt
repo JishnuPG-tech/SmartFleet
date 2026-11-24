@@ -27,9 +27,9 @@ fun EditProfileScreen(
     val typography = TcThemeState.typography
     val dimens = TcThemeState.dimens
 
-    var name by remember { mutableStateOf("Anil Kumar") }
-    var email by remember { mutableStateOf("anil@truckconnect.in") }
-    var phone by remember { mutableStateOf("+91 98765 43210") }
+    var name by remember { mutableStateOf("Jishnu P G") }
+    var email by remember { mutableStateOf("jishnupg2005@gmail.com") }
+    var phone by remember { mutableStateOf("+91 85907 31979") }
     var isSavedMessageVisible by remember { mutableStateOf(false) }
 
     TcScreen(

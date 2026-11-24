@@ -35,14 +35,15 @@ import com.truckconnect.core.design.theme.TcThemeState
 @Composable
 fun AdminSignInScreen(
     onSignInClick: () -> Unit = {},
+    onSignInWithCreds: ((String, String) -> Unit)? = null,
     onForgotPasswordClick: () -> Unit = {}
 ) {
     val colors = TcThemeState.colors
     val typography = TcThemeState.typography
     val dimens = TcThemeState.dimens
 
-    var email by remember { mutableStateOf("anil@truckconnect.in") }
-    var password by remember { mutableStateOf("••••••••••") }
+    var email by remember { mutableStateOf("jishnupg2005@gmail.com") }
+    var password by remember { mutableStateOf("Jishnu2005") }
     var keepSignedIn by remember { mutableStateOf(true) }
 
     TcScreen(
@@ -53,7 +54,13 @@ fun AdminSignInScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 TcButton(
-                    onClick = onSignInClick,
+                    onClick = {
+                        if (onSignInWithCreds != null) {
+                            onSignInWithCreds(email, password)
+                        } else {
+                            onSignInClick()
+                        }
+                    },
                     variant = TcButtonVariant.Primary,
                     size = TcButtonSize.Lg,
                     modifier = Modifier.fillMaxWidth()

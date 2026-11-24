@@ -37,6 +37,7 @@ import com.truckconnect.core.design.theme.TcThemeState
 @Composable
 fun DriverLoginScreen(
     onLoginClick: () -> Unit = {},
+    onLoginWithCreds: ((String, String) -> Unit)? = null,
     onRegisterClick: () -> Unit = {},
     onLanguageToggle: () -> Unit = {}
 ) {
@@ -45,8 +46,8 @@ fun DriverLoginScreen(
     val dimens = TcThemeState.dimens
     val isMalayalam = TcThemeState.isMalayalam
 
-    var phone by remember { mutableStateOf("+91 94470 12891") }
-    var password by remember { mutableStateOf("••••••••") }
+    var phone by remember { mutableStateOf("+91 98470 12345") }
+    var password by remember { mutableStateOf("1234") }
     var isPasswordVisible by remember { mutableStateOf(false) }
 
     TcScreen(
@@ -58,7 +59,13 @@ fun DriverLoginScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 TcButton(
-                    onClick = onLoginClick,
+                    onClick = {
+                        if (onLoginWithCreds != null) {
+                            onLoginWithCreds(phone, password)
+                        } else {
+                            onLoginClick()
+                        }
+                    },
                     variant = TcButtonVariant.Primary,
                     size = TcButtonSize.Lg,
                     modifier = Modifier.fillMaxWidth()
